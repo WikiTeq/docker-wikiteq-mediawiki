@@ -15,6 +15,7 @@ const DOCKER_SKINS = [
 const DOCKER_EXTENSIONS = [
 	'Arrays',
 	'Bootstrap',
+	'BreadCrumbs2',
 	'CategoryThree', # bundled
 	'Cite', # bundled
 	'CiteThisPage', # bundled
@@ -25,11 +26,16 @@ const DOCKER_EXTENSIONS = [
 	'DataTransfer',
 	'DisplayTitle',
 	'Gadgets', # bundled
+	'GTag',
 	'ImageMap', # bundled
 	'InputBox', # bundled
 	'Interwiki', # bundled
+	'LinkTarget',
 	'LocalisationUpdate', # bundled
+	'Lockdown',
 	'Loops',
+	'Math',
+	'MathJax',
 	'MultimediaViewer', # bundled
 	'MyVariables',
 	'NCBITaxonomyLookup',
@@ -54,6 +60,7 @@ const DOCKER_EXTENSIONS = [
 	'TitleBlacklist', # bundled
 	'Variables',
 	'VisualEditor', # bundled
+	'Widgets',
 	'WikiEditor', # bundled
 ];
 

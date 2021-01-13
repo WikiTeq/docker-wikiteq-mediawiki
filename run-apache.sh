@@ -2,10 +2,14 @@
 
 set -e
 
-# allow to write to the directories
-chgrp -R apache /mediawiki
-chmod -R g=rwX /mediawiki
-chgrp -R apache /var/log/httpd
+# Create needed directories
+rsync -avh --ignore-existing $MW_ORIGIN_FILES/ $MW_VOLUME/
+mkdir -p $MW_VOLUME/extensions/SemanticMediaWiki/config
+
+# Allow to write to the directories
+chgrp -R $WWW_GROUP $MW_VOLUME
+chmod -R g=rwX $MW_VOLUME
+chgrp -R $WWW_GROUP /var/log/httpd
 chmod -R g=rwX /var/log/httpd
 
 wait_database_started ()

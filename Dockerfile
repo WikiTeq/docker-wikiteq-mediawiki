@@ -19,6 +19,7 @@ ENV MW_VERSION=REL1_35 \
 	MW_CORE_VERSION=1.35.1 \
 	MW_HOME=/var/www/html/w \
 	MW_VOLUME=/mediawiki \
+	MW_ORIGIN_FILES=/mw_origin_files \
 	WWW_USER=apache \
 	WWW_GROUP=apache \
 	APACHE_LOG_DIR=/var/log/apache2
@@ -26,14 +27,20 @@ ENV MW_VERSION=REL1_35 \
 ##### MediaWiki Core setup
 RUN set -x; \
 	# Core
+	mkdir -p $MW_ORIGIN_FILES \
 	mkdir -p $MW_HOME \
 	&& git clone --depth 1 -b $MW_CORE_VERSION https://gerrit.wikimedia.org/r/mediawiki/core.git $MW_HOME \
 	&& cd $MW_HOME \
 	&& git submodule update --init
 
+# VisualEditor
 RUN set -x; \
-	rm -fr $MW_HOME/images \
-	&& rm -fr $MW_HOME/cache \
+	cd $MW_HOME/extensions/VisualEditor \
+	&& git submodule update --init
+
+RUN set -x; \
+	mv $MW_HOME/images $MW_ORIGIN_FILES/ \
+	&& mv $MW_HOME/cache $MW_ORIGIN_FILES/ \
 	&& ln -s $MW_VOLUME/images $MW_HOME/images \
 	&& ln -s $MW_VOLUME/cache $MW_HOME/cache
 
@@ -57,7 +64,24 @@ RUN set -x; \
 	&& git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/MyVariables \
 	&& git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/Arrays \
 	&& git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/DisplayTitle \
-	&& git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/ConfirmAccount
+	&& git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/ConfirmAccount \
+	&& git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/Lockdown \
+	&& git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/Math
+
+RUN set -x; \
+	cd $MW_HOME/extensions \
+	&& git clone https://gerrit.wikimedia.org/r/mediawiki/extensions/LinkTarget \
+	&& cd LinkTarget \
+	&& git checkout -b $MW_VERSION ab1aba0a4a138f80c4cd9c86cc53259ca0fe4545
+
+RUN set -x; \
+	cd $MW_HOME/extensions \
+	&& git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/Widgets \
+	&& cd Widgets \
+	&& composer update --no-dev \
+	&& mkdir -p $MW_ORIGIN_FILES/extensions/Widgets \
+	&& mv compiled_templates $MW_ORIGIN_FILES/extensions/Widgets/ \
+	&& ln -s $MW_VOLUME/extensions/Widgets/compiled_templates compiled_templates
 
 RUN set -x; \
 	cd $MW_HOME/extensions \
@@ -91,7 +115,36 @@ RUN set -x; \
 	&& cd NCBITaxonomyLookup \
 	&& git checkout -b $MW_VERSION f23565dfe2fdbcaa5b265545058ddc6959c96f40
 
-ENV MW_MAINTENANCE_UPDATE=0
+# MathJax
+RUN set -x; \
+	cd $MW_HOME/extensions \
+	&& git clone https://github.com/xeyownt/mediawiki-mathjax.git MathJax \
+	&& cd MathJax \
+	&& git checkout -b $MW_VERSION 4afdc226f08f9c2b1471a523d3c64df716b25c6c
+
+# BreadCrumbs2
+RUN set -x; \
+	cd $MW_HOME/extensions \
+	&& git clone https://gerrit.wikimedia.org/r/mediawiki/extensions/BreadCrumbs2.git \
+	&& cd BreadCrumbs2 \
+	&& git checkout -b $MW_VERSION d95826a74eef014be0d9685bdf66d07af0b37777
+
+# GTag1
+COPY sources/GTag1.2.0.tar.gz /tmp/
+RUN set -x; \
+	tar -xvf /tmp/GTag*.tar.gz -C $MW_HOME/extensions \
+	&& rm /tmp/GTag*.tar.gz
+
+ENV MW_MAINTENANCE_UPDATE=0 \
+	MW_ENABLE_UPLOADS=0 \
+	MW_MAIN_CACHE_TYPE=CACHE_NONE \
+	PHP_UPLOAD_MAX_FILESIZE=2M \
+	PHP_POST_MAX_SIZE=8M \
+	PHP_LOG_ERRORS=On \
+    PHP_ERROR_REPORTING=E_ALL
+
+COPY php.ini /etc/php.d/90-mediawiki.ini
+COPY mediawiki.conf /etc/httpd/conf.d/
 
 COPY run-apache.sh /run-apache.sh
 RUN chmod -v +x /run-apache.sh
