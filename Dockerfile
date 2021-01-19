@@ -11,7 +11,7 @@ RUN set -x; \
 RUN yum-config-manager --enable remi-php74
 RUN yum -y update
 RUN yum -y install php php-cli php-mysqlnd php-gd php-mbstring php-xml php-intl php-opcache php-pecl-apcu php-redis php-pecl-xdebug \
-		git composer mysql wget unzip imagemagick python-pygments
+		git composer mysql wget unzip imagemagick python-pygments ssmtp
 
 RUN sed -i '/<Directory "\/var\/www\/html">/,/<\/Directory>/ s/AllowOverride None/AllowOverride All/' /etc/httpd/conf/httpd.conf
 
@@ -142,6 +142,8 @@ ENV MW_MAINTENANCE_UPDATE=0 \
 	PHP_POST_MAX_SIZE=8M \
 	PHP_LOG_ERRORS=On \
     PHP_ERROR_REPORTING=E_ALL
+
+COPY ssmtp.conf /etc/ssmtp/ssmtp.conf
 
 COPY php.ini /etc/php.d/90-mediawiki.ini
 COPY mediawiki.conf /etc/httpd/conf.d/
