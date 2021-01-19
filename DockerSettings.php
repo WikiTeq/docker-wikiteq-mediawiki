@@ -151,6 +151,11 @@ $wgRightsIcon = "";
 # Path to the GNU diff3 utility. Used for conflict resolution.
 $wgDiff3 = "/usr/bin/diff3";
 
+# see https://www.mediawiki.org/wiki/Manual:$wgCdnServersNoPurge
+$wgUseCdn = true;
+$wgCdnServersNoPurge = [];
+$wgCdnServersNoPurge[] = '172.16.0.0/12';
+
 if ( getenv( 'MW_SHOW_EXCEPTION_DETAILS' ) === 'true' ) {
 	$wgShowExceptionDetails = true;
 }
