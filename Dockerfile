@@ -144,7 +144,6 @@ ENV MW_MAINTENANCE_UPDATE=0 \
     PHP_ERROR_REPORTING=E_ALL
 
 COPY ssmtp.conf /etc/ssmtp/ssmtp.conf
-
 COPY php.ini /etc/php.d/90-mediawiki.ini
 COPY mediawiki.conf /etc/httpd/conf.d/
 
@@ -154,6 +153,5 @@ RUN chmod -v +x /run-apache.sh
 COPY DockerSettings.php $MW_HOME/DockerSettings.php
 
 CMD ["/run-apache.sh"]
-# CMD sleep 100000000000
 
 EXPOSE 80
