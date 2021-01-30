@@ -21,7 +21,7 @@ wait_database_started ()
     echo "Waiting for database to start"
     mysql=( mysql -h db -u$1 -p$2 )
 
-    for i in {300..0}; do
+    for i in {3600..0}; do
         if echo 'SELECT 1' | "${mysql[@]}" &> /dev/null; then
                 break
         fi

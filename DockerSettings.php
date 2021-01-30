@@ -25,6 +25,7 @@ const DOCKER_EXTENSIONS = [
 	'ConfirmEdit', # bundled
 	'DataTransfer',
 	'DisplayTitle',
+	'Echo',
 	'Gadgets', # bundled
 	'GTag',
 	'ImageMap', # bundled
@@ -110,7 +111,7 @@ $wgEmailAuthentication = true;
 
 ## Database settings
 $wgDBtype = "mysql";
-$wgDBserver = "db";
+$wgDBserver = getenv( 'MW_DB_SERVER' );
 $wgDBname = getenv( 'MW_DB_NAME' );
 $wgDBuser = getenv( 'MW_DB_USER' );
 $wgDBpassword = getenv( 'MW_DB_PASS' );
@@ -136,7 +137,7 @@ $wgShellLocale = "en_US.utf8";
 ## be publicly accessible from the web.
 $wgCacheDirectory = getenv( 'MW_USE_CACHE_DIRECTORY' ) ? "$IP/cache" : false;
 
-$wgSecretKey = "476c04d27121e545842581b66846440958e486582b8b732a75fea63d0d590104";
+$wgSecretKey = getenv( 'MW_SECRET_KEY' );
 
 # Changing this will log out all existing sessions.
 $wgAuthenticationTokenVersion = "1";
