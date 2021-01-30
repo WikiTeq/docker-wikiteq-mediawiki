@@ -2,14 +2,26 @@
 
 set -e
 
+# Map the site hostname to 127.0.0.1 for VisualEditor
+MW_SITE_HOST=$(echo "$MW_SITE_SERVER" | sed -e 's|^[^/]*//||' -e 's|[:/].*$||')
+cp /etc/hosts ~/hosts.new
+sed -i '/# MW_SITE_HOST/d' ~/hosts.new
+if [[ $MW_SITE_HOST =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+  echo "MW_SITE_HOST is IP address '$MW_SITE_HOST'"
+else
+  echo "Add MW_SITE_HOST '$MW_SITE_HOST' to /etc/hosts"
+  echo "127.0.0.1 $MW_SITE_HOST # MW_SITE_HOST" >> ~/hosts.new
+fi
+cp -f ~/hosts.new /etc/hosts
+
 # Create needed directories
-rsync -avh --ignore-existing $MW_ORIGIN_FILES/ $MW_VOLUME/
-mkdir -p $MW_VOLUME/extensions/SemanticMediaWiki/config
+rsync -avh --ignore-existing "$MW_ORIGIN_FILES"/ "$MW_VOLUME"/
+mkdir -p "$MW_VOLUME"/extensions/SemanticMediaWiki/config
 
 # Allow to write to the directories
-chgrp -R $WWW_GROUP $MW_VOLUME
-chmod -R g=rwX $MW_VOLUME
-chgrp -R $WWW_GROUP /var/log/httpd
+chgrp -R "$WWW_GROUP" "$MW_VOLUME"
+chmod -R g=rwX "$MW_VOLUME"
+chgrp -R "$WWW_GROUP" /var/log/httpd
 chmod -R g=rwX /var/log/httpd
 
 wait_database_started ()
