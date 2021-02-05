@@ -189,7 +189,8 @@ run_autoupdate () {
     ### CirrusSearch
     if [ "$MW_SEARCH_TYPE" == 'CirrusSearch' ]; then
         run_maintenance_script_if_needed 'maintenance_CirrusSearch_updateConfig' "${EXTRA_MW_MAINTENANCE_CIRRUSSEARCH_UPDATECONFIG}$MW_MAINTENANCE_CIRRUSSEARCH_UPDATECONFIG" \
-            'extensions/CirrusSearch/maintenance/updateSearchIndexConfig.php'
+            'extensions/CirrusSearch/maintenance/updateSearchIndexConfig.php --reindexAndRemoveOk --indexIdentifier now' \
+            'extensions/CirrusSearch/maintenance/metastore.php --upgrade'
 
         run_maintenance_script_if_needed 'maintenance_CirrusSearch_forceIndex' "${EXTRA_MW_MAINTENANCE_CIRRUSSEARCH_FORCEINDEX}$MW_MAINTENANCE_CIRRUSSEARCH_FORCEINDEX" \
             'extensions/CirrusSearch/maintenance/forceSearchIndex.php --skipLinks --indexOnSkip' \
