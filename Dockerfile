@@ -10,8 +10,8 @@ RUN set -x; \
 		yum-utils
 RUN yum-config-manager --enable remi-php74
 RUN yum -y update
-RUN yum -y install php php-cli php-mysqlnd php-gd php-mbstring php-xml php-intl php-opcache php-pecl-apcu php-redis php-pecl-xdebug \
-		git composer mysql wget unzip imagemagick python-pygments ssmtp
+RUN yum -y install php php-cli php-mysqlnd php-gd php-mbstring php-xml php-intl php-opcache php-pecl-apcu php-redis \
+		git composer mysql wget unzip imagemagick python-pygments ssmtp patch
 
 RUN sed -i '/<Directory "\/var\/www\/html">/,/<\/Directory>/ s/AllowOverride None/AllowOverride All/' /etc/httpd/conf/httpd.conf
 
@@ -67,7 +67,22 @@ RUN set -x; \
 	&& git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/ConfirmAccount \
 	&& git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/Lockdown \
 	&& git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/Math \
-	&& git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/Echo
+	&& git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/Echo \
+	&& git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/ChangeAuthor \
+	&& git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/ContactPage \
+	&& git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/IframePage \
+	&& git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/MsUpload \
+	&& git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/SelectCategory \
+	&& git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/ShowMe \
+	&& git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/SoundManager2Button \
+	&& git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/CirrusSearch \
+	&& git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/Elastica \
+	&& git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/AuthorProtect \
+	&& git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/googleAnalytics \
+	&& git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/UniversalLanguageSelector \
+	&& git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/Survey \
+	&& git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/LiquidThreads \
+
 
 RUN set -x; \
 	cd $MW_HOME/extensions \
@@ -123,6 +138,13 @@ RUN set -x; \
 	&& cd MathJax \
 	&& git checkout -b $MW_VERSION 4afdc226f08f9c2b1471a523d3c64df716b25c6c
 
+# https://www.mediawiki.org/wiki/Extension:Skinny
+RUN set -x; \
+	cd $MW_HOME/extensions \
+	&& git clone https://github.com/tinymighty/skinny.git Skinny \
+	&& cd Skinny \
+	&& git checkout -b $MW_VERSION 41ba4e90522f6fa971a136fab072c3911750e35c
+
 # BreadCrumbs2
 RUN set -x; \
 	cd $MW_HOME/extensions \
@@ -130,16 +152,43 @@ RUN set -x; \
 	&& cd BreadCrumbs2 \
 	&& git checkout -b $MW_VERSION d95826a74eef014be0d9685bdf66d07af0b37777
 
+# https://www.mediawiki.org/wiki/Extension:RottenLinks
+RUN set -x; \
+	cd $MW_HOME/extensions \
+	&& git clone https://github.com/miraheze/RottenLinks.git  \
+	&& cd RottenLinks \
+	&& git checkout -b $MW_VERSION 7ce92c747f6d731de18045af6653686a5a0f3196
+
 # GTag1
 COPY sources/GTag1.2.0.tar.gz /tmp/
 RUN set -x; \
 	tar -xvf /tmp/GTag*.tar.gz -C $MW_HOME/extensions \
 	&& rm /tmp/GTag*.tar.gz
 
+# PATCHES
+# SemanticResultFormats, see https://github.com/WikiTeq/SemanticResultFormats/compare/master...WikiTeq:fix1_35
+COPY patches/semantic-result-formats.patch /tmp/semantic-result-formats.patch
+RUN set -x; \
+	cd $MW_HOME/extensions/SemanticResultFormats \
+	&& patch < /tmp/semantic-result-formats.patch
+
+COPY patches/VisualEditor-ParsoidHandler.patch /tmp/VisualEditor-ParsoidHandler.patch
+RUN set -x; \
+	cd $MW_HOME/extensions/VisualEditor \
+	&& git apply /tmp/VisualEditor-ParsoidHandler.patch
+
+# Default values
 ENV MW_MAINTENANCE_UPDATE=0 \
+	MW_ENABLE_EMAIL=0 \
+	MW_ENABLE_USER_EMAIL=0 \
 	MW_ENABLE_UPLOADS=0 \
+	MW_USE_IMAGE_MAGIC=0 \
+	MW_USE_INSTANT_COMMONS=0 \
+	MW_EMERGENCY_CONTACT=apache@invalid \
+	MW_PASSWORD_SENDER=apache@invalid \
 	MW_MAIN_CACHE_TYPE=CACHE_NONE \
 	MW_DB_SERVER=db \
+	MW_CIRRUS_SEARCH_SERVERS=elasticsearch \
 	PHP_UPLOAD_MAX_FILESIZE=2M \
 	PHP_POST_MAX_SIZE=8M \
 	PHP_LOG_ERRORS=On \

@@ -14,29 +14,41 @@ const DOCKER_SKINS = [
 
 const DOCKER_EXTENSIONS = [
 	'Arrays',
+	'AuthorProtect',
 	'Bootstrap',
 	'BreadCrumbs2',
 	'CategoryThree', # bundled
+	'ChangeAuthor',
+	'CirrusSearch',
+	'Elastica',
 	'Cite', # bundled
 	'CiteThisPage', # bundled
 	'CodeEditor', # bundled
 	'CodeMirror',
 //	'ConfirmAccount', no extension.json
 	'ConfirmEdit', # bundled
+	'ConfirmEdit/ReCaptchaNoCaptcha', # bundled
+	'ContactPage',
 	'DataTransfer',
 	'DisplayTitle',
 	'Echo',
+	'Flow',
 	'Gadgets', # bundled
+//	'googleAnalytics',  no extension.json
 	'GTag',
+	'IframePage',
 	'ImageMap', # bundled
 	'InputBox', # bundled
 	'Interwiki', # bundled
 	'LinkTarget',
+	'LiquidThreads',
 	'LocalisationUpdate', # bundled
 	'Lockdown',
 	'Loops',
+	'Maps',
 	'Math',
 	'MathJax',
+	'MsUpload',
 	'MultimediaViewer', # bundled
 	'MyVariables',
 	'NCBITaxonomyLookup',
@@ -50,15 +62,22 @@ const DOCKER_EXTENSIONS = [
 	'PubmedParser',
 	'Renameuser', # bundled
 	'ReplaceText', # bundled
+	'RottenLinks',
 	'Scribunto', # bundled
 	'SecureLinkFixer', # bundled
+//	'SelectCategory', no extension.json
 	'SemanticExtraSpecialProperties',
 	'SemanticResultFormats',
+	'ShowMe',
+	'Skinny',
+//	'SoundManager2Button', no extension.json
 	'SpamBlacklist', # bundled
+//	'Survey', no extension.json
 	'SyntaxHighlight_GeSHi', # bundled
 	'TemplateData', # bundled
 	'TextExtracts', # bundled
 	'TitleBlacklist', # bundled
+	'UniversalLanguageSelector',
 	'Variables',
 	'VisualEditor', # bundled
 	'Widgets',
@@ -99,11 +118,11 @@ $wgLogo = "$wgResourceBasePath/resources/assets/wiki.png";
 
 ## UPO means: this is also a user preference option
 
-$wgEnableEmail = false;
-$wgEnableUserEmail = false; # UPO
+$wgEnableEmail = (bool)getenv( 'MW_ENABLE_EMAIL' );
+$wgEnableUserEmail = (bool)getenv( 'MW_ENABLE_USER_EMAIL' );
 
-$wgEmergencyContact = "apache@🌻.invalid";
-$wgPasswordSender = "apache@🌻.invalid";
+$wgEmergencyContact = getenv( 'MW_EMERGENCY_CONTACT' );
+$wgPasswordSender = getenv( 'MW_PASSWORD_SENDER' );
 
 $wgEnotifUserTalk = false; # UPO
 $wgEnotifWatchlist = false; # UPO
@@ -166,7 +185,8 @@ if ( getenv( 'MW_SHOW_EXCEPTION_DETAILS' ) === 'true' ) {
 $wgLanguageCode = getenv( 'MW_SITE_LANG' ) ?: 'en';
 
 # Allow images and other files to be uploaded through the wiki.
-$wgEnableUploads  = getenv( 'MW_ENABLE_UPLOADS' );
+$wgEnableUploads  = (bool)getenv( 'MW_ENABLE_UPLOADS' );
+$wgUseImageMagick = (bool)getenv( 'MW_USE_IMAGE_MAGIC' );
 
 ####################### Skin Settings #######################
 # Default skin: you can change the default skin. Use the internal symbolic
@@ -212,17 +232,6 @@ $wgPygmentizePath = '/usr/bin/pygmentize';
 # SemanticMediaWiki
 $smwgConfigFileDir = "$DOCKER_MW_VOLUME/extensions/SemanticMediaWiki/config";
 
-# Flow https://www.mediawiki.org/wiki/Extension:Flow
-if ( isset( $dockerLoadExtensions['Flow'] ) ) {
-	$flowNamespaces = getenv( 'MW_FLOW_NAMESPACES' );
-	if ( $flowNamespaces ) {
-		$wgFlowContentFormat = 'html';
-		foreach ( explode( ',', $flowNamespaces ) as $ns ) {
-			$wgNamespaceContentModels[ constant( $ns ) ] = 'flow-board';
-		}
-	}
-}
-
 // Scribunto https://www.mediawiki.org/wiki/Extension:Scribunto
 if ( isset( $dockerLoadExtensions['Scribunto'] ) ) {
 	$wgScribuntoDefaultEngine = 'luastandalone';
@@ -236,7 +245,7 @@ if ( isset( $dockerLoadExtensions['Scribunto'] ) ) {
 $wgGroupPermissions['sysop']['interwiki'] = true;
 
 # InstantCommons allows wiki to use images from http://commons.wikimedia.org
-$wgUseInstantCommons  = getenv( 'MW_USE_INSTANT_COMMONS' ) ? true : false;
+$wgUseInstantCommons  = (bool)getenv( 'MW_USE_INSTANT_COMMONS' );
 
 # Name used for the project namespace. The name of the meta namespace (also known as the project namespace), used for pages regarding the wiki itself.
 #$wgMetaNamespace = 'Project';
@@ -365,21 +374,32 @@ if ( $tmpProxy ) {
 //	}
 //}
 
-########################### Search Type ############################
-//switch( getenv( 'MW_SEARCH_TYPE' ) ) {
-//	case 'CirrusSearch':
-//		# https://www.mediawiki.org/wiki/Extension:CirrusSearch
-//		wfLoadExtension( 'Elastica' );
-//		require_once "$IP/extensions/CirrusSearch/CirrusSearch.php";
-//		$wgCirrusSearchServers =  explode( ',', getenv( 'MW_CIRRUS_SEARCH_SERVERS' ) );
-//		if ( $flowNamespaces ) {
-//			$wgFlowSearchServers = $wgCirrusSearchServers;
-//		}
-//		$wgSearchType = 'CirrusSearch';
-//		break;
-//	default:
-//		$wgSearchType = null;
-//}
-
 ######################### Custom Settings ##########################
 @include( 'CustomSettings.php' );
+
+# Flow https://www.mediawiki.org/wiki/Extension:Flow
+if ( isset( $dockerLoadExtensions['Flow'] ) ) {
+	$flowNamespaces = getenv( 'MW_FLOW_NAMESPACES' );
+	if ( $flowNamespaces ) {
+		$wgFlowContentFormat = 'html';
+		foreach ( explode( ',', $flowNamespaces ) as $ns ) {
+			$wgNamespaceContentModels[ constant( $ns ) ] = 'flow-board';
+		}
+	}
+}
+
+########################### Search Type ############################
+switch( getenv( 'MW_SEARCH_TYPE' ) ) {
+	case 'CirrusSearch':
+		# https://www.mediawiki.org/wiki/Extension:CirrusSearch
+		wfLoadExtension( 'Elastica' );
+		wfLoadExtension( 'CirrusSearch' );
+		$wgCirrusSearchServers =  explode( ',', getenv( 'MW_CIRRUS_SEARCH_SERVERS' ) );
+		if ( $flowNamespaces ) {
+			$wgFlowSearchServers = $wgCirrusSearchServers;
+		}
+		$wgSearchType = 'CirrusSearch';
+		break;
+	default:
+		$wgSearchType = null;
+}
