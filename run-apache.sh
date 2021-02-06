@@ -171,6 +171,26 @@ if [ ! -e "$MW_HOME/LocalSettings.php" ]; then
     ln -s "$MW_VOLUME/LocalSettings.php" "$MW_HOME/LocalSettings.php"
 fi
 
+jobrunner() {
+    sleep 3
+    if [ "$MW_ENABLE_JOB_RUNNER" = true ]; then
+        echo Run Jobs
+        /mwjobrunner.sh
+    else
+        echo Job runner is disabled
+    fi
+}
+
+transcoder() {
+    sleep 3
+    if [ "$MW_ENABLE_TRANSCODER" = true ]; then
+        echo Run transcoder
+        /mwtranscoder.sh
+    else
+        echo Transcoder disabled
+    fi
+}
+
 run_autoupdate () {
     echo 'Check for the need to run maintenance scripts'
     ### maintenance/update.php
@@ -225,12 +245,18 @@ run_autoupdate () {
 #        fi
     fi
 
-    echo 'Auto-update completed'
+    jobrunner &
+    transcoder &
+
+    echo Auto-update completed
 }
 
 ########## Run maintenance scripts ##########
-if [ $MW_AUTOUPDATE == 'true' ]; then
+if [ "$MW_AUTOUPDATE" = true ]; then
     run_autoupdate &
+else
+    jobrunner &
+    transcoder &
 fi
 
 # Make sure we're not confused by old, incompletely-shutdown httpd
