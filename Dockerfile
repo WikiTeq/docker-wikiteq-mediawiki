@@ -82,7 +82,15 @@ RUN set -x; \
 	&& git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/UniversalLanguageSelector \
 	&& git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/Survey \
 	&& git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/LiquidThreads \
+	&& git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/CodeMirror
 
+# Run composer update
+RUN set -x; \
+	cd $MW_HOME/extensions/CodeMirror \
+	&& composer update --no-dev
+RUN set -x; \
+    cd $MW_HOME/extensions/Elastica \
+    && composer install --no-dev
 
 RUN set -x; \
 	cd $MW_HOME/extensions \
@@ -98,12 +106,6 @@ RUN set -x; \
 	&& mkdir -p $MW_ORIGIN_FILES/extensions/Widgets \
 	&& mv compiled_templates $MW_ORIGIN_FILES/extensions/Widgets/ \
 	&& ln -s $MW_VOLUME/extensions/Widgets/compiled_templates compiled_templates
-
-RUN set -x; \
-	cd $MW_HOME/extensions \
-	&& git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/CodeMirror \
-	&& cd CodeMirror \
-	&& composer update --no-dev
 
 RUN set -x; \
 	cd $MW_HOME/extensions \
@@ -189,8 +191,8 @@ ENV MW_MAINTENANCE_UPDATE=0 \
 	MW_MAIN_CACHE_TYPE=CACHE_NONE \
 	MW_DB_SERVER=db \
 	MW_CIRRUS_SEARCH_SERVERS=elasticsearch \
-	MW_MAINTENANCE_CIRRUSSEARCH_UPDATECONFIG=2 \
-	MW_MAINTENANCE_CIRRUSSEARCH_FORCEINDEX=2 \
+	MW_MAINTENANCE_CIRRUSSEARCH_UPDATECONFIG=1 \
+	MW_MAINTENANCE_CIRRUSSEARCH_FORCEINDEX=1 \
 	PHP_UPLOAD_MAX_FILESIZE=2M \
 	PHP_POST_MAX_SIZE=8M \
 	PHP_LOG_ERRORS=On \
