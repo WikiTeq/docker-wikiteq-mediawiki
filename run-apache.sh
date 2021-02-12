@@ -2,15 +2,18 @@
 
 set -e
 
-# Map the site hostname to 127.0.0.1 for VisualEditor
+# Map the site hostname to 172.17.0.1 for VisualEditor
 MW_SITE_HOST=$(echo "$MW_SITE_SERVER" | sed -e 's|^[^/]*//||' -e 's|[:/].*$||')
 cp /etc/hosts ~/hosts.new
 sed -i '/# MW_SITE_HOST/d' ~/hosts.new
-if [[ $MW_SITE_HOST =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+
+if [ "$MW_MAP_DOMAIN_TO_DOCKER_GATEWAY" != true ]; then
+    echo "MW_MAP_DOMAIN_TO_DOCKER_GATEWAY is not true"
+elif [[ $MW_SITE_HOST =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
   echo "MW_SITE_HOST is IP address '$MW_SITE_HOST'"
 else
-  echo "Add MW_SITE_HOST '$MW_SITE_HOST' to /etc/hosts"
-  echo "127.0.0.1 $MW_SITE_HOST # MW_SITE_HOST" >> ~/hosts.new
+  echo "Add MW_SITE_HOST '172.17.0.1 $MW_SITE_HOST' to /etc/hosts"
+  echo "172.17.0.1 $MW_SITE_HOST # MW_SITE_HOST" >> ~/hosts.new
 fi
 cp -f ~/hosts.new /etc/hosts
 

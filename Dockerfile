@@ -174,11 +174,6 @@ RUN set -x; \
 	cd $MW_HOME/extensions/SemanticResultFormats \
 	&& patch < /tmp/semantic-result-formats.patch
 
-COPY patches/VisualEditor-ParsoidHandler.patch /tmp/VisualEditor-ParsoidHandler.patch
-RUN set -x; \
-	cd $MW_HOME/extensions/VisualEditor \
-	&& git apply /tmp/VisualEditor-ParsoidHandler.patch
-
 # Default values
 ENV MW_MAINTENANCE_UPDATE=0 \
 	MW_ENABLE_EMAIL=0 \
@@ -197,6 +192,7 @@ ENV MW_MAINTENANCE_UPDATE=0 \
 	MW_JOB_RUNNER_PAUSE=2 \
 	MW_ENABLE_TRANSCODER=true \
 	MW_JOB_TRANSCODER_PAUSE=60 \
+	MW_MAP_DOMAIN_TO_DOCKER_GATEWAY=0 \
 	PHP_UPLOAD_MAX_FILESIZE=2M \
 	PHP_POST_MAX_SIZE=8M \
 	PHP_LOG_ERRORS=On \
