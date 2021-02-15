@@ -157,9 +157,9 @@ RUN set -x; \
 # https://www.mediawiki.org/wiki/Extension:RottenLinks
 RUN set -x; \
 	cd $MW_HOME/extensions \
-	&& git clone https://github.com/miraheze/RottenLinks.git  \
+	&& git clone https://github.com/WikiTeq/RottenLinks.git  \
 	&& cd RottenLinks \
-	&& git checkout -b $MW_VERSION 7ce92c747f6d731de18045af6653686a5a0f3196
+	&& git checkout -b $MW_VERSION 37459255db62f044216b5542c5880704387f4925
 
 # GTag1
 COPY sources/GTag1.2.0.tar.gz /tmp/
