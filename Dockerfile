@@ -154,12 +154,12 @@ RUN set -x; \
 	&& cd BreadCrumbs2 \
 	&& git checkout -b $MW_VERSION d95826a74eef014be0d9685bdf66d07af0b37777
 
-# https://www.mediawiki.org/wiki/Extension:RottenLinks
+# https://www.mediawiki.org/wiki/Extension:RottenLinks version 1.0.11
 RUN set -x; \
 	cd $MW_HOME/extensions \
-	&& git clone https://github.com/WikiTeq/RottenLinks.git  \
+	&& git clone https://github.com/miraheze/RottenLinks.git  \
 	&& cd RottenLinks \
-	&& git checkout -b $MW_VERSION d2db896cc936f1890b7fac3a9eec53591770caa6
+	&& git checkout -b $MW_VERSION 4e7e675bb26fc39b85dd62c9ad37e29d8f705a41
 
 # GTag1
 COPY sources/GTag1.2.0.tar.gz /tmp/
