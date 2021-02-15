@@ -159,7 +159,7 @@ RUN set -x; \
 	cd $MW_HOME/extensions \
 	&& git clone https://github.com/WikiTeq/RottenLinks.git  \
 	&& cd RottenLinks \
-	&& git checkout -b $MW_VERSION 37459255db62f044216b5542c5880704387f4925
+	&& git checkout -b $MW_VERSION d2db896cc936f1890b7fac3a9eec53591770caa6
 
 # GTag1
 COPY sources/GTag1.2.0.tar.gz /tmp/
