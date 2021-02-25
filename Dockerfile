@@ -92,6 +92,9 @@ RUN set -x; \
 RUN set -x; \
     cd $MW_HOME/extensions/Elastica \
     && composer install --no-dev
+RUN set -x; \
+    cd $MW_HOME/extensions/Flow \
+    && composer install --no-dev
 
 RUN set -x; \
 	cd $MW_HOME/extensions \
