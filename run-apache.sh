@@ -34,9 +34,9 @@ wait_database_started ()
     fi
 
     echo "Waiting for database to start"
-    mysql=( mysql -h db -u$1 -p$2 )
+    mysql=( mysql -h db -u"$1" -p"$2" )
 
-    for i in {3600..0}; do
+    for i in {86400..0}; do
         if echo 'SELECT 1' | "${mysql[@]}" &> /dev/null; then
                 break
         fi
@@ -62,11 +62,11 @@ wait_elasticsearch_started ()
     for i in {300..0}; do
         result=0
         output=$(wget --timeout=1 -q -O - http://elasticsearch:9200/_cat/health) || result=$?
-        if [[ "$result" = 0 && "`echo $output|awk '{ print $4 }'`" = "green" ]]; then
+        if [[ "$result" = 0 && $(echo "$output"|awk '{ print $4 }') = "green" ]]; then
             break
         fi
         if [ "$result" = 0 ]; then
-            echo "Waiting for elasticsearch health status changed from [`echo $output|awk '{ print $4 }'`] to [green]..."
+            echo "Waiting for elasticsearch health status changed from [$(echo "$output"|awk '{ print $4 }')] to [green]..."
         else
             echo 'Waiting for elasticsearch to start...'
         fi
@@ -96,13 +96,13 @@ run_maintenance_script_if_needed () {
         i=3
         while [ -n "${!i}" ]
         do
-            if [ ! -f "`echo "${!i}" | awk '{print $1}'`" ]; then
+            if [ ! -f "$(echo "${!i}" | awk '{print $1}')" ]; then
                 echo >&2 "Maintenance script does not exit: ${!i}"
                 return 0;
             fi
             echo "Run maintenance script: ${!i}"
-            runuser -c "php ${!i}" -s /bin/bash $WWW_USER
-            i=$(( $i + 1 ))
+            runuser -c "php ${!i}" -s /bin/bash "$WWW_USER"
+            i=$(( "$i" + 1 ))
         done
 
         echo "Successful updated: $2"
@@ -123,9 +123,9 @@ run_script_if_needed () {
         wait_database_started "$MW_DB_INSTALLDB_USER" "$MW_DB_INSTALLDB_PASS"
         if [[ "$1" == *CirrusSearch* ]]; then wait_elasticsearch_started; fi
         echo "Run script: $3"
-        eval $3
+        eval "$3"
 
-        cd $MW_HOME
+        cd "$MW_HOME"
 
         echo "Successful updated: $2"
         echo "$2" > "$MW_VOLUME/$1.info"
@@ -134,7 +134,7 @@ run_script_if_needed () {
     fi
 }
 
-cd $MW_HOME
+cd "$MW_HOME"
 
 # If there is no LocalSettings.php, create one using maintenance/install.php
 if [ ! -e "$MW_VOLUME/LocalSettings.php" ] && [ ! -e "$MW_HOME/LocalSettings.php" ]; then
@@ -148,7 +148,7 @@ if [ ! -e "$MW_VOLUME/LocalSettings.php" ] && [ ! -e "$MW_HOME/LocalSettings.php
         fi
     done
 
-    wait_database_started $MW_DB_INSTALLDB_USER $MW_DB_INSTALLDB_PASS
+    wait_database_started "$MW_DB_INSTALLDB_USER" "$MW_DB_INSTALLDB_PASS"
 
     php maintenance/install.php \
         --confpath "$MW_VOLUME" \
@@ -223,7 +223,7 @@ run_autoupdate () {
     ### cldr extension
     if [ -n "$MW_SCRIPT_CLDR_REBUILD" ]; then
     run_script_if_needed 'script_cldr_rebuild' "$MW_VERSION-$MW_SCRIPT_CLDR_REBUILD" \
-        'set -x; cd $MW_HOME/extensions/cldr && wget -q http://www.unicode.org/Public/cldr/latest/core.zip && unzip -q core.zip -d core && php rebuild.php && set +x;'
+        "set -x; cd $MW_HOME/extensions/cldr && wget -q http://www.unicode.org/Public/cldr/latest/core.zip && unzip -q core.zip -d core && php rebuild.php && set +x;"
 
         if [ -n "$MW_MAINTENANCE_ULS_INDEXER" ]; then
             ### UniversalLanguageSelector extension
