@@ -102,7 +102,7 @@ run_maintenance_script_if_needed () {
             fi
             echo "Run maintenance script: ${!i}"
             runuser -c "php ${!i}" -s /bin/bash "$WWW_USER"
-            i=$(( "$i" + 1 ))
+            i=$((i+1))
         done
 
         echo "Successful updated: $2"
