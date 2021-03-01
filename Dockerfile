@@ -87,6 +87,9 @@ RUN set -x; \
 
 # Run composer update
 RUN set -x; \
+	cd $MW_HOME/extensions/CirrusSearch \
+	&& composer update --no-dev
+RUN set -x; \
 	cd $MW_HOME/extensions/CodeMirror \
 	&& composer update --no-dev
 RUN set -x; \
