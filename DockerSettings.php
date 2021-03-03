@@ -14,7 +14,6 @@ const DOCKER_SKINS = [
 
 const DOCKER_EXTENSIONS = [
 	'Arrays',
-	'AuthorProtect',
 	'Bootstrap',
 	'BreadCrumbs2',
 	'CategoryThree', # bundled
@@ -43,6 +42,7 @@ const DOCKER_EXTENSIONS = [
 	'LinkTarget',
 	'LiquidThreads',
 	'LocalisationUpdate', # bundled
+	'LockAuthor',
 	'Lockdown',
 	'Loops',
 	'Maps',

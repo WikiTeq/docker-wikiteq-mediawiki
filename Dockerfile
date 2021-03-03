@@ -77,13 +77,19 @@ RUN set -x; \
 	&& git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/SoundManager2Button \
 	&& git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/CirrusSearch \
 	&& git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/Elastica \
-	&& git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/AuthorProtect \
 	&& git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/googleAnalytics \
 	&& git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/UniversalLanguageSelector \
 	&& git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/Survey \
 	&& git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/LiquidThreads \
 	&& git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/CodeMirror \
 	&& git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/Flow
+
+# TODO move me above when REL1_35 branch will be created
+RUN set -x; \
+    cd $MW_HOME/extensions \
+    && git clone https://gerrit.wikimedia.org/r/mediawiki/extensions/LockAuthor \
+    && cd LockAuthor \
+    && git checkout -b $MW_VERSION ee5ab1ed2bc34ab1b08c799fb1e14e0d5de65953
 
 # Run composer update
 RUN set -x; \
@@ -164,7 +170,7 @@ RUN set -x; \
 # https://www.mediawiki.org/wiki/Extension:RottenLinks version 1.0.11
 RUN set -x; \
 	cd $MW_HOME/extensions \
-	&& git clone https://github.com/miraheze/RottenLinks.git  \
+	&& git clone https://github.com/miraheze/RottenLinks.git \
 	&& cd RottenLinks \
 	&& git checkout -b $MW_VERSION 4e7e675bb26fc39b85dd62c9ad37e29d8f705a41
 
