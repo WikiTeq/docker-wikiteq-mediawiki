@@ -11,7 +11,7 @@ RUN set -x; \
 RUN yum-config-manager --enable remi-php74
 RUN yum -y update
 RUN yum -y install php php-cli php-mysqlnd php-gd php-mbstring php-xml php-intl php-opcache php-pecl-apcu php-redis \
-		git composer mysql wget unzip imagemagick python-pygments ssmtp patch
+		git composer mysql wget unzip ImageMagick python-pygments ssmtp patch
 
 RUN sed -i '/<Directory "\/var\/www\/html">/,/<\/Directory>/ s/AllowOverride None/AllowOverride All/' /etc/httpd/conf/httpd.conf
 
