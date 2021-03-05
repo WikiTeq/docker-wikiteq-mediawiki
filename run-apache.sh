@@ -258,6 +258,7 @@ run_autoupdate () {
 if [ "$MW_AUTOUPDATE" = true ]; then
     run_autoupdate &
 else
+    echo "Auto update script is disabled, \$MW_AUTOUPDATE is $MW_AUTOUPDATE";
     jobrunner &
     transcoder &
 fi

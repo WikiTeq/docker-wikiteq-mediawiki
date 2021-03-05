@@ -1,5 +1,6 @@
 {
 	"require": {
+		"elasticsearch/elasticsearch": "6.7.2",
 		"mediawiki/bootstrap": "^4.4.1",
 		"mediawiki/maps": "^8.0.0",
 		"mediawiki/semantic-media-wiki": "^3.2.2",
@@ -9,6 +10,8 @@
 	"extra": {
 		"merge-plugin": {
 			"include": [
+				"extensions/CirrusSearch/composer.json",
+				"extensions/Elastica/composer.json"
 			]
 		}
 	}

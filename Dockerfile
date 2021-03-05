@@ -11,7 +11,7 @@ RUN set -x; \
 RUN yum-config-manager --enable remi-php74
 RUN yum -y update
 RUN yum -y install php php-cli php-mysqlnd php-gd php-mbstring php-xml php-intl php-opcache php-pecl-apcu php-redis \
-		git composer mysql wget unzip ImageMagick python-pygments ssmtp patch
+		git composer mysql wget unzip ImageMagick python-pygments ssmtp patch vim mc
 
 RUN sed -i '/<Directory "\/var\/www\/html">/,/<\/Directory>/ s/AllowOverride None/AllowOverride All/' /etc/httpd/conf/httpd.conf
 
@@ -43,9 +43,6 @@ RUN set -x; \
 	&& mv $MW_HOME/cache $MW_ORIGIN_FILES/ \
 	&& ln -s $MW_VOLUME/images $MW_HOME/images \
 	&& ln -s $MW_VOLUME/cache $MW_HOME/cache
-
-COPY composer.local.json $MW_HOME/composer.local.json
-RUN set -x; cd $MW_HOME && composer update --no-dev
 
 # Chamelion Skin
 RUN set -x; \
@@ -92,18 +89,21 @@ RUN set -x; \
     && git checkout -b $MW_VERSION ee5ab1ed2bc34ab1b08c799fb1e14e0d5de65953
 
 # Run composer update
-RUN set -x; \
-	cd $MW_HOME/extensions/CirrusSearch \
-	&& composer update --no-dev
+#RUN set -x; \
+#	cd $MW_HOME/extensions/CirrusSearch \
+#	&& composer update --no-dev
 RUN set -x; \
 	cd $MW_HOME/extensions/CodeMirror \
 	&& composer update --no-dev
-RUN set -x; \
-    cd $MW_HOME/extensions/Elastica \
-    && composer install --no-dev
+#RUN set -x; \
+#    cd $MW_HOME/extensions/Elastica \
+#    && composer update --no-dev
 RUN set -x; \
     cd $MW_HOME/extensions/Flow \
-    && composer install --no-dev
+    && composer update --no-dev
+
+COPY composer.local.json $MW_HOME/composer.local.json
+RUN set -x; cd $MW_HOME && composer update --no-dev
 
 RUN set -x; \
 	cd $MW_HOME/extensions \
@@ -188,7 +188,8 @@ RUN set -x; \
 	&& patch < /tmp/semantic-result-formats.patch
 
 # Default values
-ENV MW_MAINTENANCE_UPDATE=0 \
+ENV MW_AUTOUPDATE=true \
+	MW_MAINTENANCE_UPDATE=0 \
 	MW_ENABLE_EMAIL=0 \
 	MW_ENABLE_USER_EMAIL=0 \
 	MW_ENABLE_UPLOADS=0 \
