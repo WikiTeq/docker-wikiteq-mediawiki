@@ -178,7 +178,7 @@ jobrunner() {
     sleep 3
     if [ "$MW_ENABLE_JOB_RUNNER" = true ]; then
         echo Run Jobs
-        /mwjobrunner.sh
+        runuser -c /mwjobrunner.sh -s /bin/bash "$WWW_USER"
     else
         echo Job runner is disabled
     fi
@@ -188,7 +188,7 @@ transcoder() {
     sleep 3
     if [ "$MW_ENABLE_TRANSCODER" = true ]; then
         echo Run transcoder
-        /mwtranscoder.sh
+        runuser -c /mwtranscoder.sh -s /bin/bash "$WWW_USER"
     else
         echo Transcoder disabled
     fi
