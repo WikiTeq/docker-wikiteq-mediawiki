@@ -79,7 +79,10 @@ RUN set -x; \
 	&& git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/Survey \
 	&& git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/LiquidThreads \
 	&& git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/CodeMirror \
-	&& git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/Flow
+	&& git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/Flow \
+	&& git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/ApprovedRevs \
+	&& git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/Collection \
+	&& git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/HTMLTags
 
 # TODO move me above when REL1_35 branch will be created
 RUN set -x; \
@@ -173,6 +176,14 @@ RUN set -x; \
 	&& git clone https://github.com/miraheze/RottenLinks.git \
 	&& cd RottenLinks \
 	&& git checkout -b $MW_VERSION 4e7e675bb26fc39b85dd62c9ad37e29d8f705a41
+
+# EmbedVideo
+RUN set -x; \
+	cd $MW_HOME/extensions \
+	&& git clone https://gitlab.com/hydrawiki/extensions/EmbedVideo.git \
+	&& cd EmbedVideo \
+	&& git checkout -b $MW_VERSION 85c5219593cc86367ffb17bfb650f73ca3eb9b11
+
 
 # GTag1
 COPY sources/GTag1.2.0.tar.gz /tmp/

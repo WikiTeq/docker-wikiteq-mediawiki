@@ -13,6 +13,7 @@ const DOCKER_SKINS = [
 ];
 
 const DOCKER_EXTENSIONS = [
+	'ApprovedRevs',
 	'Arrays',
 	'Bootstrap',
 	'BreadCrumbs2',
@@ -24,6 +25,7 @@ const DOCKER_EXTENSIONS = [
 	'CiteThisPage', # bundled
 	'CodeEditor', # bundled
 	'CodeMirror',
+	'Collection',
 //	'ConfirmAccount', no extension.json
 	'ConfirmEdit', # bundled
 	'ConfirmEdit/ReCaptchaNoCaptcha', # bundled
@@ -31,10 +33,12 @@ const DOCKER_EXTENSIONS = [
 	'DataTransfer',
 	'DisplayTitle',
 	'Echo',
+	'EmbedVideo',
 	'Flow',
 	'Gadgets', # bundled
 //	'googleAnalytics',  no extension.json
 	'GTag',
+	'HTMLTags',
 	'IframePage',
 	'ImageMap', # bundled
 	'InputBox', # bundled
