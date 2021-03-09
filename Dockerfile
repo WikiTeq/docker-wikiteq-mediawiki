@@ -11,7 +11,7 @@ RUN set -x; \
 RUN yum-config-manager --enable remi-php74
 RUN yum -y update
 RUN yum -y install php php-cli php-mysqlnd php-gd php-mbstring php-xml php-intl php-opcache php-pecl-apcu php-redis \
-		git composer mysql wget unzip ImageMagick python-pygments ssmtp patch vim mc
+		git composer mysql wget unzip ImageMagick python-pygments ssmtp patch vim mc cronie
 
 RUN sed -i '/<Directory "\/var\/www\/html">/,/<\/Directory>/ s/AllowOverride None/AllowOverride All/' /etc/httpd/conf/httpd.conf
 
@@ -200,7 +200,9 @@ RUN set -x; \
 
 # INSTALL medaiwiki-maintenance-automation (silent mode)
 COPY scripts/mediawiki-maintenance-automation /root/mediawiki-maintenance-automation
-RUN /root/mediawiki-maintenance-automation/setupWikiCron.sh $MW_HOME --silent
+RUN set -x; \
+	cd /root/mediawiki-maintenance-automation \
+	&& ./setupWikiCron.sh $MW_HOME --silent
 
 # Default values
 ENV MW_AUTOUPDATE=true \
