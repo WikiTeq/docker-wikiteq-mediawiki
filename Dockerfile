@@ -198,6 +198,10 @@ RUN set -x; \
 	cd $MW_HOME/extensions/SemanticResultFormats \
 	&& patch < /tmp/semantic-result-formats.patch
 
+# INSTALL medaiwiki-maintenance-automation (silent mode)
+COPY scripts/mediawiki-maintenance-automation /root/mediawiki-maintenance-automation
+RUN /root/mediawiki-maintenance-automation/setupWikiCron.sh $MW_HOME --silent
+
 # Default values
 ENV MW_AUTOUPDATE=true \
 	MW_MAINTENANCE_UPDATE=0 \
