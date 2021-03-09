@@ -1,0 +1,3 @@
+[submodule "scripts/mediawiki-maintenance-automation"]
+	path = scripts/mediawiki-maintenance-automation
+	url = https://github.com/WikiTeq/mediawiki-maintenance-automation.git
