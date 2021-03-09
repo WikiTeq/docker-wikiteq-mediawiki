@@ -227,12 +227,12 @@ COPY ssmtp.conf /etc/ssmtp/ssmtp.conf
 COPY php.ini /etc/php.d/90-mediawiki.ini
 COPY mediawiki.conf /etc/httpd/conf.d/
 
-COPY mwjobrunner.sh /mwjobrunner.sh
+COPY scripts/mwjobrunner.sh /mwjobrunner.sh
 RUN chmod -v +x /mwjobrunner.sh
-COPY mwtranscoder.sh /mwtranscoder.sh
+COPY scripts/mwtranscoder.sh /mwtranscoder.sh
 RUN chmod -v +x /mwtranscoder.sh
 
-COPY run-apache.sh /run-apache.sh
+COPY scripts/run-apache.sh /run-apache.sh
 RUN chmod -v +x /run-apache.sh
 
 COPY DockerSettings.php $MW_HOME/DockerSettings.php
