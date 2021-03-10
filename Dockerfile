@@ -202,7 +202,8 @@ RUN set -x; \
 COPY scripts/mediawiki-maintenance-automation /root/mediawiki-maintenance-automation
 RUN set -x; \
 	cd /root/mediawiki-maintenance-automation \
-	&& ./setupWikiCron.sh $MW_HOME --silent
+	&& ./setupWikiCron.sh $MW_HOME --silent \
+	&& touch /var/log/mediawiki.cron.log
 
 # Default values
 ENV MW_AUTOUPDATE=true \
