@@ -11,7 +11,7 @@ RUN set -x; \
 RUN yum-config-manager --enable remi-php74
 RUN yum -y update
 RUN yum -y install php php-cli php-mysqlnd php-gd php-mbstring php-xml php-intl php-opcache php-pecl-apcu php-redis \
-		git composer mysql wget unzip ImageMagick python-pygments ssmtp patch vim mc cronie
+		git composer mysql wget unzip ImageMagick python-pygments ssmtp patch vim mc
 
 RUN sed -i '/<Directory "\/var\/www\/html">/,/<\/Directory>/ s/AllowOverride None/AllowOverride All/' /etc/httpd/conf/httpd.conf
 
@@ -198,12 +198,6 @@ RUN set -x; \
 	cd $MW_HOME/extensions/SemanticResultFormats \
 	&& patch < /tmp/semantic-result-formats.patch
 
-# INSTALL medaiwiki-maintenance-automation (silent mode)
-COPY scripts/mediawiki-maintenance-automation /root/mediawiki-maintenance-automation
-RUN set -x; \
-	cd /root/mediawiki-maintenance-automation \
-	&& ./setupWikiCron.sh $MW_HOME --silent
-
 # Rewind ReplaceText to apply fix // TODO remove me in mw > 1.35.1
 RUN set -x; \
 	cd $MW_HOME/extensions/ReplaceText \
@@ -238,12 +232,12 @@ COPY ssmtp.conf /etc/ssmtp/ssmtp.conf
 COPY php.ini /etc/php.d/90-mediawiki.ini
 COPY mediawiki.conf /etc/httpd/conf.d/
 
-COPY scripts/mwjobrunner.sh /mwjobrunner.sh
+COPY mwjobrunner.sh /mwjobrunner.sh
 RUN chmod -v +x /mwjobrunner.sh
-COPY scripts/mwtranscoder.sh /mwtranscoder.sh
+COPY mwtranscoder.sh /mwtranscoder.sh
 RUN chmod -v +x /mwtranscoder.sh
 
-COPY scripts/run-apache.sh /run-apache.sh
+COPY run-apache.sh /run-apache.sh
 RUN chmod -v +x /run-apache.sh
 
 COPY DockerSettings.php $MW_HOME/DockerSettings.php
