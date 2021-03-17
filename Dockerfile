@@ -204,6 +204,11 @@ RUN set -x; \
 	cd /root/mediawiki-maintenance-automation \
 	&& ./setupWikiCron.sh $MW_HOME --silent
 
+# Rewind ReplaceText to apply fix // TODO remove me in mw > 1.35.1
+RUN set -x; \
+	cd $MW_HOME/extensions/ReplaceText \
+	&& git pull origin REL1_35
+
 # Default values
 ENV MW_AUTOUPDATE=true \
 	MW_MAINTENANCE_UPDATE=0 \
