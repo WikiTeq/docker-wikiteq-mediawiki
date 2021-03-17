@@ -5,13 +5,15 @@ MAINTAINER pastakhov@yandex.ru
 # Install requered packages
 RUN set -x; \
 	yum -y install httpd \
-		https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm \
-		https://rpms.remirepo.net/enterprise/remi-release-7.rpm \
-		yum-utils
+	https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm \
+	https://rpms.remirepo.net/enterprise/remi-release-7.rpm \
+	yum-utils
+RUN yum -y localinstall --nogpgcheck https://download1.rpmfusion.org/free/el/rpmfusion-free-release-7.noarch.rpm \
+	https://download1.rpmfusion.org/nonfree/el/rpmfusion-nonfree-release-7.noarch.rpm
 RUN yum-config-manager --enable remi-php74
 RUN yum -y update
 RUN yum -y install php php-cli php-mysqlnd php-gd php-mbstring php-xml php-intl php-opcache php-pecl-apcu php-redis \
-		git composer mysql wget unzip ImageMagick python-pygments ssmtp patch vim mc
+	git composer mysql wget unzip ImageMagick python-pygments ssmtp patch vim mc ffmpeg
 
 RUN sed -i '/<Directory "\/var\/www\/html">/,/<\/Directory>/ s/AllowOverride None/AllowOverride All/' /etc/httpd/conf/httpd.conf
 
@@ -44,15 +46,20 @@ RUN set -x; \
 	&& ln -s $MW_VOLUME/images $MW_HOME/images \
 	&& ln -s $MW_VOLUME/cache $MW_HOME/cache
 
-# Chamelion Skin
+### Skins
+# Chameleon
 RUN set -x; \
 	cd $MW_HOME/skins \
 	&& git clone https://github.com/ProfessionalWiki/chameleon.git \
 	&& cd chameleon \
 	&& git checkout -b $MW_VERSION c4cd43625c20e8979f2d274b4dd514388f3d47cc
 
-### Extensions
+# Refreshed
+RUN set -x; \
+	cd $MW_HOME/skins \
+	&& git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/skins/Refreshed
 
+### Extensions
 RUN set -x; \
 	cd $MW_HOME/extensions \
 	&& git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/DataTransfer \
@@ -82,14 +89,41 @@ RUN set -x; \
 	&& git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/Flow \
 	&& git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/ApprovedRevs \
 	&& git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/Collection \
-	&& git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/HTMLTags
+	&& git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/HTMLTags \
+	&& git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/BetaFeatures \
+	&& git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/SkinPerNamespace \
+	&& git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/SkinPerPage \
+	&& git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/CharInsert \
+	&& git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/Tabs \
+	&& git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/AdvancedSearch \
+	&& git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/Disambiguator \
+	&& git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/CheckUser \
+	&& git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/CommonsMetadata \
+	&& git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/TimedMediaHandler \
+	&& git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/SocialProfile \
+	&& git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/WikiForum \
+	&& git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/VoteNY \
+	&& git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/AJAXPoll \
+	&& git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/YouTube \
+	&& git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/AntiSpoof \
+	&& git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/Popups \
+	&& git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/Description2 \
+	&& git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/Thanks \
+	&& git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/MobileDetect \
+	&& git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/SimpleChanges \
+	&& git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/UserMerge \
+	&& git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/LinkSuggest \
+	&& git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/TwitterTag \
+	&& git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/TemplateStyles \
+	&& git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/LookupUser \
+	&& git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/HeadScript
 
 # TODO move me above when REL1_35 branch will be created
 RUN set -x; \
-    cd $MW_HOME/extensions \
-    && git clone https://gerrit.wikimedia.org/r/mediawiki/extensions/LockAuthor \
-    && cd LockAuthor \
-    && git checkout -b $MW_VERSION ee5ab1ed2bc34ab1b08c799fb1e14e0d5de65953
+	cd $MW_HOME/extensions \
+	&& git clone https://gerrit.wikimedia.org/r/mediawiki/extensions/LockAuthor \
+	&& cd LockAuthor \
+	&& git checkout -b $MW_VERSION ee5ab1ed2bc34ab1b08c799fb1e14e0d5de65953
 
 # Run composer update
 #RUN set -x; \
@@ -99,11 +133,20 @@ RUN set -x; \
 	cd $MW_HOME/extensions/CodeMirror \
 	&& composer update --no-dev
 #RUN set -x; \
-#    cd $MW_HOME/extensions/Elastica \
-#    && composer update --no-dev
+#	cd $MW_HOME/extensions/Elastica \
+#	&& composer update --no-dev
 RUN set -x; \
-    cd $MW_HOME/extensions/Flow \
-    && composer update --no-dev
+	cd $MW_HOME/extensions/Flow \
+	&& composer update --no-dev
+RUN set -x; \
+	cd $MW_HOME/extensions/TimedMediaHandler \
+	&& composer update --no-dev
+RUN set -x; \
+	cd $MW_HOME/extensions/AntiSpoof \
+	&& composer update --no-dev
+RUN set -x; \
+	cd $MW_HOME/extensions/TemplateStyles \
+	&& composer update --no-dev
 
 COPY composer.local.json $MW_HOME/composer.local.json
 RUN set -x; cd $MW_HOME && composer update --no-dev
@@ -184,12 +227,28 @@ RUN set -x; \
 	&& cd EmbedVideo \
 	&& git checkout -b $MW_VERSION 85c5219593cc86367ffb17bfb650f73ca3eb9b11
 
+# Lazyload
+RUN set -x; \
+	cd $MW_HOME/extensions \
+	&& git clone https://github.com/mudkipme/mediawiki-lazyload.git Lazyload \
+	&& cd Lazyload \
+	&& git checkout -b $MW_VERSION 41b1b608a21d7fcc9eb1bd8fa1240873df01acd4
+
+# WikiSEO Dont change me without well testing!
+RUN set -x; \
+	cd $MW_HOME/extensions \
+	&& git clone https://gerrit.wikimedia.org/r/mediawiki/extensions/WikiSEO \
+	&& cd WikiSEO \
+	&& git checkout -b $MW_VERSION 30bb8c323e8cd44df52c7537f97f8518de2557df
 
 # GTag1
 COPY sources/GTag1.2.0.tar.gz /tmp/
 RUN set -x; \
 	tar -xvf /tmp/GTag*.tar.gz -C $MW_HOME/extensions \
 	&& rm /tmp/GTag*.tar.gz
+
+# CheckEmailAddress from https://www.mediawiki.org/w/index.php?title=Extension:CheckEmailAddress&oldid=2422991
+COPY sources/CheckEmailAddress $MW_HOME/extensions/CheckEmailAddress
 
 # PATCHES
 # SemanticResultFormats, see https://github.com/WikiTeq/SemanticResultFormats/compare/master...WikiTeq:fix1_35
@@ -198,10 +257,24 @@ RUN set -x; \
 	cd $MW_HOME/extensions/SemanticResultFormats \
 	&& patch < /tmp/semantic-result-formats.patch
 
-# Rewind ReplaceText to apply fix // TODO remove me in mw > 1.35.1
+# Rewind ReplaceText to apply fix
+# TODO remove me in mw > 1.35.1
 RUN set -x; \
 	cd $MW_HOME/extensions/ReplaceText \
 	&& git pull origin REL1_35
+
+# This path fixes error: `Use of undefined constant CURLMOPT_MAX_HOST_CONNECTIONS`, see https://phabricator.wikimedia.org/T264986
+# TODO remove me in mw > 1.35.1
+COPY patches/core-fix-for-curl-a2f60bb.diff /tmp/core-fix-for-curl-a2f60bb.diff
+RUN set -x; \
+	cd $MW_HOME \
+	&& git apply /tmp/core-fix-for-curl-a2f60bb.diff
+
+# Fixes PHP parsoid errors when user replies on a flow message, see https://phabricator.wikimedia.org/T260648#6645078
+COPY patches/flow-conversion-utils.patch /tmp/flow-conversion-utils.patch
+RUN set -x; \
+	cd $MW_HOME/extensions/Flow \
+	&& git apply /tmp/flow-conversion-utils.patch
 
 # Default values
 ENV MW_AUTOUPDATE=true \

@@ -6,19 +6,27 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 }
 
 const DOCKER_SKINS = [
+	'chameleon',
 	'MonoBook', # bundled
+	'Refreshed',
 	'Timeless', # bundled
 	'Vector', # bundled
-	'chameleon',
 ];
 
 const DOCKER_EXTENSIONS = [
+	'AdvancedSearch',
+	'AJAXPoll',
+	'AntiSpoof',
 	'ApprovedRevs',
 	'Arrays',
+	'BetaFeatures',
 	'Bootstrap',
 	'BreadCrumbs2',
-	'CategoryThree', # bundled
+	'CategoryTree', # bundled
 	'ChangeAuthor',
+	'CharInsert',
+//	'CheckEmailAddress', no extension.json
+	'CheckUser',
 	'CirrusSearch',
 	'Elastica',
 	'Cite', # bundled
@@ -26,11 +34,15 @@ const DOCKER_EXTENSIONS = [
 	'CodeEditor', # bundled
 	'CodeMirror',
 	'Collection',
+	'CommonsMetadata',
 //	'ConfirmAccount', no extension.json
 	'ConfirmEdit', # bundled
+	'ConfirmEdit/QuestyCaptcha', # bundled
 	'ConfirmEdit/ReCaptchaNoCaptcha', # bundled
 	'ContactPage',
 	'DataTransfer',
+	'Description2',
+	'Disambiguator',
 	'DisplayTitle',
 	'Echo',
 	'EmbedVideo',
@@ -38,20 +50,25 @@ const DOCKER_EXTENSIONS = [
 	'Gadgets', # bundled
 //	'googleAnalytics',  no extension.json
 	'GTag',
+	'HeadScript',
 	'HTMLTags',
 	'IframePage',
 	'ImageMap', # bundled
 	'InputBox', # bundled
 	'Interwiki', # bundled
+	'Lazyload',
+	'LinkSuggest',
 	'LinkTarget',
 	'LiquidThreads',
 	'LocalisationUpdate', # bundled
 	'LockAuthor',
 	'Lockdown',
+	'LookupUser',
 	'Loops',
 	'Maps',
 	'Math',
 	'MathJax',
+//	'MobileDetect', no extension.json
 	'MsUpload',
 	'MultimediaViewer', # bundled
 	'MyVariables',
@@ -63,29 +80,44 @@ const DOCKER_EXTENSIONS = [
 	'ParserFunctions', # bundled
 	'PdfHandler', # bundled
 	'Poem', # bundled
+	'Popups',
 	'PubmedParser',
 	'Renameuser', # bundled
 	'ReplaceText', # bundled
 	'RottenLinks',
+	'SkinPerNamespace',
+	'SkinPerPage',
 	'Scribunto', # bundled
 	'SecureLinkFixer', # bundled
 //	'SelectCategory', no extension.json
 	'SemanticExtraSpecialProperties',
 	'SemanticResultFormats',
 	'ShowMe',
+	'SimpleChanges',
 	'Skinny',
+//	'SocialProfile', no extension.json
 //	'SoundManager2Button', no extension.json
 	'SpamBlacklist', # bundled
 //	'Survey', no extension.json
 	'SyntaxHighlight_GeSHi', # bundled
+	'Tabs',
 	'TemplateData', # bundled
+	'TemplateStyles',
 	'TextExtracts', # bundled
+	'Thanks',
+	'TimedMediaHandler',
 	'TitleBlacklist', # bundled
+	'TwitterTag',
 	'UniversalLanguageSelector',
+	'UserMerge',
 	'Variables',
 	'VisualEditor', # bundled
+	'VoteNY',
 	'Widgets',
 	'WikiEditor', # bundled
+	'WikiForum',
+	'WikiSEO',
+	'YouTube',
 ];
 
 $DOCKER_MW_VOLUME = getenv( 'MW_VOLUME' );
