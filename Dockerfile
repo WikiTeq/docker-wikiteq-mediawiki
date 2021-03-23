@@ -304,6 +304,7 @@ ENV MW_AUTOUPDATE=true \
 COPY ssmtp.conf /etc/ssmtp/ssmtp.conf
 COPY php.ini /etc/php.d/90-mediawiki.ini
 COPY mediawiki.conf /etc/httpd/conf.d/
+COPY robots.txt /var/www/html/robots.txt
 
 COPY mwjobrunner.sh /mwjobrunner.sh
 RUN chmod -v +x /mwjobrunner.sh
