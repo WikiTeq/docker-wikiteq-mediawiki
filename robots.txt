@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /w/load.php?
+Disallow: /w/
