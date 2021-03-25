@@ -2,6 +2,8 @@ FROM centos:7.9.2009
 
 MAINTAINER pastakhov@yandex.ru
 
+LABEL org.opencontainers.image.source=https://github.com/WikiTeq/docker-wikiteq-mediawiki
+
 # Install requered packages
 RUN set -x; \
 	yum -y install httpd \
