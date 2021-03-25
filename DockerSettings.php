@@ -46,6 +46,7 @@ const DOCKER_EXTENSIONS = [
 	'DisplayTitle',
 	'Echo',
 	'EmbedVideo',
+	'Favorites',
 	'Flow',
 	'Gadgets', # bundled
 //	'googleAnalytics',  no extension.json
