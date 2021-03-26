@@ -233,20 +233,14 @@ run_autoupdate () {
     fi
 
     ### Flow extension
-    if [ -n "$MW_FLOW_NAMESPACES" ]; then
-        # https://www.mediawiki.org/wiki/Extension:Flow#Enabling_or_disabling_Flow
-        run_maintenance_script_if_needed 'maintenance_populateContentModel' "$MW_FLOW_NAMESPACES" \
-            'maintenance/populateContentModel.php --ns=all --table=revision' \
-            'maintenance/populateContentModel.php --ns=all --table=archive' \
-            'maintenance/populateContentModel.php --ns=all --table=page'
-
+#    if [ -n "$MW_FLOW_NAMESPACES" ]; then
 # https://phabricator.wikimedia.org/T172369
 #        if [ "$MW_SEARCH_TYPE" == 'CirrusSearch' ]; then
 #            # see https://www.mediawiki.org/wiki/Flow/Architecture/Search
 #            run_maintenance_script_if_needed 'maintenance_FlowSearchConfig_CirrusSearch' "$MW_MAINTENANCE_CIRRUSSEARCH_UPDATECONFIG" \
 #                'extensions/Flow/maintenance/FlowSearchConfig.php'
 #        fi
-    fi
+#    fi
 
     jobrunner &
     transcoder &
