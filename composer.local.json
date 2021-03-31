@@ -11,7 +11,8 @@
 		"merge-plugin": {
 			"include": [
 				"extensions/CirrusSearch/composer.json",
-				"extensions/Elastica/composer.json"
+				"extensions/Elastica/composer.json",
+				"extensions/OATHAuth/composer.json"
 			]
 		}
 	}
