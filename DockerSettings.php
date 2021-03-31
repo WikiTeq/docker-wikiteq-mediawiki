@@ -432,7 +432,7 @@ switch( getenv( 'MW_SEARCH_TYPE' ) ) {
 		wfLoadExtension( 'Elastica' );
 		wfLoadExtension( 'CirrusSearch' );
 		$wgCirrusSearchServers =  explode( ',', getenv( 'MW_CIRRUS_SEARCH_SERVERS' ) );
-		if ( $flowNamespaces ) {
+		if ( isset( $flowNamespaces ) ) {
 			$wgFlowSearchServers = $wgCirrusSearchServers;
 		}
 		$wgSearchType = 'CirrusSearch';
