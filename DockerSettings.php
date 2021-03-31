@@ -76,6 +76,7 @@ const DOCKER_EXTENSIONS = [
 	'NCBITaxonomyLookup',
 	'Nuke', # bundled
 	'OATHAuth', # bundled
+	'PageExchange',
 	'PageImages', # bundled
 //	'PageForms',   must be enabled manually after enableSemantics()
 	'ParserFunctions', # bundled
