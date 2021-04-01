@@ -119,8 +119,7 @@ RUN set -x; \
 	&& git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/TemplateStyles \
 	&& git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/LookupUser \
 	&& git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/HeadScript \
-	&& git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/Favorites \
-	&& git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/PageExchange
+	&& git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/Favorites
 
 # TODO move me above when REL1_35 branch will be created
 RUN set -x; \
@@ -128,6 +127,13 @@ RUN set -x; \
 	&& git clone https://gerrit.wikimedia.org/r/mediawiki/extensions/LockAuthor \
 	&& cd LockAuthor \
 	&& git checkout -b $MW_VERSION ee5ab1ed2bc34ab1b08c799fb1e14e0d5de65953
+
+# TODO move me above, we use master because of compatibility issues of REL1_35 branch of the extension with core 1.35.1 tag
+RUN set -x; \
+	cd $MW_HOME/extensions \
+	&& git clone https://gerrit.wikimedia.org/r/mediawiki/extensions/PageExchange \
+	&& cd PageExchange \
+    && git checkout -b $MW_VERSION 339056ffba8db1a98ff166aa11f639e5bc1ac665
 
 # Run composer update
 #RUN set -x; \
