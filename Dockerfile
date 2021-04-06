@@ -238,11 +238,13 @@ RUN set -x; \
 	&& git checkout -b $MW_VERSION 85c5219593cc86367ffb17bfb650f73ca3eb9b11
 
 # Lazyload
+# TODO change me when https://github.com/mudkipme/mediawiki-lazyload/pull/15 will be merged
 RUN set -x; \
 	cd $MW_HOME/extensions \
-	&& git clone https://github.com/mudkipme/mediawiki-lazyload.git Lazyload \
+#	&& git clone https://github.com/mudkipme/mediawiki-lazyload.git Lazyload \
+	&& git clone https://github.com/WikiTeq/mediawiki-lazyload.git Lazyload \
 	&& cd Lazyload \
-	&& git checkout -b $MW_VERSION 41b1b608a21d7fcc9eb1bd8fa1240873df01acd4
+	&& git checkout -b $MW_VERSION 92172c30ee5ac764627e397b19eddd536155394e
 
 # WikiSEO Dont change me without well testing!
 RUN set -x; \
