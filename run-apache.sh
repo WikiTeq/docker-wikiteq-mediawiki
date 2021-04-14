@@ -150,7 +150,9 @@ if [ ! -e "$MW_VOLUME/LocalSettings.php" ] && [ ! -e "$MW_HOME/LocalSettings.php
 
     wait_database_started "$MW_DB_INSTALLDB_USER" "$MW_DB_INSTALLDB_PASS"
 
-    if mysqlshow -h db -u"$MW_DB_INSTALLDB_USER" -p"$MW_DB_INSTALLDB_PASS" "$MW_DB_NAME" > /dev/null 2>&1 ; then
+	# Check that the database and table exists (docker creates an empty database)
+	tables_count=$(mysql -h db -u"$MW_DB_INSTALLDB_USER" -p"$MW_DB_INSTALLDB_PASS" -e "SELECT count(*) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = '$MW_DB_NAME'" | sed -n 2p)
+    if [[ $tables_count -gt 0 ]] ; then
         echo "Database exists. Create a symlink to DockerSettings.php as LocalSettings.php"
         ln -s "$MW_HOME/DockerSettings.php" "$MW_VOLUME/LocalSettings.php"
     else
