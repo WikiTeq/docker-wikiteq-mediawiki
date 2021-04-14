@@ -223,7 +223,7 @@ run_autoupdate () {
 
         run_maintenance_script_if_needed 'maintenance_CirrusSearch_forceIndex' "${EXTRA_MW_MAINTENANCE_CIRRUSSEARCH_FORCEINDEX}${MW_MAINTENANCE_CIRRUSSEARCH_FORCEINDEX}${MW_VERSION}" \
             'extensions/CirrusSearch/maintenance/ForceSearchIndex.php --skipLinks --indexOnSkip' \
-            'extensions/CirrusSearch/maintenance/ForceSearchIndex.php –skipParse'
+            'extensions/CirrusSearch/maintenance/ForceSearchIndex.php --skipParse'
     fi
 
     ### cldr extension
