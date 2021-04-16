@@ -297,6 +297,10 @@ RUN set -x; \
 	cd $MW_HOME/skins/Refreshed \
 	&& patch -u -b includes/RefreshedTemplate.php -i /tmp/skin-refreshed.patch
 
+# Create a directory for sitemaps
+RUN set -x; \
+	mkdir $MW_HOME\sitemap
+
 # Default values
 ENV MW_AUTOUPDATE=true \
 	MW_MAINTENANCE_UPDATE=0 \
@@ -317,6 +321,8 @@ ENV MW_AUTOUPDATE=true \
 	MW_ENABLE_TRANSCODER=true \
 	MW_JOB_TRANSCODER_PAUSE=60 \
 	MW_MAP_DOMAIN_TO_DOCKER_GATEWAY=0 \
+	MW_ENABLE_SITEMAP_GENERATOR=false \
+	MW_SITEMAP_PAUSE=86400 \
 	PHP_UPLOAD_MAX_FILESIZE=2M \
 	PHP_POST_MAX_SIZE=8M \
 	PHP_LOG_ERRORS=On \

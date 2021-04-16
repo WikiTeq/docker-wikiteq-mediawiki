@@ -202,6 +202,16 @@ transcoder() {
     fi
 }
 
+sitemapgen() {
+    sleep 3
+    if [ "$MW_ENABLE_SITEMAP_GENERATOR" = true ]; then
+        echo Run sitemap generator
+        runuser -c /mwsitemapgen.sh -s /bin/bash "$WWW_USER"
+    else
+        echo Sitemap generator is disabled
+    fi
+}
+
 run_autoupdate () {
     echo 'Check for the need to run maintenance scripts'
     ### maintenance/update.php
@@ -252,6 +262,7 @@ run_autoupdate () {
 
     jobrunner &
     transcoder &
+    sitemapgen &
 
     echo Auto-update completed
 }
@@ -263,6 +274,7 @@ else
     echo "Auto update script is disabled, \$MW_AUTOUPDATE is $MW_AUTOUPDATE";
     jobrunner &
     transcoder &
+    sitemapgen &
 fi
 
 # Make sure we're not confused by old, incompletely-shutdown httpd
