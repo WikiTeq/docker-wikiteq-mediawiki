@@ -20,7 +20,7 @@ RUN yum -y install php php-cli php-mysqlnd php-gd php-mbstring php-xml php-intl 
 RUN sed -i '/<Directory "\/var\/www\/html">/,/<\/Directory>/ s/AllowOverride None/AllowOverride All/' /etc/httpd/conf/httpd.conf
 
 ENV MW_VERSION=REL1_35 \
-	MW_CORE_VERSION=1.35.1 \
+	MW_CORE_VERSION=1.35.2 \
 	MW_HOME=/var/www/html/w \
 	MW_VOLUME=/mediawiki \
 	MW_ORIGIN_FILES=/mw_origin_files \
@@ -271,13 +271,6 @@ RUN set -x; \
 RUN set -x; \
 	cd $MW_HOME/extensions/ReplaceText \
 	&& git pull origin REL1_35
-
-# This path fixes error: `Use of undefined constant CURLMOPT_MAX_HOST_CONNECTIONS`, see https://phabricator.wikimedia.org/T264986
-# TODO remove me in mw > 1.35.1
-COPY patches/core-fix-for-curl-a2f60bb.diff /tmp/core-fix-for-curl-a2f60bb.diff
-RUN set -x; \
-	cd $MW_HOME \
-	&& git apply /tmp/core-fix-for-curl-a2f60bb.diff
 
 # Fixes PHP parsoid errors when user replies on a flow message, see https://phabricator.wikimedia.org/T260648#6645078
 COPY patches/flow-conversion-utils.patch /tmp/flow-conversion-utils.patch
