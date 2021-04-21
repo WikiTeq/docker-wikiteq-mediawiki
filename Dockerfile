@@ -297,9 +297,13 @@ RUN set -x; \
 	cd $MW_HOME/skins/Refreshed \
 	&& patch -u -b includes/RefreshedTemplate.php -i /tmp/skin-refreshed.patch
 
-# Create a directory for sitemaps
+# Create a directory for sitemaps & copy sitemap generation scripts
+COPY mwsitemapgen.sh /mwsitemapgen.sh
+RUN chmod -v +x /mwsitemapgen.sh
 RUN set -x; \
-	mkdir $MW_HOME\sitemap
+	mkdir $MW_HOME/sitemap \
+	&& chown $WWW_USER:$WWW_GROUP $MW_HOME/sitemap \
+	&& chmod g+w $MW_HOME/sitemap
 
 # Default values
 ENV MW_AUTOUPDATE=true \

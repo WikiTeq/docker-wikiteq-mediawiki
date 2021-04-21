@@ -437,3 +437,16 @@ switch( getenv( 'MW_SEARCH_TYPE' ) ) {
 	default:
 		$wgSearchType = null;
 }
+
+########################### Sitemap ############################
+if ( getenv('MW_ENABLE_SITEMAP_GENERATOR') === 'true' ) {
+	$wgHooks['BeforePageDisplay'][] = function ( $out, $skin ) {
+		global $wgScriptPath;
+		$out->addLink( [
+			'rel' => 'sitemap',
+			'type' => 'application/xml',
+			'title' => 'Sitemap',
+			'href' => $wgScriptPath . '/sitemap/sitemap-index-mediawiki.xml'
+		] );
+	};
+}
