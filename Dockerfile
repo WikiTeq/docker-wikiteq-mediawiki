@@ -259,9 +259,6 @@ RUN set -x; \
 	tar -xvf /tmp/GTag*.tar.gz -C $MW_HOME/extensions \
 	&& rm /tmp/GTag*.tar.gz
 
-# CheckEmailAddress from https://www.mediawiki.org/w/index.php?title=Extension:CheckEmailAddress&oldid=2422991
-COPY sources/CheckEmailAddress $MW_HOME/extensions/CheckEmailAddress
-
 # PATCHES
 # SemanticResultFormats, see https://github.com/WikiTeq/SemanticResultFormats/compare/master...WikiTeq:fix1_35
 COPY patches/semantic-result-formats.patch /tmp/semantic-result-formats.patch
