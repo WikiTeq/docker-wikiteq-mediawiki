@@ -25,7 +25,6 @@ const DOCKER_EXTENSIONS = [
 	'CategoryTree', # bundled
 	'ChangeAuthor',
 	'CharInsert',
-//	'CheckEmailAddress', no extension.json
 	'CheckUser',
 	'CirrusSearch',
 	'Elastica',
