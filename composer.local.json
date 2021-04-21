@@ -3,7 +3,7 @@
 		"elasticsearch/elasticsearch": "6.7.2",
 		"mediawiki/bootstrap": "4.4.1",
 		"mediawiki/maps": "8.0.0",
-		"mediawiki/semantic-media-wiki": "3.2.2",
+		"mediawiki/semantic-media-wiki": "3.2.3",
 		"mediawiki/semantic-result-formats": "3.2.0",
 		"mediawiki/semantic-compound-queries": "2.1.0",
 		"mediawiki/semantic-extra-special-properties": "2.1.0"
