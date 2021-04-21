@@ -266,12 +266,6 @@ RUN set -x; \
 	cd $MW_HOME/extensions/SemanticResultFormats \
 	&& patch < /tmp/semantic-result-formats.patch
 
-# Rewind ReplaceText to apply fix
-# TODO remove me in mw > 1.35.1
-RUN set -x; \
-	cd $MW_HOME/extensions/ReplaceText \
-	&& git pull origin REL1_35
-
 # Fixes PHP parsoid errors when user replies on a flow message, see https://phabricator.wikimedia.org/T260648#6645078
 COPY patches/flow-conversion-utils.patch /tmp/flow-conversion-utils.patch
 RUN set -x; \
