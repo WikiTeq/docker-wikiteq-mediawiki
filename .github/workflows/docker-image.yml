@@ -64,16 +64,16 @@ jobs:
           VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
 
           # For pull requests just extract the PR number
-          [ "$VERSION" == "merge" ] && VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\)/merge,\1,')
-
-          # Strip "v" prefix from tag name
-          [[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
-
-          # Use Docker `latest` tag convention
-          [ "$VERSION" == "master" ] && VERSION=latest
+          [ "$VERSION" == "merge" ] && [ "${{ github.event_name }}" == "pull_request" ] VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\)/merge,\1,')
 
           # Append PR branch name if it's a PR
-          [ "$VERSION" != "latest" ] && [ "${{ github.event_name }}" == "pull_request" ] && VERSION=$BDATE-$(echo ${{ github.head_ref }} | tr '\/' '-')-$VERSION
+          [ "$VERSION" == "merge" ] && [ "${{ github.event_name }}" == "pull_request" ] && VERSION=$BDATE-$(echo ${{ github.head_ref }} | tr '\/' '-')-$VERSION
+
+          # Strip "v" prefix from tag name if it's a tag
+          [[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
+
+          # Use Docker `latest` tag convention if it's a master branch build
+          [ "$VERSION" == "master" ] && VERSION=latest
 
           echo IMAGE_ID=$IMAGE_ID
           echo VERSION=$VERSION
