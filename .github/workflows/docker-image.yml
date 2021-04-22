@@ -7,7 +7,7 @@ on:
       - master
     # Plus for all tags
     tags:
-      - *
+      - '*'
 
   # Plus for any pull-requests
   pull_request:
