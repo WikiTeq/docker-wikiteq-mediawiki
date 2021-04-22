@@ -67,7 +67,7 @@ jobs:
           [ "$VERSION" == "merge" ] && [ "${{ github.event_name }}" == "pull_request" ] && VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\)/merge,\1,')
 
           # Append PR branch name if it's a PR
-          [ "$VERSION" == "merge" ] && [ "${{ github.event_name }}" == "pull_request" ] && VERSION=$BDATE-$(echo ${{ github.head_ref }} | tr '\/' '-')-$VERSION
+          [ "${{ github.event_name }}" == "pull_request" ] && VERSION=$BDATE-$(echo ${{ github.head_ref }} | tr '\/' '-')-$VERSION
 
           # Strip "v" prefix from tag name if it's a tag
           [[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
