@@ -25,14 +25,13 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Run tests
-        run: ls
-#        run: |
-#          if [ -f docker-compose.test.yml ]; then
-#            docker-compose --file docker-compose.test.yml build
-#            docker-compose --file docker-compose.test.yml run sut
-#          else
-#            docker build . --file Dockerfile
-#          fi
+        run: |
+          if [ -f docker-compose.test.yml ]; then
+            docker-compose --file docker-compose.test.yml build
+            docker-compose --file docker-compose.test.yml run sut
+          else
+            docker build . --file Dockerfile
+          fi
 
   # Push image to GitHub Packages.
   # See also https://docs.docker.com/docker-hub/builds/
@@ -81,4 +80,3 @@ jobs:
 
           #docker tag $IMAGE_NAME $IMAGE_ID:$VERSION
           #docker images
-          #test123testtest
