@@ -5,9 +5,9 @@ on:
     # Only activate for `master` branch
     branches:
       - master
-    # Plus for tags starting with "v"
+    # Plus for all tags
     tags:
-      - v*
+      - *
 
   # Plus for any pull-requests
   pull_request:
@@ -70,7 +70,7 @@ jobs:
           [ "${{ github.event_name }}" == "pull_request" ] && VERSION=$BDATE-$(echo ${{ github.head_ref }} | tr '\/' '-')-$VERSION
 
           # Strip "v" prefix from tag name if it's a tag
-          [[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
+          # [[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
 
           # Use Docker `latest` tag convention if it's a master branch build
           [ "$VERSION" == "master" ] && VERSION=latest
