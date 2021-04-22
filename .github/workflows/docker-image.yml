@@ -79,4 +79,4 @@ jobs:
           echo headref=${{ github.head_ref }}
 
           docker tag $IMAGE_NAME $IMAGE_ID:$VERSION
-          docker images
+          docker push $IMAGE_ID:$VERSION
