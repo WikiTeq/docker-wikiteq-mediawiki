@@ -73,7 +73,7 @@ jobs:
           [ "$VERSION" == "master" ] && VERSION=latest
 
           # Append PR branch name if it's a PR
-          [ "$VERSION" != "latest" ] && [ "${{ github.event_name }}" == "pull_request" ] VERSION=$BDATE-$(echo ${{ github.head_ref }} | tr '\/' '-')-$VERSION
+          [ "$VERSION" != "latest" ] && [ "${{ github.event_name }}" == "pull_request" ] && VERSION=$BDATE-$(echo ${{ github.head_ref }} | tr '\/' '-')-$VERSION
 
           echo IMAGE_ID=$IMAGE_ID
           echo VERSION=$VERSION
