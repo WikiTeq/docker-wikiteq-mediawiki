@@ -45,11 +45,11 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      #- name: Build image
-      #  run: docker build . --file Dockerfile --tag $IMAGE_NAME
+      - name: Build image
+        run: docker build . --file Dockerfile --tag $IMAGE_NAME
 
-      #- name: Log into registry
-      #  run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+      - name: Log into registry
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
       - name: Push image
         run: |
@@ -78,5 +78,5 @@ jobs:
           echo VERSION=$VERSION
           echo headref=${{ github.head_ref }}
 
-          #docker tag $IMAGE_NAME $IMAGE_ID:$VERSION
-          #docker images
+          docker tag $IMAGE_NAME $IMAGE_ID:$VERSION
+          docker images
