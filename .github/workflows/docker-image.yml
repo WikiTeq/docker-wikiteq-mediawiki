@@ -2,14 +2,14 @@ name: Docker
 
 on:
   push:
-    # Publish `master` as Docker image.
+    # Only activate for `master` branch
     branches:
       - master
-    # Publish `v1.2.3` tags
+    # Plus for tags starting with "v"
     tags:
       - v*
 
-  # Run tests for any PRs.
+  # Plus for any pull-requests
   pull_request:
 
 env:
@@ -72,8 +72,8 @@ jobs:
           # Use Docker `latest` tag convention
           [ "$VERSION" == "master" ] && VERSION=latest
 
-          # Append BDATE
-          [ "$VERSION" != "latest" ] && VERSION=$BDATE-$VERSION
+          # Append PR branch name if it's a PR
+          [ "$VERSION" != "latest" ] && [ "${{ github.event_name }}" == "pull_request" ] VERSION=$BDATE-$(echo ${{ github.head_ref }} | tr '\/' '-')-$VERSION
 
           echo IMAGE_ID=$IMAGE_ID
           echo VERSION=$VERSION
