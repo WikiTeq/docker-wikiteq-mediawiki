@@ -297,6 +297,14 @@ RUN set -x; \
 	cd $MW_HOME/skins/Refreshed \
 	&& patch -u -b includes/RefreshedTemplate.php -i /tmp/skin-refreshed.patch
 
+# Create a directory for sitemaps & copy sitemap generation scripts
+COPY mwsitemapgen.sh /mwsitemapgen.sh
+RUN chmod -v +x /mwsitemapgen.sh
+RUN set -x; \
+	mkdir $MW_HOME/sitemap \
+	&& chown $WWW_USER:$WWW_GROUP $MW_HOME/sitemap \
+	&& chmod g+w $MW_HOME/sitemap
+
 # Default values
 ENV MW_AUTOUPDATE=true \
 	MW_MAINTENANCE_UPDATE=0 \
@@ -317,6 +325,8 @@ ENV MW_AUTOUPDATE=true \
 	MW_ENABLE_TRANSCODER=true \
 	MW_JOB_TRANSCODER_PAUSE=60 \
 	MW_MAP_DOMAIN_TO_DOCKER_GATEWAY=0 \
+	MW_ENABLE_SITEMAP_GENERATOR=false \
+	MW_SITEMAP_PAUSE_DAYS=1 \
 	PHP_UPLOAD_MAX_FILESIZE=2M \
 	PHP_POST_MAX_SIZE=8M \
 	PHP_LOG_ERRORS=On \
