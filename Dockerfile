@@ -294,7 +294,7 @@ COPY patches/skin-refreshed.patch /tmp/skin-refreshed.patch
 RUN set -x; \
 	cd $MW_HOME/skins/Refreshed \
 	&& patch -u -b includes/RefreshedTemplate.php -i /tmp/skin-refreshed.patch
-
+  
 FROM base
 
 COPY --from=source $MW_HOME $MW_HOME
@@ -320,6 +320,8 @@ ENV MW_AUTOUPDATE=true \
 	MW_ENABLE_TRANSCODER=true \
 	MW_JOB_TRANSCODER_PAUSE=60 \
 	MW_MAP_DOMAIN_TO_DOCKER_GATEWAY=0 \
+	MW_ENABLE_SITEMAP_GENERATOR=false \
+	MW_SITEMAP_PAUSE_DAYS=1 \
 	PHP_UPLOAD_MAX_FILESIZE=2M \
 	PHP_POST_MAX_SIZE=8M \
 	PHP_LOG_ERRORS=On \
@@ -329,14 +331,18 @@ COPY ssmtp.conf /etc/ssmtp/ssmtp.conf
 COPY php.ini /etc/php.d/90-mediawiki.ini
 COPY mediawiki.conf /etc/httpd/conf.d/
 COPY robots.txt .htaccess /var/www/html/
-COPY run-apache.sh mwjobrunner.sh mwtranscoder.sh /
+COPY run-apache.sh mwjobrunner.sh mwsitemapgen.sh mwtranscoder.sh /
 COPY DockerSettings.php $MW_HOME/DockerSettings.php
 
 # update packages every time!
 RUN set -x; \
 	yum -y update \
 	&& sed -i '/<Directory "\/var\/www\/html">/,/<\/Directory>/ s/AllowOverride None/AllowOverride All/' /etc/httpd/conf/httpd.conf \
-	&& chmod -v +x /*.sh
+	&& chmod -v +x /*.sh \
+	&& mkdir $MW_HOME/sitemap \
+	&& chown $WWW_USER:$WWW_GROUP $MW_HOME/sitemap \
+	&& chmod g+w $MW_HOME/sitemap
+  
 
 CMD ["/run-apache.sh"]
 
