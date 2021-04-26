@@ -1,5 +1,7 @@
 name: Docker
 
+permissions: read-all|write-all
+
 on:
   push:
     # Only activate for `master` branch
