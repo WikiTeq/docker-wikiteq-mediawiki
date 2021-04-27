@@ -295,7 +295,7 @@ RUN set -x; \
 	cd $MW_HOME/skins/Refreshed \
 	&& patch -u -b includes/RefreshedTemplate.php -i /tmp/skin-refreshed.patch
   
-FROM base
+FROM base as final
 
 COPY --from=source $MW_HOME $MW_HOME
 COPY --from=source $MW_ORIGIN_FILES $MW_ORIGIN_FILES
