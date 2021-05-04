@@ -294,7 +294,7 @@ COPY patches/skin-refreshed.patch /tmp/skin-refreshed.patch
 RUN set -x; \
 	cd $MW_HOME/skins/Refreshed \
 	&& patch -u -b includes/RefreshedTemplate.php -i /tmp/skin-refreshed.patch
-  
+
 FROM base as final
 
 COPY --from=source $MW_HOME $MW_HOME
@@ -323,12 +323,10 @@ ENV MW_AUTOUPDATE=true \
 	MW_ENABLE_SITEMAP_GENERATOR=false \
 	MW_SITEMAP_PAUSE_DAYS=1 \
 	PHP_UPLOAD_MAX_FILESIZE=2M \
-	PHP_POST_MAX_SIZE=8M \
-	PHP_LOG_ERRORS=On \
-    PHP_ERROR_REPORTING=24567
+	PHP_POST_MAX_SIZE=8M
 
 COPY ssmtp.conf /etc/ssmtp/ssmtp.conf
-COPY php.ini /etc/php.d/90-mediawiki.ini
+COPY php_error_reporting.ini php_upload_max_filesize.ini /etc/php.d/
 COPY mediawiki.conf /etc/httpd/conf.d/
 COPY robots.txt .htaccess /var/www/html/
 COPY run-apache.sh mwjobrunner.sh mwsitemapgen.sh mwtranscoder.sh /
@@ -342,7 +340,6 @@ RUN set -x; \
 	&& mkdir $MW_HOME/sitemap \
 	&& chown $WWW_USER:$WWW_GROUP $MW_HOME/sitemap \
 	&& chmod g+w $MW_HOME/sitemap
-  
 
 CMD ["/run-apache.sh"]
 
