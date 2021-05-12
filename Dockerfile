@@ -198,9 +198,7 @@ RUN set -x; \
 # NCBITaxonomyLookup
 RUN set -x; \
 	cd $MW_HOME/extensions \
-	&& git clone https://github.com/WikiTeq/NCBITaxonomyLookup.git \
-	&& cd NCBITaxonomyLookup \
-	&& git checkout -b $MW_VERSION f23565dfe2fdbcaa5b265545058ddc6959c96f40
+	&& git clone https://gerrit.wikimedia.org/r/mediawiki/extensions/NCBITaxonomyLookup
 
 # MathJax
 RUN set -x; \
