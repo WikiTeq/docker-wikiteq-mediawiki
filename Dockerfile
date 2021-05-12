@@ -186,12 +186,14 @@ RUN set -x; \
 	&& cd PubmedParser \
 	&& git checkout -b $MW_VERSION 9cd01d828b23853e3e790dc7bf49cdd230847272
 
-# PageForm
+# PageForms
+COPY patches/pageforms-xss-cherry-picked.patch /tmp/pageforms-xss-cherry-picked.patch
 RUN set -x; \
 	cd $MW_HOME/extensions \
 	&& git clone https://gerrit.wikimedia.org/r/mediawiki/extensions/PageForms \
 	&& cd PageForms \
-	&& git checkout -b $MW_VERSION d2e48e51eef1
+	&& git checkout -b $MW_VERSION d2e48e51eef1 \
+	&& git apply /tmp/pageforms-xss-cherry-picked.patch
 
 # NCBITaxonomyLookup
 RUN set -x; \
