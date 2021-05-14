@@ -5,7 +5,7 @@ MAINTAINER pastakhov@yandex.ru
 LABEL org.opencontainers.image.source=https://github.com/WikiTeq/docker-wikiteq-mediawiki
 
 ENV MW_VERSION=REL1_35 \
-	MW_CORE_VERSION=1.35.1 \
+	MW_CORE_VERSION=1.35.2 \
 	MW_HOME=/var/www/html/w \
 	MW_VOLUME=/mediawiki \
 	MW_ORIGIN_FILES=/mw_origin_files \
@@ -263,19 +263,6 @@ COPY patches/semantic-result-formats.patch /tmp/semantic-result-formats.patch
 RUN set -x; \
 	cd $MW_HOME/extensions/SemanticResultFormats \
 	&& patch < /tmp/semantic-result-formats.patch
-
-# Rewind ReplaceText to apply fix
-# TODO remove me in mw > 1.35.1
-RUN set -x; \
-	cd $MW_HOME/extensions/ReplaceText \
-	&& git pull origin REL1_35
-
-# This path fixes error: `Use of undefined constant CURLMOPT_MAX_HOST_CONNECTIONS`, see https://phabricator.wikimedia.org/T264986
-# TODO remove me in mw > 1.35.1
-COPY patches/core-fix-for-curl-a2f60bb.diff /tmp/core-fix-for-curl-a2f60bb.diff
-RUN set -x; \
-	cd $MW_HOME \
-	&& git apply /tmp/core-fix-for-curl-a2f60bb.diff
 
 # Fixes PHP parsoid errors when user replies on a flow message, see https://phabricator.wikimedia.org/T260648#6645078
 COPY patches/flow-conversion-utils.patch /tmp/flow-conversion-utils.patch
