@@ -1,19 +1,46 @@
 #!/bin/bash
 
-set -e
+set -x
+
+# read variables from LocalSettings.php
+get_mediawiki_variable () {
+    php /getMediawikiSettings.php --variable="$1" --format="${2:-string}"
+}
+
+get_hostname_with_port () {
+    port=$(echo "$1" | grep ":" | cut -d":" -f2)
+    echo "$1:${port:-$2}"
+}
+
+WG_SITE_SERVER=$(get_mediawiki_variable wgServer)
+WG_DB_TYPE=$(get_mediawiki_variable wgDBtype)
+WG_DB_SERVER=$(get_mediawiki_variable wgDBserver)
+WG_DB_NAME=$(get_mediawiki_variable wgDBname)
+WG_DB_USER=$(get_mediawiki_variable wgDBuser)
+WG_DB_PASSWORD=$(get_mediawiki_variable wgDBpassword)
+WG_SQLITE_DATA_DIR=$(get_mediawiki_variable wgSQLiteDataDir)
+WG_LANG_CODE=$(get_mediawiki_variable wgLanguageCode)
+WG_SITE_NAME=$(get_mediawiki_variable wgSitename)
+WG_SEARCH_TYPE=$(get_mediawiki_variable wgSearchType)
+WG_CIRRUS_SEARCH_SERVER=$(get_hostname_with_port "$(get_mediawiki_variable wgCirrusSearchServers first)" 9200)
+
+if [ -z "$WG_DB_SERVER" ]; then
+    echo the wgDBserver variable must be defined
+    exit 1
+fi
 
 # Map the site hostname to 172.17.0.1 for VisualEditor
-MW_SITE_HOST=$(echo "$MW_SITE_SERVER" | sed -e 's|^[^/]*//||' -e 's|[:/].*$||')
+MW_SITE_HOST=$(echo "$WG_SITE_SERVER" | sed -e 's|^[^/]*//||' -e 's|[:/].*$||')
 cp /etc/hosts ~/hosts.new
 sed -i '/# MW_SITE_HOST/d' ~/hosts.new
 
 if [ "$MW_MAP_DOMAIN_TO_DOCKER_GATEWAY" != true ]; then
     echo "MW_MAP_DOMAIN_TO_DOCKER_GATEWAY is not true"
 elif [[ $MW_SITE_HOST =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-  echo "MW_SITE_HOST is IP address '$MW_SITE_HOST'"
+    echo "MW_SITE_HOST is IP address '$MW_SITE_HOST'"
 else
-  echo "Add MW_SITE_HOST '172.17.0.1 $MW_SITE_HOST' to /etc/hosts"
-  echo "172.17.0.1 $MW_SITE_HOST # MW_SITE_HOST" >> ~/hosts.new
+    echo "Add MW_SITE_HOST '172.17.0.1 $MW_SITE_HOST' to /etc/hosts"
+    echo "172.17.0.1 $MW_SITE_HOST # MW_SITE_HOST" >> ~/hosts.new
 fi
 cp -f ~/hosts.new /etc/hosts
 
@@ -27,29 +54,69 @@ chmod -R g=rwX "$MW_VOLUME"
 chgrp -R "$WWW_GROUP" /var/log/httpd
 chmod -R g=rwX /var/log/httpd
 
+if [ "$WG_DB_TYPE" = "sqlite" ]; then
+    mkdir -p "$WG_SQLITE_DATA_DIR"
+    chgrp -R "$WWW_GROUP" "$WG_SQLITE_DATA_DIR"
+    chmod -R g=rwX "$WG_SQLITE_DATA_DIR"
+fi
+
 wait_database_started ()
 {
     if [ -n "$db_started" ]; then
         return 0; # already started
     fi
 
-    echo "Waiting for database to start"
-    mysql=( mysql -h db -u"$1" -p"$2" )
+    if [ "$WG_DB_TYPE" = "sqlite" ]; then
+        echo >&2 "SQLite database used"
+        db_started="3"
+        return 0
+    fi
+
+    if [ "$WG_DB_TYPE" != "mysql" ]; then
+        echo >&2 "Unsupported database type ($WG_DB_TYPE)"
+        exit 123
+    fi
+
+    echo >&2 "Waiting for database to start"
+    mysql=( mysql -h "$WG_DB_SERVER" -u"$WG_DB_USER" -p"$WG_DB_PASSWORD" )
+    mysql_install=( mysql -h "$WG_DB_SERVER" -u"${MW_DB_INSTALLDB_USER:-root}" -p"$MW_DB_INSTALLDB_PASS" )
 
     for i in {86400..0}; do
         if echo 'SELECT 1' | "${mysql[@]}" &> /dev/null; then
-                break
+            db_started="1"
+            break
         fi
-        echo 'Waiting for database to start...'
+        sleep 1
+        if echo 'SELECT 1' | "${mysql_install[@]}" &> /dev/null; then
+            db_started="2"
+            break
+        fi
+        echo >&2 'Waiting for database to start...'
         sleep 1
     done
     if [ "$i" = 0 ]; then
         echo >&2 'Could not connect to the database.'
         return 1
     fi
-    echo 'Successfully connected to the database.'
-    db_started="1"
+    echo >&2 'Successfully connected to the database.'
     return 0
+}
+
+get_tables_count() {
+    wait_database_started
+
+    if [ "3" = "$db_started" ]; then
+        # sqlite
+        find "$WG_SQLITE_DATA_DIR" -type f | wc -l
+        return 0
+    elif [ "1" = "$db_started" ]; then
+        db_user="$WG_DB_USER"
+        db_password="$WG_DB_PASSWORD"
+    else
+        db_user="$MW_DB_INSTALLDB_USER"
+        db_password="$MW_DB_INSTALLDB_PASS"
+    fi
+    mysql -h "$WG_DB_SERVER" -u"$db_user" -p"$db_password" -e "SELECT count(*) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = '$WG_DB_NAME'" | sed -n 2p
 }
 
 wait_elasticsearch_started ()
@@ -58,17 +125,17 @@ wait_elasticsearch_started ()
         return 0; # already started
     fi
 
-    echo 'Waiting for elasticsearch to start'
+    echo >&2 'Waiting for elasticsearch to start'
     for i in {300..0}; do
         result=0
-        output=$(wget --timeout=1 -q -O - http://elasticsearch:9200/_cat/health) || result=$?
+        output=$(wget --timeout=1 -q -O - "http://$WG_CIRRUS_SEARCH_SERVER/_cat/health") || result=$?
         if [[ "$result" = 0 && $(echo "$output"|awk '{ print $4 }') = "green" ]]; then
             break
         fi
         if [ "$result" = 0 ]; then
-            echo "Waiting for elasticsearch health status changed from [$(echo "$output"|awk '{ print $4 }')] to [green]..."
+            echo >&2 "Waiting for elasticsearch health status changed from [$(echo "$output"|awk '{ print $4 }')] to [green]..."
         else
-            echo 'Waiting for elasticsearch to start...'
+            echo >&2 'Waiting for elasticsearch to start...'
         fi
         sleep 1
     done
@@ -77,7 +144,7 @@ wait_elasticsearch_started ()
         echo "$output"
         retirn 1
     fi
-    echo 'Elasticsearch started successfully'
+    echo >&2 'Elasticsearch started successfully'
     es_started="1"
     return 0
 }
@@ -90,7 +157,7 @@ run_maintenance_script_if_needed () {
     fi
 
     if [[ "$update_info" != "$2" && -n "$2" && "${2: -1}" != '-' || "$2" == "always" ]]; then
-        wait_database_started "$MW_DB_INSTALLDB_USER" "$MW_DB_INSTALLDB_PASS"
+        wait_database_started
         if [[ "$1" == *CirrusSearch* ]]; then wait_elasticsearch_started; fi
 
         i=3
@@ -100,15 +167,15 @@ run_maintenance_script_if_needed () {
                 echo >&2 "Maintenance script does not exit: ${!i}"
                 return 0;
             fi
-            echo "Run maintenance script: ${!i}"
+            echo >&2 "Run maintenance script: ${!i}"
             runuser -c "php ${!i}" -s /bin/bash "$WWW_USER"
             i=$((i+1))
         done
 
-        echo "Successful updated: $2"
+        echo >&2 "Successful updated: $2"
         echo "$2" > "$MW_VOLUME/$1.info"
     else
-        echo "$1 is up to date: $2."
+        echo >&2 "$1 is up to date: $2."
     fi
 }
 
@@ -120,14 +187,14 @@ run_script_if_needed () {
     fi
 
     if [[ "$update_info" != "$2" && -n "$2" && "${2: -1}" != '-' ]]; then
-        wait_database_started "$MW_DB_INSTALLDB_USER" "$MW_DB_INSTALLDB_PASS"
+        wait_database_started
         if [[ "$1" == *CirrusSearch* ]]; then wait_elasticsearch_started; fi
-        echo "Run script: $3"
+        echo >&2 "Run script: $3"
         eval "$3"
 
         cd "$MW_HOME"
 
-        echo "Successful updated: $2"
+        echo >&2 "Successful updated: $2"
         echo "$2" > "$MW_VOLUME/$1.info"
     else
         echo "$1 is skipped: $2."
@@ -140,37 +207,36 @@ cd "$MW_HOME"
 if [ ! -e "$MW_VOLUME/LocalSettings.php" ] && [ ! -e "$MW_HOME/LocalSettings.php" ]; then
     echo "There is no LocalSettings.php"
 
-    for x in MW_DB_INSTALLDB_USER MW_DB_INSTALLDB_PASS
-    do
-        if [ -z "${!x}" ]; then
-            echo >&2 "Variable $x must be defined";
-            exit 1;
-        fi
-    done
-
-    wait_database_started "$MW_DB_INSTALLDB_USER" "$MW_DB_INSTALLDB_PASS"
-
-	# Check that the database and table exists (docker creates an empty database)
-	tables_count=$(mysql -h db -u"$MW_DB_INSTALLDB_USER" -p"$MW_DB_INSTALLDB_PASS" -e "SELECT count(*) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = '$MW_DB_NAME'" | sed -n 2p)
-    if [[ $tables_count -gt 0 ]] ; then
+    # Check that the database and table exists (docker creates an empty database)
+    tables_count=$(get_tables_count)
+    if [[ "$tables_count" -gt 0 ]] ; then
         echo "Database exists. Create a symlink to DockerSettings.php as LocalSettings.php"
         ln -s "$MW_HOME/DockerSettings.php" "$MW_VOLUME/LocalSettings.php"
     else
+        for x in MW_DB_INSTALLDB_USER MW_DB_INSTALLDB_PASS MW_ADMIN_USER MW_ADMIN_PASS
+        do
+            if [ -z "${!x}" ]; then
+                echo >&2 "Variable $x must be defined";
+                exit 1;
+            fi
+        done
+
         echo "Create database and LocalSettings.php using maintenance/install.php"
         php maintenance/install.php \
             --confpath "$MW_VOLUME" \
-            --dbserver "db" \
-            --dbtype "mysql" \
-            --dbname "$MW_DB_NAME" \
-            --dbuser "$MW_DB_USER" \
-            --dbpass "$MW_DB_PASS" \
+            --dbserver "$WG_DB_SERVER" \
+            --dbtype "$WG_DB_TYPE" \
+            --dbname "$WG_DB_NAME" \
+            --dbuser "$WG_DB_USER" \
+            --dbpass "$WG_DB_PASSWORD" \
+            --dbpath "$WG_SQLITE_DATA_DIR" \
             --installdbuser "$MW_DB_INSTALLDB_USER" \
             --installdbpass "$MW_DB_INSTALLDB_PASS" \
             --scriptpath "/w" \
-            --lang "$MW_SITE_LANG" \
+            --lang "$WG_LANG_CODE" \
             --pass "$MW_ADMIN_PASS" \
             --skins "" \
-            "$MW_SITE_NAME" \
+            "$WG_SITE_NAME" \
             "$MW_ADMIN_USER"
 
         # Append inclusion of DockerSettings.php
@@ -213,7 +279,7 @@ sitemapgen() {
 }
 
 run_autoupdate () {
-    echo 'Check for the need to run maintenance scripts'
+    echo >&2 'Check for the need to run maintenance scripts'
     ### maintenance/update.php
     # run_maintenance_script_if_needed 'maintenance_update' "$MW_VERSION-$MW_CORE_VERSION-$MW_MAINTENANCE_UPDATE-$MW_LOAD_SKINS-$MW_LOAD_EXTENSIONS" \
     #    'maintenance/update.php --quick'
@@ -228,7 +294,7 @@ run_autoupdate () {
         'extensions/SemanticMediaWiki/maintenance/updateEntityCountMap.php'
 
     ### CirrusSearch
-    if [ "$MW_SEARCH_TYPE" == 'CirrusSearch' ]; then
+    if [ "$WG_SEARCH_TYPE" == 'CirrusSearch' ]; then
         run_maintenance_script_if_needed 'maintenance_CirrusSearch_updateConfig' "${EXTRA_MW_MAINTENANCE_CIRRUSSEARCH_UPDATECONFIG}${MW_MAINTENANCE_CIRRUSSEARCH_UPDATECONFIG}${MW_VERSION}" \
             'extensions/CirrusSearch/maintenance/UpdateSearchIndexConfig.php --reindexAndRemoveOk --indexIdentifier now' \
             'extensions/CirrusSearch/maintenance/Metastore.php --upgrade'
@@ -253,7 +319,7 @@ run_autoupdate () {
     ### Flow extension
 #    if [ -n "$MW_FLOW_NAMESPACES" ]; then
 # https://phabricator.wikimedia.org/T172369
-#        if [ "$MW_SEARCH_TYPE" == 'CirrusSearch' ]; then
+#        if [ "$WG_SEARCH_TYPE" == 'CirrusSearch' ]; then
 #            # see https://www.mediawiki.org/wiki/Flow/Architecture/Search
 #            run_maintenance_script_if_needed 'maintenance_FlowSearchConfig_CirrusSearch' "$MW_MAINTENANCE_CIRRUSSEARCH_UPDATECONFIG" \
 #                'extensions/Flow/maintenance/FlowSearchConfig.php'

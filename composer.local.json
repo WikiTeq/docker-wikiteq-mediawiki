@@ -6,6 +6,7 @@
 		"mediawiki/semantic-media-wiki": "3.2.3",
 		"mediawiki/semantic-result-formats": "3.2.0",
 		"mediawiki/semantic-compound-queries": "2.1.0",
+		"mediawiki/semantic-external-query-lookup": "1.x-dev",
 		"mediawiki/semantic-extra-special-properties": "2.1.0"
 	},
 	"extra": {
