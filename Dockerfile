@@ -133,32 +133,6 @@ RUN set -x; \
 	&& cd PageExchange \
     && git checkout -b $MW_VERSION 339056ffba8db1a98ff166aa11f639e5bc1ac665
 
-# Run composer update
-#RUN set -x; \
-#	cd $MW_HOME/extensions/CirrusSearch \
-#	&& composer update --no-dev
-RUN set -x; \
-	cd $MW_HOME/extensions/CodeMirror \
-	&& composer update --no-dev
-#RUN set -x; \
-#	cd $MW_HOME/extensions/Elastica \
-#	&& composer update --no-dev
-RUN set -x; \
-	cd $MW_HOME/extensions/Flow \
-	&& composer update --no-dev
-RUN set -x; \
-	cd $MW_HOME/extensions/TimedMediaHandler \
-	&& composer update --no-dev
-RUN set -x; \
-	cd $MW_HOME/extensions/AntiSpoof \
-	&& composer update --no-dev
-RUN set -x; \
-	cd $MW_HOME/extensions/TemplateStyles \
-	&& composer update --no-dev
-
-COPY composer.local.json $MW_HOME/composer.local.json
-RUN set -x; cd $MW_HOME && composer update --no-dev
-
 RUN set -x; \
 	cd $MW_HOME/extensions \
 	&& git clone https://gerrit.wikimedia.org/r/mediawiki/extensions/LinkTarget \
@@ -169,7 +143,6 @@ RUN set -x; \
 	cd $MW_HOME/extensions \
 	&& git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/Widgets \
 	&& cd Widgets \
-	&& composer update --no-dev \
 	&& mkdir -p $MW_ORIGIN_FILES/extensions/Widgets \
 	&& mv compiled_templates $MW_ORIGIN_FILES/extensions/Widgets/ \
 	&& ln -s $MW_VOLUME/extensions/Widgets/compiled_templates compiled_templates
@@ -250,6 +223,9 @@ RUN set -x; \
 	&& git clone https://gerrit.wikimedia.org/r/mediawiki/extensions/WikiSEO \
 	&& cd WikiSEO \
 	&& git checkout -b $MW_VERSION 30bb8c323e8cd44df52c7537f97f8518de2557df
+
+COPY composer.local.json $MW_HOME/composer.local.json
+RUN set -x; cd $MW_HOME && composer update --no-dev
 
 # GTag1
 COPY sources/GTag1.2.0.tar.gz /tmp/
