@@ -267,6 +267,10 @@ run_autoupdate () {
     echo Auto-update completed
 }
 
+run_monit () {
+  monit -I -c /etc/monitrc
+}
+
 ########## Run maintenance scripts ##########
 if [ "$MW_AUTOUPDATE" = true ]; then
     run_autoupdate &
@@ -275,6 +279,12 @@ else
     jobrunner &
     transcoder &
     sitemapgen &
+fi
+
+########## Run Monit ##########
+if [ -n "$MONIT_SLACK_HOOK" ]; then
+    echo "Starting monit.."
+    run_monit &
 fi
 
 # Make sure we're not confused by old, incompletely-shutdown httpd

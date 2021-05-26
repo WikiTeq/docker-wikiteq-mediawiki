@@ -23,9 +23,19 @@ RUN set -x; \
 	&& yum-config-manager --enable remi-php74 \
 	&& yum -y update \
 	&& yum -y install httpd php php-cli php-mysqlnd php-gd php-mbstring php-xml php-intl php-opcache php-pecl-apcu php-redis \
-		git composer mysql wget unzip ImageMagick python-pygments ssmtp patch vim mc ffmpeg \
+		git composer mysql wget unzip ImageMagick python-pygments ssmtp patch vim mc ffmpeg curl monit \
 	&& mkdir -p $MW_ORIGIN_FILES \
 	&& mkdir -p $MW_HOME
+
+# Install Monit & monit-slack-hook to watch low disk space
+# The hook will do nothing unless the $MONIT_SLACK_HOOK is provided
+
+COPY monit-slack.sh /monit-slack.sh
+
+RUN set -x; \
+	chmod +x /monit-slack.sh \
+	&& echo $'set httpd port 2812 and\n\tuse address localhost\n\tallow localhost' >> /etc/monitrc \
+	&& echo $'check filesystem rootfs with path /\n\tif SPACE usage > 90% then exec "/monit-slack.sh"' > /etc/monit.d/hdd
 
 FROM base as source
 
