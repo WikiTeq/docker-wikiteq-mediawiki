@@ -409,7 +409,11 @@ if ( $tmpProxy ) {
 //}
 
 ######################### Custom Settings ##########################
-@include( 'CustomSettings.php' );
+if ( file_exists( "$IP/_settings/LocalSettings.php" ) ) {
+	require_once "$IP/_settings/LocalSettings.php";
+} elseif ( file_exists( "$IP/CustomSettings.php" ) ) {
+	require_once "$IP/CustomSettings.php";
+}
 
 # Flow https://www.mediawiki.org/wiki/Extension:Flow
 if ( isset( $dockerLoadExtensions['Flow'] ) ) {

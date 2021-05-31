@@ -329,7 +329,7 @@ COPY ssmtp.conf /etc/ssmtp/ssmtp.conf
 COPY php_error_reporting.ini php_upload_max_filesize.ini /etc/php.d/
 COPY mediawiki.conf /etc/httpd/conf.d/
 COPY robots.txt .htaccess /var/www/html/
-COPY run-apache.sh mwjobrunner.sh mwsitemapgen.sh mwtranscoder.sh /
+COPY run-apache.sh mwjobrunner.sh mwsitemapgen.sh mwtranscoder.sh rotatelogs-compress.sh /
 COPY DockerSettings.php $MW_HOME/DockerSettings.php
 
 # update packages every time!
@@ -339,8 +339,12 @@ RUN set -x; \
 	&& chmod -v +x /*.sh \
 	&& mkdir $MW_HOME/sitemap \
 	&& chown $WWW_USER:$WWW_GROUP $MW_HOME/sitemap \
-	&& chmod g+w $MW_HOME/sitemap
+	&& chmod g+w $MW_HOME/sitemap \
+	&& sed -i 's/^\(\s*ErrorLog .*\)/# \1/g' /etc/httpd/conf/httpd.conf \
+	&& sed -i 's/^\(\s*CustomLog .*\)/# \1/g' /etc/httpd/conf/httpd.conf
 
 CMD ["/run-apache.sh"]
 
 EXPOSE 80
+
+WORKDIR $MW_HOME
