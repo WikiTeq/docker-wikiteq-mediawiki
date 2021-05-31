@@ -21,12 +21,6 @@ class GetMediawikiSettings extends Maintenance {
 			true
 		);
 		$this->addOption(
-			'config',
-			'',
-			false,
-			true
-		);
-		$this->addOption(
 			'format',
 			'',
 			false,
@@ -35,18 +29,15 @@ class GetMediawikiSettings extends Maintenance {
 	}
 
 	public function execute() {
-	#	$this->output( "######\n" . var_export( $GLOBALS, true ) );
-
 		$return = null;
-		if ( $this->hasOption( 'config' ) ) {
-			$configName = $this->getOption( 'config' );
-			$config = MediaWikiServices::getInstance()->getMainConfig();
-			if ( $config->has( $configName ) ) {
-				$return = $config->get( $configName );
-			} // TODO else error message?
-		} elseif ( $this->hasOption( 'variable' ) ) {
+		if ( $this->hasOption( 'variable' ) ) {
 			$variableName = $this->getOption( 'variable' );
-			$return = $GLOBALS[$variableName] ?? '';
+			$config = MediaWikiServices::getInstance()->getMainConfig();
+			if ( $config->has( $variableName ) ) {
+				$return = $config->get( $variableName );
+			} else { // the last chance to fetch a value from global variable
+				$return = $GLOBALS[$variableName] ?? '';
+			}
 		}
 
 		$format = $this->getOption( 'format', 'string' );
@@ -66,7 +57,15 @@ class GetMediawikiSettings extends Maintenance {
 		return Maintenance::DB_NONE;
 	}
 
+	/**
+	 * Remove values from the SetupAfterCache hooks at last-minute setup because
+	 * some extensions makes requests to the database using the SetupAfterCache hook
+	 * (for example they can check user and etc..)
+	 * but this script can be used for getting parameters when database is not initialized yet
+	 */
 	public function finalSetup() {
+		parent::finalSetup();
+
 		global $wgShowExceptionDetails, $wgHooks;
 
 		$wgShowExceptionDetails = true;
