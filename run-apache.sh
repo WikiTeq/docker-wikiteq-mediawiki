@@ -277,6 +277,14 @@ else
     sitemapgen &
 fi
 
+########## Run Monit ##########
+if [ -n "$MONIT_SLACK_HOOK" ]; then
+    echo "Starting monit.."
+    monit -I -c /etc/monitrc &
+else
+    echo "Skip monit (MONIT_SLACK_HOOK is not defined)"
+fi
+
 # Make sure we're not confused by old, incompletely-shutdown httpd
 # context after restarting the container.  httpd won't start correctly
 # if it thinks it is already running.

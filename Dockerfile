@@ -23,7 +23,7 @@ RUN set -x; \
 	&& yum-config-manager --enable remi-php74 \
 	&& yum -y update \
 	&& yum -y install httpd php php-cli php-mysqlnd php-gd php-mbstring php-xml php-intl php-opcache php-pecl-apcu php-redis \
-		git composer mysql wget unzip ImageMagick python-pygments ssmtp patch vim mc ffmpeg \
+		git composer mysql wget unzip ImageMagick python-pygments ssmtp patch vim mc ffmpeg curl monit \
 	&& mkdir -p $MW_ORIGIN_FILES \
 	&& mkdir -p $MW_HOME
 
@@ -316,7 +316,7 @@ COPY ssmtp.conf /etc/ssmtp/ssmtp.conf
 COPY php_error_reporting.ini php_upload_max_filesize.ini /etc/php.d/
 COPY mediawiki.conf /etc/httpd/conf.d/
 COPY robots.txt .htaccess /var/www/html/
-COPY run-apache.sh mwjobrunner.sh mwsitemapgen.sh mwtranscoder.sh /
+COPY run-apache.sh mwjobrunner.sh mwsitemapgen.sh mwtranscoder.sh monit-slack.sh /
 COPY DockerSettings.php $MW_HOME/DockerSettings.php
 
 # update packages every time!
@@ -326,7 +326,11 @@ RUN set -x; \
 	&& chmod -v +x /*.sh \
 	&& mkdir $MW_HOME/sitemap \
 	&& chown $WWW_USER:$WWW_GROUP $MW_HOME/sitemap \
-	&& chmod g+w $MW_HOME/sitemap
+	&& chmod g+w $MW_HOME/sitemap \
+# Install Monit & monit-slack-hook to watch low disk space
+# The hook will do nothing unless the $MONIT_SLACK_HOOK is provided
+	&& echo $'set httpd port 2812 and\n\tuse address localhost\n\tallow localhost' >> /etc/monitrc \
+	&& echo $'check filesystem rootfs with path /\n\tif SPACE usage > 90% then exec "/monit-slack.sh"' > /etc/monit.d/hdd
 
 CMD ["/run-apache.sh"]
 
