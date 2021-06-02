@@ -34,7 +34,6 @@ jobs:
 #          fi
 
   # Push image to GitHub Packages.
-  # See also https://docs.docker.com/docker-hub/builds/
   push:
     # Ensure test job passes before pushing image.
     # needs: test
@@ -50,6 +49,11 @@ jobs:
 
       - name: Log into registry
         run: echo "${{ secrets.SECRET_PAT }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+        # The image tag pattern is:
+        # for pull-requests: <DATE>-<BRANCH>-<PR_NUMBER>, eg: 20210125-some-branch-name-25
+        # for tags: <TAG>
+        # for `master` branch: latest
 
       - name: Push image
         run: |
@@ -78,5 +82,7 @@ jobs:
           echo VERSION=$VERSION
           echo headref=${{ github.head_ref }}
 
-          docker tag $IMAGE_NAME $IMAGE_ID:$VERSION
-          docker push $IMAGE_ID:$VERSION
+          echo $IMAGE_ID:$VERSION
+
+          #docker tag $IMAGE_NAME $IMAGE_ID:$VERSION
+          #docker push $IMAGE_ID:$VERSION
