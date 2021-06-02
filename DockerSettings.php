@@ -7,6 +7,8 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 
 const DOCKER_SKINS = [
 	'chameleon',
+	'CologneBlue',
+	'Modern',
 	'MonoBook', # bundled
 	'Refreshed',
 	'Timeless', # bundled
@@ -33,6 +35,7 @@ const DOCKER_EXTENSIONS = [
 	'CodeEditor', # bundled
 	'CodeMirror',
 	'Collection',
+	'CommentStreams',
 	'CommonsMetadata',
 //	'ConfirmAccount', no extension.json
 	'ConfirmEdit', # bundled
@@ -44,12 +47,19 @@ const DOCKER_EXTENSIONS = [
 	'Disambiguator',
 	'DisplayTitle',
 	'Echo',
+	'EditUser',
 	'EmbedVideo',
+	'EncryptedUploads',
+	'EventLogging',
 	'Favorites',
 	'Flow',
 	'Gadgets', # bundled
 //	'googleAnalytics',  no extension.json
+	'GoogleAnalyticsMetrics',
+	'GoogleDocCreator',
+	'GoogleDocTag',
 	'GTag',
+	'HeaderTabs',
 	'HeadScript',
 	'HTMLTags',
 	'IframePage',
@@ -66,8 +76,12 @@ const DOCKER_EXTENSIONS = [
 	'LookupUser',
 	'Loops',
 	'Maps',
+	'MassMessage',
+	'MassMessageEmail',
+	'MassPasswordReset',
 	'Math',
 	'MathJax',
+	'Mendeley',
 //	'MobileDetect', no extension.json
 	'MsUpload',
 	'MultimediaViewer', # bundled
@@ -86,33 +100,46 @@ const DOCKER_EXTENSIONS = [
 	'Renameuser', # bundled
 	'ReplaceText', # bundled
 	'RottenLinks',
-	'SkinPerNamespace',
-	'SkinPerPage',
+	'SaveSpinner',
+	'Scopus',
 	'Scribunto', # bundled
 	'SecureLinkFixer', # bundled
 //	'SelectCategory', no extension.json
+	'SemanticExternalQueryLookup',
 	'SemanticExtraSpecialProperties',
 	'SemanticCompoundQueries',
+	'SemanticDrilldown',
+//	'SemanticQueryInterface', no extension.json
 	'SemanticResultFormats',
 	'ShowMe',
 	'SimpleChanges',
 	'Skinny',
+	'SkinPerNamespace',
+	'SkinPerPage',
 //	'SocialProfile', no extension.json
 //	'SoundManager2Button', no extension.json
 	'SpamBlacklist', # bundled
+	'SRFEventCalendarMod',
 //	'Survey', no extension.json
+	'Sync',
 	'SyntaxHighlight_GeSHi', # bundled
+	'Tabber',
 	'Tabs',
 	'TemplateData', # bundled
 	'TemplateStyles',
 	'TextExtracts', # bundled
 	'Thanks',
 	'TimedMediaHandler',
+	'TinyMCE',
 	'TitleBlacklist', # bundled
 	'TwitterTag',
 	'UniversalLanguageSelector',
+	'UploadWizard',
+	'UploadWizardExtraButtons',
+	'UrlGetParameters',
 	'UserMerge',
 	'Variables',
+	'VEForAll',
 	'VisualEditor', # bundled
 	'VoteNY',
 	'Widgets',
@@ -163,7 +190,8 @@ $wgEnotifWatchlist = false; # UPO
 $wgEmailAuthentication = true;
 
 ## Database settings
-$wgDBtype = "mysql";
+$wgSQLiteDataDir = "$DOCKER_MW_VOLUME/sqlite";
+$wgDBtype = getenv( 'MW_DB_TYPE' );
 $wgDBserver = getenv( 'MW_DB_SERVER' );
 $wgDBname = getenv( 'MW_DB_NAME' );
 $wgDBuser = getenv( 'MW_DB_USER' );
@@ -409,7 +437,11 @@ if ( $tmpProxy ) {
 //}
 
 ######################### Custom Settings ##########################
-@include( 'CustomSettings.php' );
+if ( file_exists( "$IP/_settings/LocalSettings.php" ) ) {
+	require_once "$IP/_settings/LocalSettings.php";
+} elseif ( file_exists( "$IP/CustomSettings.php" ) ) {
+	require_once "$IP/CustomSettings.php";
+}
 
 # Flow https://www.mediawiki.org/wiki/Extension:Flow
 if ( isset( $dockerLoadExtensions['Flow'] ) ) {
