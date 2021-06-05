@@ -7,7 +7,7 @@ RedirectMatch 404 /\.git
 Options -Indexes
 
 # VisualEditor support
-RewriteRule ^/?w/rest.php/ - [L,NC]
+RewriteRule /?w/rest.php/ - [L,NC]
 
 # Redirect / to Main Page
 RewriteRule ^/*$ %{DOCUMENT_ROOT}/w/index.php [L]
