@@ -51,6 +51,7 @@ const DOCKER_EXTENSIONS = [
 	'EmbedVideo',
 	'EncryptedUploads',
 	'EventLogging',
+	'EventStreamConfig',
 	'Favorites',
 	'Flow',
 	'Gadgets', # bundled
@@ -105,10 +106,10 @@ const DOCKER_EXTENSIONS = [
 	'Scribunto', # bundled
 	'SecureLinkFixer', # bundled
 //	'SelectCategory', no extension.json
-	'SemanticExternalQueryLookup',
+//	'SemanticExternalQueryLookup', no extension.json
 	'SemanticExtraSpecialProperties',
 	'SemanticCompoundQueries',
-	'SemanticDrilldown',
+//	'SemanticDrilldown', no extension.json
 //	'SemanticQueryInterface', no extension.json
 	'SemanticResultFormats',
 	'ShowMe',
@@ -136,7 +137,7 @@ const DOCKER_EXTENSIONS = [
 	'UniversalLanguageSelector',
 	'UploadWizard',
 	'UploadWizardExtraButtons',
-	'UrlGetParameters',
+//	'UrlGetParameters', no extension.json
 	'UserMerge',
 	'Variables',
 	'VEForAll',
@@ -147,6 +148,21 @@ const DOCKER_EXTENSIONS = [
 	'WikiForum',
 	'WikiSEO',
 	'YouTube',
+];
+
+// Extensions included in the docker image which not supported Extension registration.
+const DOCKER_EXTENSIONS_NO_REGISTRATION = [
+	'ConfirmAccount',
+	'googleAnalytics',
+	'MobileDetect',
+	'SelectCategory',
+	'SemanticExternalQueryLookup',
+	'SemanticDrilldown',
+	'SemanticQueryInterface',
+	'SocialProfile',
+	'SoundManager2Button',
+	'Survey',
+	'UrlGetParameters',
 ];
 
 $DOCKER_MW_VOLUME = getenv( 'MW_VOLUME' );
@@ -281,10 +297,16 @@ if ( isset( $dockerLoadSkins['chameleon'] ) ) {
 $dockerLoadExtensions = getenv( 'MW_LOAD_EXTENSIONS' );
 if ( $dockerLoadExtensions ) {
 	$dockerLoadExtensions = explode( ',', $dockerLoadExtensions );
+	$dockerLoadExtensionsNoRegistration = array_intersect( DOCKER_EXTENSIONS_NO_REGISTRATION, $dockerLoadExtensions );
 	$dockerLoadExtensions = array_intersect( DOCKER_EXTENSIONS, $dockerLoadExtensions );
 	if ( $dockerLoadExtensions ) {
 		wfLoadExtensions( $dockerLoadExtensions );
 		$dockerLoadExtensions = array_combine( $dockerLoadExtensions, $dockerLoadExtensions );
+	}
+	if ( $dockerLoadExtensionsNoRegistration ) {
+		foreach ( $dockerLoadExtensionsNoRegistration as $extension ) {
+			require_once "$wgExtensionDirectory/$extension/$extension.php";
+		}
 	}
 }
 
