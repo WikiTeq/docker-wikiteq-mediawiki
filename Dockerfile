@@ -326,7 +326,12 @@ RUN set -x; \
 	cd $MW_HOME/extensions \
 	&& git clone https://github.com/vedmaka/SemanticQueryInterface.git \
 	&& cd SemanticQueryInterface \
-	&& git checkout -b $MW_VERSION 0016305a95ecbb6ed4709bfa3fc6d9995d51336f
+	&& git checkout -b $MW_VERSION 0016305a95ecbb6ed4709bfa3fc6d9995d51336f \
+# FIXME in the repo
+	&& mv SemanticQueryInterface/* . \
+	&& rmdir SemanticQueryInterface \
+	&& ln -s SQI.php SemanticQueryInterface.php \
+	&& rm -fr .git
 
 # SRFEventCalendarMod
 RUN set -x; \
