@@ -51,9 +51,10 @@ jobs:
         run: echo "${{ secrets.SECRET_PAT }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
         # The image tag pattern is:
-        # for pull-requests: <DATE>-<BRANCH>-<PR_NUMBER>, eg: 1.35.2-20210125-some-branch-name-25
+        # for pull-requests: <MW_CORE_VERSION>-<DATE>-<BRANCH>-<PR_NUMBER>, eg: 1.35.2-20210125-some-branch-name-25
         # for tags: <TAG>
         # for `master` branch: latest
+        # <MW_CORE_VERSION> being parsed from the Dockerfile
 
       - name: Push image
         run: |
