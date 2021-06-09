@@ -58,8 +58,14 @@ jobs:
 
       - name: Push image
         run: |
+
+          # Image ID
           IMAGE_ID=ghcr.io/wikiteq/mediawiki
+
+          # Date
           BDATE=$(date +%Y%m%d)
+
+          # Extract MW version from Dockerfile
           MEDIAWIKI_VERSION=$(sed -nr 's/MW_CORE_VERSION\=([0-9\.]+)/\1/p' Dockerfile | sed "s/ \\\//" | sed "s/\t//")
 
           # Change all uppercase to lowercase, just in case
@@ -69,9 +75,9 @@ jobs:
           VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
 
           # For pull requests just extract the PR number
-          [ "$VERSION" == "merge" ] && [ "${{ github.event_name }}" == "pull_request" ] && VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\)/merge,\1,')
+          [ "${{ github.event_name }}" == "pull_request" ] && VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\)/merge,\1,')
 
-          # Append PR branch name if it's a PR
+          # Append PR branch name
           [ "${{ github.event_name }}" == "pull_request" ] && VERSION=$MEDIAWIKI_VERSION-$BDATE-$(echo ${{ github.head_ref }} | tr '\/' '-')-$VERSION
 
           # Strip "v" prefix from tag name if it's a tag
