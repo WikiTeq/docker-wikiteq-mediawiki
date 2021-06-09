@@ -83,6 +83,7 @@ jobs:
           echo VERSION=$VERSION
           echo headref=${{ github.head_ref }}
 
+          echo "Final image tag to be pushed:"
           echo $IMAGE_ID:$VERSION
 
           #docker tag $IMAGE_NAME $IMAGE_ID:$VERSION
