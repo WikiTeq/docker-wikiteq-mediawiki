@@ -59,7 +59,7 @@ jobs:
         run: |
           IMAGE_ID=ghcr.io/wikiteq/mediawiki
           BDATE=$(date +%Y%m%d)
-          MEDIAWIKI_VERSION=sed -nr 's/MW_CORE_VERSION\=([0-9\.]+)/\1/p' Dockerfile | sed "s/ \\\//" | sed "s/\t//"
+          MEDIAWIKI_VERSION=$(sed -nr 's/MW_CORE_VERSION\=([0-9\.]+)/\1/p' Dockerfile | sed "s/ \\\//" | sed "s/\t//")
 
           # Change all uppercase to lowercase, just in case
           IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
