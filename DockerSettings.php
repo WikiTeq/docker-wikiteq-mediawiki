@@ -288,8 +288,7 @@ if ( $dockerLoadExtensions ) {
 	if ( $dockerLoadExtensions ) {
 		$dockerLoadExtensions = array_combine( $dockerLoadExtensions, $dockerLoadExtensions );
 		foreach ( $dockerLoadExtensions as $extension ) {
-			$jsonFile = "$wgExtensionDirectory/$extension/extension.json";
-			if ( file_exists( $jsonFile ) ) {
+			if ( file_exists( "$wgExtensionDirectory/$extension/extension.json" ) ) {
 				wfLoadExtension( $extension );
 			} else {
 				require_once "$wgExtensionDirectory/$extension/$extension.php";
