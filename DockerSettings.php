@@ -37,7 +37,7 @@ const DOCKER_EXTENSIONS = [
 	'Collection',
 	'CommentStreams',
 	'CommonsMetadata',
-//	'ConfirmAccount', no extension.json
+	'ConfirmAccount',
 	'ConfirmEdit', # bundled
 	'ConfirmEdit/QuestyCaptcha', # bundled
 	'ConfirmEdit/ReCaptchaNoCaptcha', # bundled
@@ -55,7 +55,7 @@ const DOCKER_EXTENSIONS = [
 	'Favorites',
 	'Flow',
 	'Gadgets', # bundled
-//	'googleAnalytics',  no extension.json
+	'googleAnalytics',
 	'GoogleAnalyticsMetrics',
 	'GoogleDocCreator',
 	'GoogleDocTag',
@@ -83,7 +83,7 @@ const DOCKER_EXTENSIONS = [
 	'Math',
 	'MathJax',
 	'Mendeley',
-//	'MobileDetect', no extension.json
+	'MobileDetect',
 	'MsUpload',
 	'MultimediaViewer', # bundled
 	'MyVariables',
@@ -105,23 +105,23 @@ const DOCKER_EXTENSIONS = [
 	'Scopus',
 	'Scribunto', # bundled
 	'SecureLinkFixer', # bundled
-//	'SelectCategory', no extension.json
-//	'SemanticExternalQueryLookup', no extension.json
+	'SelectCategory',
+	'SemanticExternalQueryLookup',
 	'SemanticExtraSpecialProperties',
 	'SemanticCompoundQueries',
-//	'SemanticDrilldown', no extension.json
-//	'SemanticQueryInterface', no extension.json
+	'SemanticDrilldown',
+	'SemanticQueryInterface',
 	'SemanticResultFormats',
 	'ShowMe',
 	'SimpleChanges',
 	'Skinny',
 	'SkinPerNamespace',
 	'SkinPerPage',
-//	'SocialProfile', no extension.json
-//	'SoundManager2Button', no extension.json
+	'SocialProfile',
+	'SoundManager2Button',
 	'SpamBlacklist', # bundled
 	'SRFEventCalendarMod',
-//	'Survey', no extension.json
+	'Survey',
 	'Sync',
 	'SyntaxHighlight_GeSHi', # bundled
 	'Tabber',
@@ -137,7 +137,7 @@ const DOCKER_EXTENSIONS = [
 	'UniversalLanguageSelector',
 	'UploadWizard',
 	'UploadWizardExtraButtons',
-//	'UrlGetParameters', no extension.json
+	'UrlGetParameters',
 	'UserMerge',
 	'Variables',
 	'VEForAll',
@@ -148,21 +148,6 @@ const DOCKER_EXTENSIONS = [
 	'WikiForum',
 	'WikiSEO',
 	'YouTube',
-];
-
-// Extensions included in the docker image which not supported Extension registration.
-const DOCKER_EXTENSIONS_NO_REGISTRATION = [
-	'ConfirmAccount',
-	'googleAnalytics',
-	'MobileDetect',
-	'SelectCategory',
-	'SemanticExternalQueryLookup',
-	'SemanticDrilldown',
-	'SemanticQueryInterface',
-	'SocialProfile',
-	'SoundManager2Button',
-	'Survey',
-	'UrlGetParameters',
 ];
 
 $DOCKER_MW_VOLUME = getenv( 'MW_VOLUME' );
@@ -294,18 +279,21 @@ if ( isset( $dockerLoadSkins['chameleon'] ) ) {
 }
 
 ####################### Extension Settings #######################
+// The variable will be an array [ 'extensionName' => 'extensionName, ... ]
+// made by see array_combine( $dockerLoadExtensions, $dockerLoadExtensions ) below
 $dockerLoadExtensions = getenv( 'MW_LOAD_EXTENSIONS' );
 if ( $dockerLoadExtensions ) {
 	$dockerLoadExtensions = explode( ',', $dockerLoadExtensions );
-	$dockerLoadExtensionsNoRegistration = array_intersect( DOCKER_EXTENSIONS_NO_REGISTRATION, $dockerLoadExtensions );
 	$dockerLoadExtensions = array_intersect( DOCKER_EXTENSIONS, $dockerLoadExtensions );
 	if ( $dockerLoadExtensions ) {
-		wfLoadExtensions( $dockerLoadExtensions );
 		$dockerLoadExtensions = array_combine( $dockerLoadExtensions, $dockerLoadExtensions );
-	}
-	if ( $dockerLoadExtensionsNoRegistration ) {
-		foreach ( $dockerLoadExtensionsNoRegistration as $extension ) {
-			require_once "$wgExtensionDirectory/$extension/$extension.php";
+		foreach ( $dockerLoadExtensions as $extension ) {
+			$jsonFile = "$wgExtensionDirectory/$extension/extension.json";
+			if ( file_exists( $jsonFile ) ) {
+				wfLoadExtension( $extension );
+			} else {
+				require_once "$wgExtensionDirectory/$extension/$extension.php";
+			}
 		}
 	}
 }
