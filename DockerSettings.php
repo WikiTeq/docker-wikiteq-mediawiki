@@ -475,8 +475,6 @@ switch( getenv( 'MW_SEARCH_TYPE' ) ) {
 		}
 		$wgSearchType = 'CirrusSearch';
 		break;
-	default:
-		$wgSearchType = null;
 }
 
 ########################### Sitemap ############################
