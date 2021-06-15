@@ -338,7 +338,7 @@ RUN set -x; \
 	cd $MW_HOME/extensions \
 	&& git clone https://github.com/vedmaka/mediawiki-extension-SRFEventCalendarMod.git SRFEventCalendarMod \
 	&& cd SRFEventCalendarMod \
-	&& git checkout -b $MW_VERSION b029049ce32890eff03224b9e31c3bff11d9b6e1
+	&& git checkout -b $MW_VERSION e0dfa797af0709c90f9c9295d217bbb6d564a7a8
 
 # Sync
 RUN set -x; \
