@@ -183,6 +183,9 @@ RUN set -x; \
 RUN set -x; \
 	cd $MW_HOME/extensions/TemplateStyles \
 	&& composer update --no-dev
+RUN set -x; \
+	cd $MW_HOME/extensions/GoogleAnalyticsMetrics \
+	&& composer update --no-dev
 
 COPY composer.local.json $MW_HOME/composer.local.json
 RUN set -x; cd $MW_HOME && composer update --no-dev
