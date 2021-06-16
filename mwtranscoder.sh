@@ -7,6 +7,7 @@ sleep 180
 echo Transcoder started.
 while true; do
     php $RJ --type webVideoTranscodePrioritized --maxjobs=10
+    sleep 1
     php $RJ --type webVideoTranscode --maxjobs=1
 
     # Wait some seconds to let the CPU do other things, like handling web requests, etc
