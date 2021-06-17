@@ -24,7 +24,7 @@ jobs:
   # The image tag pattern is:
   # for pull-requests: <MW_CORE_VERSION>-<DATE>-<PR_NUMBER>, eg: 1.35.2-20210125-25
   # for tags: <TAG>
-  # for `master` branch: latest + <MW_CORE_VERSION>-<DATE>-<SHA>
+  # for `master` branch: latest + <MW_VERSION>-latest + <MW_CORE_VERSION>-<DATE>-<SHA>
   # <MW_CORE_VERSION> being parsed from the Dockerfile
   push:
     runs-on: ubuntu-latest
@@ -67,8 +67,8 @@ jobs:
           # Compose REGISTRY_TAGS variable
           REGISTRY_TAGS=$IMAGE_ID:$VERSION
 
-          # For master branch also supply an extra tag
-          [ "$VERSION" == "latest" ] && REGISTRY_TAGS=$REGISTRY_TAGS,$IMAGE_ID:$MEDIAWIKI_VERSION-$BDATE-$(git rev-parse --short HEAD)
+          # For master branch also supply an extra tag: <MW_VERSION>-latest,<MW_VERSION>-<DATE>-<SHA>
+          [ "$VERSION" == "latest" ] && REGISTRY_TAGS=$REGISTRY_TAGS,$IMAGE_ID:$MEDIAWIKI_VERSION-latest,$IMAGE_ID:$MEDIAWIKI_VERSION-$BDATE-$(git rev-parse --short HEAD)
 
           echo IMAGE_ID=$IMAGE_ID
           echo VERSION=$VERSION
