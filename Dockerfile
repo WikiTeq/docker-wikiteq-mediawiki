@@ -140,6 +140,12 @@ RUN set -x; \
 	&& git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/UrlGetParameters \
 	&& git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/TinyMCE
 
+# switch to version 0.3 TODO remove me for REL1_36
+RUN set -x; \
+	cd $MW_HOME/extensions/VEForAll \
+	&& git fetch origin master \
+	&& git checkout 8f83eb6e607b89f6e1a44966e8637cadd7942bd7
+
 # TODO move me above when REL1_35 branch will be created
 RUN set -x; \
 	cd $MW_HOME/extensions \
