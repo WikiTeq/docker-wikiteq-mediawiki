@@ -23,7 +23,7 @@ RUN set -x; \
 	&& yum-config-manager --enable remi-php74 \
 	&& yum -y update \
 	&& yum -y install httpd php php-cli php-mysqlnd php-gd php-mbstring php-xml php-intl php-opcache php-pecl-apcu php-redis \
-		git composer mysql wget unzip ImageMagick python-pygments ssmtp patch vim mc ffmpeg \
+		git composer mysql wget unzip ImageMagick python-pygments ssmtp patch vim mc ffmpeg curl monit \
 	&& mkdir -p $MW_ORIGIN_FILES \
 	&& mkdir -p $MW_HOME
 
@@ -47,17 +47,23 @@ RUN set -x; \
 	&& ln -s $MW_VOLUME/cache $MW_HOME/cache
 
 ### Skins
-# Chameleon
+# Chameleon skin
 RUN set -x; \
 	cd $MW_HOME/skins \
 	&& git clone https://github.com/ProfessionalWiki/chameleon.git \
 	&& cd chameleon \
 	&& git checkout -b $MW_VERSION c4cd43625c20e8979f2d274b4dd514388f3d47cc
 
-# Refreshed
+# CologneBlue, Modern, Refreshed skins
 RUN set -x; \
 	cd $MW_HOME/skins \
+	&& git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/skins/CologneBlue \
+	&& git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/skins/Modern \
 	&& git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/skins/Refreshed
+
+RUN set -x; \
+	cd $MW_HOME/skins \
+	&& git clone --depth 1 -b v2.3.0 https://github.com/Hutchy68/pivot.git
 
 ### Extensions
 RUN set -x; \
@@ -117,7 +123,22 @@ RUN set -x; \
 	&& git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/TemplateStyles \
 	&& git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/LookupUser \
 	&& git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/HeadScript \
-	&& git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/Favorites
+	&& git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/Favorites \
+	&& git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/GoogleDocTag \
+	&& git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/EditUser \
+	&& git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/EventLogging \
+	&& git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/EventStreamConfig \
+	&& git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/SaveSpinner \
+	&& git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/UploadWizard \
+	&& git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/CommentStreams \
+	&& git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/GoogleAnalyticsMetrics \
+	&& git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/MassMessage \
+	&& git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/MassMessageEmail \
+	&& git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/SemanticDrilldown \
+	&& git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/VEForAll \
+	&& git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/HeaderTabs \
+	&& git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/UrlGetParameters \
+	&& git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/TinyMCE
 
 # TODO move me above when REL1_35 branch will be created
 RUN set -x; \
@@ -125,6 +146,13 @@ RUN set -x; \
 	&& git clone https://gerrit.wikimedia.org/r/mediawiki/extensions/LockAuthor \
 	&& cd LockAuthor \
 	&& git checkout -b $MW_VERSION ee5ab1ed2bc34ab1b08c799fb1e14e0d5de65953
+
+# TODO move me above when REL1_35 branch will be created
+RUN set -x; \
+	cd $MW_HOME/extensions \
+	&& git clone https://gerrit.wikimedia.org/r/mediawiki/extensions/EncryptedUploads \
+	&& cd EncryptedUploads \
+	&& git checkout -b $MW_VERSION 51e3482462f1852e289d5863849b164e1b1a7ea9
 
 # TODO move me above, we use master because of compatibility issues of REL1_35 branch of the extension with core 1.35.1 tag
 RUN set -x; \
@@ -224,8 +252,73 @@ RUN set -x; \
 	&& cd WikiSEO \
 	&& git checkout -b $MW_VERSION 30bb8c323e8cd44df52c7537f97f8518de2557df
 
-COPY composer.local.json $MW_HOME/composer.local.json
-RUN set -x; cd $MW_HOME && composer update --no-dev
+# GoogleDocCreator
+RUN set -x; \
+	cd $MW_HOME/extensions \
+	&& git clone https://github.com/nischayn22/GoogleDocCreator.git \
+	&& cd GoogleDocCreator \
+	&& git checkout -b $MW_VERSION 63aecabb4292ad9d4e8336a93aec25f977ee633e
+
+# MassPasswordReset
+RUN set -x; \
+	cd $MW_HOME/extensions \
+	&& git clone https://github.com/nischayn22/MassPasswordReset.git \
+	&& cd MassPasswordReset \
+	&& git checkout -b $MW_VERSION affaeee6620f9a70b9dc80c53879a35c9aed92c6
+
+# Tabber
+RUN set -x; \
+	cd $MW_HOME/extensions \
+	&& git clone https://gitlab.com/hydrawiki/extensions/Tabber.git \
+	&& cd Tabber \
+	&& git checkout -b $MW_VERSION 6c67baf4d18518fa78e07add4c032d62dd384b06
+
+# UploadWizardExtraButtons
+RUN set -x; \
+	cd $MW_HOME/extensions \
+	&& git clone https://github.com/vedmaka/mediawiki-extension-UploadWizardExtraButtons.git UploadWizardExtraButtons \
+	&& cd UploadWizardExtraButtons \
+	&& git checkout -b $MW_VERSION accba1b9b6f50e67d709bd727c9f4ad6de78c0c0
+
+# Mendeley
+RUN set -x; \
+	cd $MW_HOME/extensions \
+	&& git clone https://github.com/nischayn22/Mendeley.git \
+	&& cd Mendeley \
+	&& git checkout -b $MW_VERSION b866c3608ada025ce8a3e161e4605cd9106056c4
+
+# Scopus
+RUN set -x; \
+	cd $MW_HOME/extensions \
+	&& git clone https://github.com/nischayn22/Scopus.git \
+	&& cd Scopus \
+	&& git checkout -b $MW_VERSION 4fe8048459d9189626d82d9d93a0d5f906c43746
+
+# SemanticQueryInterface
+RUN set -x; \
+	cd $MW_HOME/extensions \
+	&& git clone https://github.com/vedmaka/SemanticQueryInterface.git \
+	&& cd SemanticQueryInterface \
+	&& git checkout -b $MW_VERSION 0016305a95ecbb6ed4709bfa3fc6d9995d51336f \
+# FIXME in the repo
+	&& mv SemanticQueryInterface/* . \
+	&& rmdir SemanticQueryInterface \
+	&& ln -s SQI.php SemanticQueryInterface.php \
+	&& rm -fr .git
+
+# SRFEventCalendarMod
+RUN set -x; \
+	cd $MW_HOME/extensions \
+	&& git clone https://github.com/vedmaka/mediawiki-extension-SRFEventCalendarMod.git SRFEventCalendarMod \
+	&& cd SRFEventCalendarMod \
+	&& git checkout -b $MW_VERSION e0dfa797af0709c90f9c9295d217bbb6d564a7a8
+
+# Sync
+RUN set -x; \
+	cd $MW_HOME/extensions \
+	&& git clone https://github.com/nischayn22/Sync.git \
+	&& cd Sync \
+	&& git checkout -b $MW_VERSION f56b956521f383221737261ad68aef2367466b76
 
 # GTag1
 COPY sources/GTag1.2.0.tar.gz /tmp/
@@ -258,6 +351,9 @@ RUN set -x; \
 	cd $MW_HOME/skins/Refreshed \
 	&& patch -u -b includes/RefreshedTemplate.php -i /tmp/skin-refreshed.patch
 
+COPY composer.local.json $MW_HOME/composer.local.json
+RUN set -x; cd $MW_HOME && composer update --no-dev
+
 FROM base as final
 
 COPY --from=source $MW_HOME $MW_HOME
@@ -274,6 +370,7 @@ ENV MW_AUTOUPDATE=true \
 	MW_EMERGENCY_CONTACT=apache@invalid \
 	MW_PASSWORD_SENDER=apache@invalid \
 	MW_MAIN_CACHE_TYPE=CACHE_NONE \
+	MW_DB_TYPE=mysql \
 	MW_DB_SERVER=db \
 	MW_CIRRUS_SEARCH_SERVERS=elasticsearch \
 	MW_MAINTENANCE_CIRRUSSEARCH_UPDATECONFIG=1 \
@@ -292,7 +389,7 @@ COPY ssmtp.conf /etc/ssmtp/ssmtp.conf
 COPY php_error_reporting.ini php_upload_max_filesize.ini /etc/php.d/
 COPY mediawiki.conf /etc/httpd/conf.d/
 COPY robots.txt .htaccess /var/www/html/
-COPY run-apache.sh mwjobrunner.sh mwsitemapgen.sh mwtranscoder.sh /
+COPY run-apache.sh mwjobrunner.sh mwsitemapgen.sh mwtranscoder.sh monit-slack.sh rotatelogs-compress.sh getMediawikiSettings.php /
 COPY DockerSettings.php $MW_HOME/DockerSettings.php
 
 # update packages every time!
@@ -302,8 +399,17 @@ RUN set -x; \
 	&& chmod -v +x /*.sh \
 	&& mkdir $MW_HOME/sitemap \
 	&& chown $WWW_USER:$WWW_GROUP $MW_HOME/sitemap \
-	&& chmod g+w $MW_HOME/sitemap
+	&& chmod g+w $MW_HOME/sitemap \
+# Install Monit & monit-slack-hook to watch low disk space
+# The hook will do nothing unless the $MONIT_SLACK_HOOK is provided
+	&& echo $'set httpd port 2812 and\n\tuse address localhost\n\tallow localhost' >> /etc/monitrc \
+	&& echo $'check filesystem rootfs with path /\n\tif SPACE usage > 90% then exec "/monit-slack.sh"' > /etc/monit.d/hdd \
+# Comment out ErrorLog and CustomLog parameters, we use rotatelogs in mediawiki.conf for the log files
+	&& sed -i 's/^\(\s*ErrorLog .*\)/# \1/g' /etc/httpd/conf/httpd.conf \
+	&& sed -i 's/^\(\s*CustomLog .*\)/# \1/g' /etc/httpd/conf/httpd.conf
 
 CMD ["/run-apache.sh"]
 
 EXPOSE 80
+
+WORKDIR $MW_HOME

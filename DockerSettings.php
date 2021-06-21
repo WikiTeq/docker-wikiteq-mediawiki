@@ -7,6 +7,8 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 
 const DOCKER_SKINS = [
 	'chameleon',
+	'CologneBlue',
+	'Modern',
 	'MonoBook', # bundled
 	'Refreshed',
 	'Timeless', # bundled
@@ -33,8 +35,9 @@ const DOCKER_EXTENSIONS = [
 	'CodeEditor', # bundled
 	'CodeMirror',
 	'Collection',
+	'CommentStreams',
 	'CommonsMetadata',
-//	'ConfirmAccount', no extension.json
+	'ConfirmAccount',
 	'ConfirmEdit', # bundled
 	'ConfirmEdit/QuestyCaptcha', # bundled
 	'ConfirmEdit/ReCaptchaNoCaptcha', # bundled
@@ -44,12 +47,20 @@ const DOCKER_EXTENSIONS = [
 	'Disambiguator',
 	'DisplayTitle',
 	'Echo',
+	'EditUser',
 	'EmbedVideo',
+	'EncryptedUploads',
+	'EventLogging',
+	'EventStreamConfig',
 	'Favorites',
 	'Flow',
 	'Gadgets', # bundled
-//	'googleAnalytics',  no extension.json
+	'googleAnalytics',
+	'GoogleAnalyticsMetrics',
+	'GoogleDocCreator',
+	'GoogleDocTag',
 	'GTag',
+	'HeaderTabs',
 	'HeadScript',
 	'HTMLTags',
 	'IframePage',
@@ -66,9 +77,13 @@ const DOCKER_EXTENSIONS = [
 	'LookupUser',
 	'Loops',
 	'Maps',
+	'MassMessage',
+	'MassMessageEmail',
+	'MassPasswordReset',
 	'Math',
 	'MathJax',
-//	'MobileDetect', no extension.json
+	'Mendeley',
+	'MobileDetect',
 	'MsUpload',
 	'MultimediaViewer', # bundled
 	'MyVariables',
@@ -86,33 +101,46 @@ const DOCKER_EXTENSIONS = [
 	'Renameuser', # bundled
 	'ReplaceText', # bundled
 	'RottenLinks',
-	'SkinPerNamespace',
-	'SkinPerPage',
+	'SaveSpinner',
+	'Scopus',
 	'Scribunto', # bundled
 	'SecureLinkFixer', # bundled
-//	'SelectCategory', no extension.json
+	'SelectCategory',
+	'SemanticExternalQueryLookup',
 	'SemanticExtraSpecialProperties',
 	'SemanticCompoundQueries',
+	'SemanticDrilldown',
+	'SemanticQueryInterface',
 	'SemanticResultFormats',
 	'ShowMe',
 	'SimpleChanges',
 	'Skinny',
-//	'SocialProfile', no extension.json
-//	'SoundManager2Button', no extension.json
+	'SkinPerNamespace',
+	'SkinPerPage',
+	'SocialProfile',
+	'SoundManager2Button',
 	'SpamBlacklist', # bundled
-//	'Survey', no extension.json
+	'SRFEventCalendarMod',
+	'Survey',
+	'Sync',
 	'SyntaxHighlight_GeSHi', # bundled
+	'Tabber',
 	'Tabs',
 	'TemplateData', # bundled
 	'TemplateStyles',
 	'TextExtracts', # bundled
 	'Thanks',
 	'TimedMediaHandler',
+	'TinyMCE',
 	'TitleBlacklist', # bundled
 	'TwitterTag',
 	'UniversalLanguageSelector',
+	'UploadWizard',
+	'UploadWizardExtraButtons',
+	'UrlGetParameters',
 	'UserMerge',
 	'Variables',
+	'VEForAll',
 	'VisualEditor', # bundled
 	'VoteNY',
 	'Widgets',
@@ -163,7 +191,8 @@ $wgEnotifWatchlist = false; # UPO
 $wgEmailAuthentication = true;
 
 ## Database settings
-$wgDBtype = "mysql";
+$wgSQLiteDataDir = "$DOCKER_MW_VOLUME/sqlite";
+$wgDBtype = getenv( 'MW_DB_TYPE' );
 $wgDBserver = getenv( 'MW_DB_SERVER' );
 $wgDBname = getenv( 'MW_DB_NAME' );
 $wgDBuser = getenv( 'MW_DB_USER' );
@@ -250,13 +279,21 @@ if ( isset( $dockerLoadSkins['chameleon'] ) ) {
 }
 
 ####################### Extension Settings #######################
+// The variable will be an array [ 'extensionName' => 'extensionName, ... ]
+// made by see array_combine( $dockerLoadExtensions, $dockerLoadExtensions ) below
 $dockerLoadExtensions = getenv( 'MW_LOAD_EXTENSIONS' );
 if ( $dockerLoadExtensions ) {
 	$dockerLoadExtensions = explode( ',', $dockerLoadExtensions );
 	$dockerLoadExtensions = array_intersect( DOCKER_EXTENSIONS, $dockerLoadExtensions );
 	if ( $dockerLoadExtensions ) {
-		wfLoadExtensions( $dockerLoadExtensions );
 		$dockerLoadExtensions = array_combine( $dockerLoadExtensions, $dockerLoadExtensions );
+		foreach ( $dockerLoadExtensions as $extension ) {
+			if ( file_exists( "$wgExtensionDirectory/$extension/extension.json" ) ) {
+				wfLoadExtension( $extension );
+			} else {
+				require_once "$wgExtensionDirectory/$extension/$extension.php";
+			}
+		}
 	}
 }
 
@@ -409,7 +446,11 @@ if ( $tmpProxy ) {
 //}
 
 ######################### Custom Settings ##########################
-@include( 'CustomSettings.php' );
+if ( file_exists( "$IP/_settings/LocalSettings.php" ) ) {
+	require_once "$IP/_settings/LocalSettings.php";
+} elseif ( file_exists( "$IP/CustomSettings.php" ) ) {
+	require_once "$IP/CustomSettings.php";
+}
 
 # Flow https://www.mediawiki.org/wiki/Extension:Flow
 if ( isset( $dockerLoadExtensions['Flow'] ) ) {
@@ -434,8 +475,6 @@ switch( getenv( 'MW_SEARCH_TYPE' ) ) {
 		}
 		$wgSearchType = 'CirrusSearch';
 		break;
-	default:
-		$wgSearchType = null;
 }
 
 ########################### Sitemap ############################
