@@ -326,6 +326,12 @@ RUN set -x; \
 	tar -xvf /tmp/GTag*.tar.gz -C $MW_HOME/extensions \
 	&& rm /tmp/GTag*.tar.gz
 
+# Resolve composer conflicts for GoogleAnalyticsMetrics extension TODO remove me when update the core or extension
+COPY patches/core-fix-composer-for-GoogleAnalyticsMetrics.diff /tmp/core-fix-composer-for-GoogleAnalyticsMetrics.diff
+RUN set -x; \
+	cd $MW_HOME \
+	&& git apply /tmp/core-fix-composer-for-GoogleAnalyticsMetrics.diff
+
 # we should run composer update before patches because we need to patch installed extensions by composer too
 COPY composer.local.json $MW_HOME/composer.local.json
 RUN set -x; cd $MW_HOME && composer update --no-dev
