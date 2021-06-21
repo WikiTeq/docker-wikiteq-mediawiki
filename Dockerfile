@@ -326,6 +326,10 @@ RUN set -x; \
 	tar -xvf /tmp/GTag*.tar.gz -C $MW_HOME/extensions \
 	&& rm /tmp/GTag*.tar.gz
 
+# we should run composer update before patches because we need to patch installed extensions by composer too
+COPY composer.local.json $MW_HOME/composer.local.json
+RUN set -x; cd $MW_HOME && composer update --no-dev
+
 # PATCHES
 # SemanticResultFormats, see https://github.com/WikiTeq/SemanticResultFormats/compare/master...WikiTeq:fix1_35
 COPY patches/semantic-result-formats.patch /tmp/semantic-result-formats.patch
@@ -350,9 +354,6 @@ COPY patches/skin-refreshed.patch /tmp/skin-refreshed.patch
 RUN set -x; \
 	cd $MW_HOME/skins/Refreshed \
 	&& patch -u -b includes/RefreshedTemplate.php -i /tmp/skin-refreshed.patch
-
-COPY composer.local.json $MW_HOME/composer.local.json
-RUN set -x; cd $MW_HOME && composer update --no-dev
 
 FROM base as final
 
