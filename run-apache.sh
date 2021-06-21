@@ -251,30 +251,30 @@ fi
 jobrunner() {
     sleep 3
     if [ "$MW_ENABLE_JOB_RUNNER" = true ]; then
-        echo Run Jobs
-        runuser -c /mwjobrunner.sh -s /bin/bash "$WWW_USER"
+        echo >&2 Run Jobs
+        nice -n 20 runuser -c /mwjobrunner.sh -s /bin/bash "$WWW_USER"
     else
-        echo Job runner is disabled
+        echo >&2 Job runner is disabled
     fi
 }
 
 transcoder() {
     sleep 3
     if [ "$MW_ENABLE_TRANSCODER" = true ]; then
-        echo Run transcoder
-        runuser -c /mwtranscoder.sh -s /bin/bash "$WWW_USER"
+        echo >&2 Run transcoder
+        nice -n 20 runuser -c /mwtranscoder.sh -s /bin/bash "$WWW_USER"
     else
-        echo Transcoder disabled
+        echo >&2 Transcoder disabled
     fi
 }
 
 sitemapgen() {
     sleep 3
     if [ "$MW_ENABLE_SITEMAP_GENERATOR" = true ]; then
-        echo Run sitemap generator
-        runuser -c /mwsitemapgen.sh -s /bin/bash "$WWW_USER"
+        echo >&2 Run sitemap generator
+        nice -n 20 runuser -c /mwsitemapgen.sh -s /bin/bash "$WWW_USER"
     else
-        echo Sitemap generator is disabled
+        echo >&2 Sitemap generator is disabled
     fi
 }
 

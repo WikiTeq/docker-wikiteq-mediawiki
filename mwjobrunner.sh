@@ -10,9 +10,13 @@ while true; do
     # Job types that need to be run ASAP mo matter how many of them are in the queue
     # Those jobs should be very "cheap" to run
     php $RJ --type="enotifNotify"
+    sleep 1
     php $RJ --type="createPage"
+    sleep 1
     php $RJ --type="refreshLinks"
+    sleep 1
     php $RJ --type="htmlCacheUpdate" --maxjobs=500
+    sleep 1
     # Everything else, limit the number of jobs on each batch
     # The --wait parameter will pause the execution here until new jobs are added,
     # to avoid running the loop without anything to do
