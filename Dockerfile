@@ -330,7 +330,13 @@ RUN set -x; \
 COPY sources/GTag1.2.0.tar.gz /tmp/
 RUN set -x; \
 	tar -xvf /tmp/GTag*.tar.gz -C $MW_HOME/extensions \
-	&& rm /tmp/GTag*.tar.gz
+	&& rm /tmp/GTag*.tar.gz \
+
+# SemanticExternalQueryLookup
+RUN set -x; \
+    cd $MW_HOME/extensions \
+    && git clone https://github.com/SemanticMediaWiki/SemanticExternalQueryLookup.git \
+    && cd SemanticExternalQueryLookup
 
 # Resolve composer conflicts for GoogleAnalyticsMetrics extension TODO remove me when update the core or extension
 COPY patches/core-fix-composer-for-GoogleAnalyticsMetrics.diff /tmp/core-fix-composer-for-GoogleAnalyticsMetrics.diff
@@ -366,6 +372,12 @@ COPY patches/skin-refreshed.patch /tmp/skin-refreshed.patch
 RUN set -x; \
 	cd $MW_HOME/skins/Refreshed \
 	&& patch -u -b includes/RefreshedTemplate.php -i /tmp/skin-refreshed.patch
+
+# SemanticExternalQueryLookup
+COPY patches/SemanticExternalQueryLookup.REL1_35.patch /tmp/SemanticExternalQueryLookup.REL1_35.patch
+RUN set -x; \
+    cd $MW_HOME/extensions/SemanticExternalQueryLookup \
+    && git apply /tmp/SemanticExternalQueryLookup.REL1_35.patch
 
 FROM base as final
 

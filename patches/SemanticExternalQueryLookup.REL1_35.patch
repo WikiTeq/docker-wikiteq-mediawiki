@@ -1,0 +1,23 @@
+diff --git a/src/ByHttpRequestQueryLookup.php b/src/ByHttpRequestQueryLookup.php
+index 01e84fc..58ea358 100644
+--- a/src/ByHttpRequestQueryLookup.php
++++ b/src/ByHttpRequestQueryLookup.php
+@@ -2,6 +2,7 @@
+ 
+ namespace SEQL;
+ 
++use MediaWiki\MediaWikiServices;
+ use Onoi\HttpRequest\HttpRequestFactory;
+ use SEQL\ByHttpRequest\JsonResponseParser;
+ use SEQL\ByHttpRequest\QueryResultFetcher;
+@@ -56,7 +57,9 @@ class ByHttpRequestQueryLookup extends SQLStore {
+ 	}
+ 
+ 	protected function tryToMatchInterwikiFor( Query $query ) {
+-		return Interwiki::fetch( $query->getQuerySource() );
++		return MediaWikiServices::getInstance()
++			->getInterwikiLookup()
++			->fetch( $query->getQuerySource() );
+ 	}
+ 
+ 	protected function fetchQueryResultFor( Query $query, $interwiki ) {
