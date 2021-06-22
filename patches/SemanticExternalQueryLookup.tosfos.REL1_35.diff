@@ -1,8 +1,8 @@
 diff --git a/src/ByHttpRequestQueryLookup.php b/src/ByHttpRequestQueryLookup.php
-index 01e84fc..58ea358 100644
+index 5791ae1..1ca9a85 100644
 --- a/src/ByHttpRequestQueryLookup.php
 +++ b/src/ByHttpRequestQueryLookup.php
-@@ -2,6 +2,7 @@
+@@ -2,14 +2,15 @@
  
  namespace SEQL;
  
@@ -10,7 +10,16 @@ index 01e84fc..58ea358 100644
  use Onoi\HttpRequest\HttpRequestFactory;
  use SEQL\ByHttpRequest\JsonResponseParser;
  use SEQL\ByHttpRequest\QueryResultFetcher;
-@@ -56,7 +57,9 @@ class ByHttpRequestQueryLookup extends SQLStore {
++use SMW\CacheFactory;
+ use SMW\SQLStore\SQLStore;
+ use SMW\ApplicationFactory;
+ use SMWQuery as Query;
+ use SMWQueryResult as QueryResult;
+-use Interwiki;
+ 
+ /**
+  * @license GNU GPL v2+
+@@ -61,7 +62,9 @@ class ByHttpRequestQueryLookup extends SQLStore {
  	}
  
  	protected function tryToMatchInterwikiFor( Query $query ) {
@@ -20,4 +29,4 @@ index 01e84fc..58ea358 100644
 +			->fetch( $query->getQuerySource() );
  	}
  
- 	protected function fetchQueryResultFor( Query $query, $interwiki ) {
+ 	protected function fetchQueryResultFor( Query $query, $interwiki, $credentials = false ) {

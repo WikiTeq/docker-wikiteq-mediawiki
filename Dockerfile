@@ -335,8 +335,9 @@ RUN set -x; \
 # SemanticExternalQueryLookup
 RUN set -x; \
     cd $MW_HOME/extensions \
-    && git clone https://github.com/SemanticMediaWiki/SemanticExternalQueryLookup.git \
-    && cd SemanticExternalQueryLookup
+    && git clone https://github.com/tosfos/SemanticExternalQueryLookup.git \
+    && cd SemanticExternalQueryLookup \
+    && git checkout private
 
 # Resolve composer conflicts for GoogleAnalyticsMetrics extension TODO remove me when update the core or extension
 COPY patches/core-fix-composer-for-GoogleAnalyticsMetrics.diff /tmp/core-fix-composer-for-GoogleAnalyticsMetrics.diff
@@ -374,10 +375,10 @@ RUN set -x; \
 	&& patch -u -b includes/RefreshedTemplate.php -i /tmp/skin-refreshed.patch
 
 # SemanticExternalQueryLookup
-COPY patches/SemanticExternalQueryLookup.REL1_35.patch /tmp/SemanticExternalQueryLookup.REL1_35.patch
+COPY patches/SemanticExternalQueryLookup.tosfos.REL1_35.diff /tmp/SemanticExternalQueryLookup.tosfos.REL1_35.diff
 RUN set -x; \
     cd $MW_HOME/extensions/SemanticExternalQueryLookup \
-    && git apply /tmp/SemanticExternalQueryLookup.REL1_35.patch
+    && git apply /tmp/SemanticExternalQueryLookup.tosfos.REL1_35.diff
 
 FROM base as final
 
