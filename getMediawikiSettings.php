@@ -104,7 +104,17 @@ class GetMediawikiSettings extends Maintenance {
 			$this->output( md5( $return ) );
 		} elseif ( $format === 'first' ) {
 			if ( is_array( $return ) && $return ) {
-				$return = array_values($return)[0];
+				$return = array_values( $return )[0];
+			}
+			$this->output( $return );
+		} elseif ( $format === 'semicolon' ) {
+			if ( is_array( $return ) && $return ) {
+				$return = implode( ';', $return );
+			}
+			$this->output( $return );
+		} elseif ( $format === 'space' ) {
+			if ( is_array( $return ) && $return ) {
+				$return = implode( ' ', $return );
 			}
 			$this->output( $return );
 		} elseif ( is_array( $return ) || strcasecmp( $format, 'json' ) === 0 ) {
