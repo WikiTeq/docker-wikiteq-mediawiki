@@ -336,6 +336,7 @@ RUN set -x; \
 RUN set -x; \
     cd $MW_HOME/extensions \
     && git clone https://github.com/WikiTeq/SemanticExternalQueryLookup.git \
+    && cd SemanticExternalQueryLookup \
     && git checkout master
 
 # Resolve composer conflicts for GoogleAnalyticsMetrics extension TODO remove me when update the core or extension
