@@ -332,10 +332,11 @@ RUN set -x; \
 	tar -xvf /tmp/GTag*.tar.gz -C $MW_HOME/extensions \
 	&& rm /tmp/GTag*.tar.gz \
 
-# SemanticExternalQueryLookup (WikiTeq fork)
+# SemanticExternalQueryLookup (WikiTeq's fork)
 RUN set -x; \
     cd $MW_HOME/extensions \
-    && git clone https://github.com/WikiTeq/SemanticExternalQueryLookup.git
+    && git clone https://github.com/WikiTeq/SemanticExternalQueryLookup.git \
+    && git checkout master
 
 # Resolve composer conflicts for GoogleAnalyticsMetrics extension TODO remove me when update the core or extension
 COPY patches/core-fix-composer-for-GoogleAnalyticsMetrics.diff /tmp/core-fix-composer-for-GoogleAnalyticsMetrics.diff
