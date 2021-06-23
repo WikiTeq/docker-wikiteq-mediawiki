@@ -311,6 +311,9 @@ run_autoupdate () {
                 run_maintenance_script_if_needed 'maintenance_semantic_updateEntityCountMap' "always" \
                     'extensions/SemanticMediaWiki/maintenance/updateEntityCountMap.php'
                 ;;
+            *)
+                echo >&2 "######## Unknown SMW maintenance setup task - $task ########"
+                ;;
         esac
     done
 
