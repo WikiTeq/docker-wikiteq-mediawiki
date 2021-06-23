@@ -23,6 +23,7 @@ WG_LANG_CODE=$(get_mediawiki_variable wgLanguageCode)
 WG_SITE_NAME=$(get_mediawiki_variable wgSitename)
 WG_SEARCH_TYPE=$(get_mediawiki_variable wgSearchType)
 WG_CIRRUS_SEARCH_SERVER=$(get_hostname_with_port "$(get_mediawiki_variable wgCirrusSearchServers first)" 9200)
+VERSION_HASH=$(php /getMediawikiSettings.php --versions --format=md5)
 
 if [ -z "$WG_DB_SERVER" ]; then
     echo the wgDBserver variable must be defined
@@ -156,7 +157,7 @@ run_maintenance_script_if_needed () {
         update_info=""
     fi
 
-    if [[ "$update_info" != "$2" && -n "$2" && "${2: -1}" != '-' || "$2" == "always" ]]; then
+    if [[ "$update_info" != "$2" && -n "$2" || "$2" == "always" ]]; then
         wait_database_started
         if [[ "$1" == *CirrusSearch* ]]; then wait_elasticsearch_started; fi
 
@@ -192,7 +193,7 @@ run_script_if_needed () {
         echo >&2 "Run script: $3"
         eval "$3"
 
-        cd "$MW_HOME"
+        cd "$MW_HOME" || exit
 
         echo >&2 "Successful updated: $2"
         echo "$2" > "$MW_VOLUME/$1.info"
@@ -201,7 +202,7 @@ run_script_if_needed () {
     fi
 }
 
-cd "$MW_HOME"
+cd "$MW_HOME" || exit
 
 # If there is no LocalSettings.php
 if [ ! -e "$MW_VOLUME/LocalSettings.php" ] && [ ! -e "$MW_HOME/LocalSettings.php" ]; then
@@ -281,17 +282,37 @@ sitemapgen() {
 run_autoupdate () {
     echo >&2 'Check for the need to run maintenance scripts'
     ### maintenance/update.php
-    # run_maintenance_script_if_needed 'maintenance_update' "$MW_VERSION-$MW_CORE_VERSION-$MW_MAINTENANCE_UPDATE-$MW_LOAD_SKINS-$MW_LOAD_EXTENSIONS" \
-    #    'maintenance/update.php --quick'
 
-    run_maintenance_script_if_needed 'maintenance_update' "always" \
+#    if [ "$(php /getMediawikiSettings.php --isSMWValid)" = false ]; then
+#        SMW_UPGRADE_KEY=
+#        UPDATE_DATABASE_ANYWAY=true
+#    else
+#        UPDATE_DATABASE_ANYWAY=false
+#    fi
+
+    SMW_UPGRADE_KEY=$(php /getMediawikiSettings.php --SMWUpgradeKey)
+    run_maintenance_script_if_needed 'maintenance_update' "$MW_VERSION-$MW_CORE_VERSION-$MW_MAINTENANCE_UPDATE-$VERSION_HASH-$SMW_UPGRADE_KEY" \
         'maintenance/update.php --quick'
 
-    run_maintenance_script_if_needed 'maintenance_semantic_updateEntityCollation' "always" \
-        'extensions/SemanticMediaWiki/maintenance/updateEntityCollation.php'
+#    run_maintenance_script_if_needed 'maintenance_update' "always" \
+#        'maintenance/update.php --quick'
 
-    run_maintenance_script_if_needed 'maintenance_semantic_updateEntityCountMap' "always" \
-        'extensions/SemanticMediaWiki/maintenance/updateEntityCountMap.php'
+
+    # Run incomplete SemanticMediawiki setup tasks
+    SMW_INCOMPLETE_TASKS=$(php /getMediawikiSettings.php --SWMIncompleteSetupTasks --format=space)
+    for task in $SMW_INCOMPLETE_TASKS
+    do
+        case $task in
+            smw-updateentitycollation-incomplete)
+                run_maintenance_script_if_needed 'maintenance_semantic_updateEntityCollation' "always" \
+                    'extensions/SemanticMediaWiki/maintenance/updateEntityCollation.php'
+                ;;
+            smw-updateentitycountmap-incomplete)
+                run_maintenance_script_if_needed 'maintenance_semantic_updateEntityCountMap' "always" \
+                    'extensions/SemanticMediaWiki/maintenance/updateEntityCountMap.php'
+                ;;
+        esac
+    done
 
     ### CirrusSearch
     if [ "$WG_SEARCH_TYPE" == 'CirrusSearch' ]; then
