@@ -332,7 +332,7 @@ RUN set -x; \
 	tar -xvf /tmp/GTag*.tar.gz -C $MW_HOME/extensions \
 	&& rm /tmp/GTag*.tar.gz \
 
-# SemanticExternalQueryLookup (WikiTeq's fork)
+# SemanticExternalQueryLookup (WikiTeq fork)
 RUN set -x; \
     cd $MW_HOME/extensions \
     && git clone https://github.com/WikiTeq/SemanticExternalQueryLookup.git
