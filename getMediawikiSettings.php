@@ -103,17 +103,21 @@ class GetMediawikiSettings extends Maintenance {
 			}
 			$this->output( md5( $return ) );
 		} elseif ( $format === 'first' ) {
-			if ( is_array( $return ) && $return ) {
-				$return = array_values( $return )[0];
+			if ( is_array( $return ) ) {
+				if ( $return ) {
+					$return = array_values( $return )[0];
+				} else {
+					$return = '';
+				}
 			}
 			$this->output( $return );
 		} elseif ( $format === 'semicolon' ) {
-			if ( is_array( $return ) && $return ) {
+			if ( is_array( $return ) ) {
 				$return = implode( ';', $return );
 			}
 			$this->output( $return );
 		} elseif ( $format === 'space' ) {
-			if ( is_array( $return ) && $return ) {
+			if ( is_array( $return ) ) {
 				$return = implode( ' ', $return );
 			}
 			$this->output( $return );
