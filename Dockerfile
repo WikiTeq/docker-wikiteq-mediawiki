@@ -362,6 +362,7 @@ RUN set -x; \
 COPY patches/flow-conversion-utils.patch /tmp/flow-conversion-utils.patch
 RUN set -x; \
 	cd $MW_HOME/extensions/Flow \
+    && git checkout -b $MW_VERSION d37f94241d8cb94ac96c7946f83c1038844cf7e6 \
 	&& git apply /tmp/flow-conversion-utils.patch
 
 # SWM maintenance page returns 503 (Service Unavailable) status code, PR: https://github.com/SemanticMediaWiki/SemanticMediaWiki/pull/4967
