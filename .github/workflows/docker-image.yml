@@ -119,5 +119,16 @@ jobs:
       -
         name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
-      - name: Image tags debug
+      -
+        name: Image tags debug
         run: echo ${{ steps.generate.outputs.REGISTRY_TAGS }}
+
+      -
+        name: Comment on PR
+        if: ${{ steps.docker_build.outputs.digest }}
+        uses: jungwinter/comment@v1
+        id: create
+        with:
+          type: create
+          body: "Image is built and pushed to the repository as `${{ steps.generate.outputs.REGISTRY_TAGS }}`"
+          token: ${{ secrets.GITHUB_TOKEN }}
