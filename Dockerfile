@@ -396,7 +396,9 @@ ENV MW_AUTOUPDATE=true \
 	MW_ENABLE_SITEMAP_GENERATOR=false \
 	MW_SITEMAP_PAUSE_DAYS=1 \
 	PHP_UPLOAD_MAX_FILESIZE=2M \
-	PHP_POST_MAX_SIZE=8M
+	PHP_POST_MAX_SIZE=8M \
+	LOG_FILES_COMPRESS_DELAY=3600 \
+	LOG_FILES_REMOVE_OLDER_THAN_DAYS=10
 
 COPY ssmtp.conf /etc/ssmtp/ssmtp.conf
 COPY php_error_reporting.ini php_upload_max_filesize.ini /etc/php.d/
