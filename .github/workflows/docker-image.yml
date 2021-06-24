@@ -126,9 +126,8 @@ jobs:
       -
         name: Comment on PR
         if: ${{ steps.docker_build.outputs.digest }}
-        uses: jungwinter/comment@v1
-        id: create
+        uses: mshick/add-pr-comment@v1
+        id: comment
         with:
-          type: create
-          body: "Image is built and pushed to the repository as `${{ steps.generate.outputs.REGISTRY_TAGS }}`"
-          token: ${{ secrets.GITHUB_TOKEN }}
+          message: "Image is built and pushed to the repository as `${{ steps.generate.outputs.REGISTRY_TAGS }}`"
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
