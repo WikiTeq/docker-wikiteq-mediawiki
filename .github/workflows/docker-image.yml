@@ -119,5 +119,15 @@ jobs:
       -
         name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
-      - name: Image tags debug
+      -
+        name: Image tags debug
         run: echo ${{ steps.generate.outputs.REGISTRY_TAGS }}
+
+      -
+        name: Comment on PR
+        if: ${{ steps.docker_build.outputs.digest }} && ${{ github.event_name == 'pull_request' }}
+        uses: mshick/add-pr-comment@v1
+        id: comment
+        with:
+          message: "Image is built and pushed to the repository as `${{ steps.generate.outputs.REGISTRY_TAGS }}`"
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
