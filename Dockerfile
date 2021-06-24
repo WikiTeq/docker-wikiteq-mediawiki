@@ -1,5 +1,3 @@
-FROM ghcr.io/wikiteq/mediawiki-maintenance-automation:latest AS maintenance-automation
-
 FROM centos:7.9.2009 as base
 
 LABEL maintainers="pastakhov@yandex.ru,alexey@wikiteq.com"
@@ -696,7 +694,7 @@ COPY DockerSettings.php $MW_HOME/DockerSettings.php
 # Installs mediawiki-maintenance-automation scripts
 # This is disabled by default. You can enable this by adding
 # MEDIAWIKI_MAINTENANCE_AUTO_ENABLED=true environment variable to docker-compose.yml
-COPY --from=0 /root/mediawiki-maintenance-automation /root/mediawiki-maintenance-automation
+COPY --from=ghcr.io/wikiteq/mediawiki-maintenance-automation:latest /root/mediawiki-maintenance-automation /root/mediawiki-maintenance-automation
 RUN set -x; \
 	cd /root/mediawiki-maintenance-automation \
 	&& ./setupWikiCron.sh $MW_HOME --silent
