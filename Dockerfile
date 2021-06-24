@@ -330,7 +330,7 @@ RUN set -x; \
 COPY sources/GTag1.2.0.tar.gz /tmp/
 RUN set -x; \
 	tar -xvf /tmp/GTag*.tar.gz -C $MW_HOME/extensions \
-	&& rm /tmp/GTag*.tar.gz \
+	&& rm /tmp/GTag*.tar.gz
 
 # SemanticExternalQueryLookup (WikiTeq's fork)
 RUN set -x; \
