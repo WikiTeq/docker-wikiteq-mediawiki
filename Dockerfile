@@ -206,7 +206,8 @@ RUN set -x; \
 RUN set -x; \
 	cd $MW_HOME/extensions \
 	&& git clone https://gerrit.wikimedia.org/r/mediawiki/extensions/NCBITaxonomyLookup \
-    && git checkout -b $MW_VERSION 512a390a62fbe6f3a7480641f6582126678e5a7c
+	&& cd NCBITaxonomyLookup \
+	&& git checkout -b $MW_VERSION 512a390a62fbe6f3a7480641f6582126678e5a7c
 
 # MathJax
 RUN set -x; \
@@ -335,9 +336,10 @@ RUN set -x; \
 
 # SemanticExternalQueryLookup (WikiTeq's fork)
 RUN set -x; \
-    cd $MW_HOME/extensions \
-    && git clone https://github.com/WikiTeq/SemanticExternalQueryLookup.git \
-    && git checkout -b $MW_VERSION dd7810061f2f1a9eef7be5ee09da999cbf9ecd8a
+	cd $MW_HOME/extensions \
+	&& git clone https://github.com/WikiTeq/SemanticExternalQueryLookup.git \
+	&& cd SemanticExternalQueryLookup \
+	&& git checkout -b $MW_VERSION dd7810061f2f1a9eef7be5ee09da999cbf9ecd8a
 
 # Resolve composer conflicts for GoogleAnalyticsMetrics extension TODO remove me when update the core or extension
 COPY patches/core-fix-composer-for-GoogleAnalyticsMetrics.diff /tmp/core-fix-composer-for-GoogleAnalyticsMetrics.diff
