@@ -21,6 +21,24 @@ class GetMediawikiSettings extends Maintenance {
 			true
 		);
 		$this->addOption(
+			'versions',
+			'',
+			false,
+			false
+		);
+		$this->addOption(
+			'isSMWValid',
+			''
+		);
+		$this->addOption(
+			'SMWUpgradeKey',
+			''
+		);
+		$this->addOption(
+			'SWMIncompleteSetupTasks',
+			''
+		);
+		$this->addOption(
 			'format',
 			'',
 			false,
@@ -38,16 +56,74 @@ class GetMediawikiSettings extends Maintenance {
 			} else { // the last chance to fetch a value from global variable
 				$return = $GLOBALS[$variableName] ?? '';
 			}
+		} elseif ( $this->hasOption( 'versions' ) ) {
+			$return = [
+				'MediaWiki' => SpecialVersion::getVersion( 'nodb' ),
+			];
+			$extThings = self::getExtensionsThings();
+			foreach ( $extThings as $name => $extension ) {
+				$return[$name] = $extension['version'] ?? '';
+				// Try to add git version
+				if ( isset( $extension['path'] ) ) {
+					$extensionPath = dirname( $extension['path'] );
+					$gitInfo = new GitInfo( $extensionPath );
+					$gitVersion = substr( $gitInfo->getHeadSHA1() ?: '', 0, 7 );
+					$return[$name] .= " ($gitVersion)";
+				}
+			}
+		} elseif ( $this->hasOption( 'isSMWValid' ) ) {
+			$extThings = self::getExtensionsThings();
+			if ( isset( $extThings['SemanticMediaWiki'] ) ) {
+				$this->output( SMW\Setup::isValid() ? 'true' : 'false' );
+			} else {
+				$this->output( 'SMW not installed' );
+			}
+			return;
+		} elseif ( $this->hasOption( 'SMWUpgradeKey' ) ) {
+			$extThings = self::getExtensionsThings();
+			if ( isset( $extThings['SemanticMediaWiki'] ) ) {
+				SemanticMediaWiki::onExtensionFunction();
+				$smwId = SMW\Site::id();
+				$return = $GLOBALS['smw.json'][$smwId]['upgrade_key'] ?? '';
+			}
+		} elseif ( $this->hasOption( 'SWMIncompleteSetupTasks' ) ) {
+			$extThings = self::getExtensionsThings();
+			if ( isset( $extThings['SemanticMediaWiki'] ) ) {
+				SemanticMediaWiki::onExtensionFunction();
+				$SMWSetupFile = new SMW\SetupFile();
+				$SMWIncompleteTasks = $SMWSetupFile->findIncompleteTasks();
+				$return = $SMWIncompleteTasks;
+			}
 		}
 
 		$format = $this->getOption( 'format', 'string' );
-		if ( strcasecmp( $format, 'json' ) === 0 ) {
-			$this->output( FormatJson::encode( $return ) );
+		if ( $format === 'md5' ) {
+			if ( is_array( $return ) ) {
+				$return = FormatJson::encode( $return );
+			}
+			$this->output( md5( $return ) );
 		} elseif ( $format === 'first' ) {
-			if ( is_array( $return ) && $return ) {
-				$return = array_values($return)[0];
+			if ( is_array( $return ) ) {
+				if ( $return ) {
+					$return = array_values( $return )[0];
+				} else {
+					$return = '';
+				}
 			}
 			$this->output( $return );
+		} elseif ( $format === 'semicolon' ) {
+			if ( is_array( $return ) ) {
+				$return = implode( ';', $return );
+			}
+			$this->output( $return );
+		} elseif ( $format === 'space' ) {
+			if ( is_array( $return ) ) {
+				$return = implode( ' ', $return );
+			}
+			$this->output( $return );
+		} elseif ( is_array( $return ) || strcasecmp( $format, 'json' ) === 0 ) {
+			// return json format by default for an array
+			$this->output( FormatJson::encode( $return ) );
 		} else { // string
 			$this->output( $return );
 		}
@@ -73,6 +149,11 @@ class GetMediawikiSettings extends Maintenance {
 			global $wgExtensionFunctions;
 			$wgExtensionFunctions = [];
 		};
+	}
+
+	private static function getExtensionsThings() {
+		$extensionRegistry = ExtensionRegistry::getInstance();
+		return $extensionRegistry->getAllThings();
 	}
 }
 
