@@ -228,7 +228,8 @@ RUN set -x; \
 	cd $MW_HOME/extensions \
 	&& git clone https://gerrit.wikimedia.org/r/mediawiki/extensions/BreadCrumbs2.git \
 	&& cd BreadCrumbs2 \
-	&& git checkout -b $MW_VERSION d95826a74eef014be0d9685bdf66d07af0b37777
+	&& git fetch "https://gerrit.wikimedia.org/r/mediawiki/extensions/BreadCrumbs2" refs/changes/03/701603/1 \
+    && git checkout FETCH_HEAD
 
 # https://www.mediawiki.org/wiki/Extension:RottenLinks version 1.0.11
 RUN set -x; \
