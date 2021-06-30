@@ -95,11 +95,21 @@ Below is the list of evironment variables used by the image:
 
 ## LocalSettings.php
 
-The [LocalSettings.php](https://www.mediawiki.org/wiki/Manual:LocalSettings.php) is divided into three parts:
-- LocalSettings.php will be created automatically upon container startup, contains settings specific to the MediaWiki installed instance such as database connection, [$wgSecretKey](https://www.mediawiki.org/wiki/Manual:$wgSecretKey) and etc. **Should not be changed**
-- DockerSettings.php contains settings specific to the released containers such as database server name, path to programs, installed extensions, etc. **Should be changed if you make changes to the containers only**
-- CustomSettings.php - contains user defined settings such as user rights, extensions settings and etc. **You should make changes there**.
-  `CustomSettings.php` placed in folder `_resources` And will be copied to the container during build
+Depending on the setup approach the container will handle the settings files as below:
+
+* Fresh install:
+** The default `LocalSettings.php` is generated automatically by the MediaWiki's `install.php` script
+** The `DockerSettings.php` contains settings specific to the container, it handles all the specific of this image like
+  automatically enabling of some settings when certain type of cache is enabled, etc. This file is appended to the default
+  `LocalSettings.php` generated above
+* Importing existing database:
+** The `DockerSettings.php` is symlinked directly as root `LocalSettings.php`
+
+## Custom settings files
+
+The container looks for a custom settings file at `_settings/LocalSettings.php` so
+you can mount the `_settings` directory to the container and put the `LocalSettings.php` file there.
+This file will be appended to the bottom of the `DockerSettings.php`
 
 ## Data (images, database)
 
