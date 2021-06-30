@@ -1,6 +1,16 @@
 # WikiTeq's MediaWiki Docker image
 
 The image is based on `centos` and runs [MediaWiki](https://www.mediawiki.org/) software.
+The image consists of the following:
+
+* Apache 2.x web server
+* PHP 7.x
+* Monit
+* ImageMagick + FFMpeg + Curl
+* Composer
+
+**Note**: the image does not conaint a database embed, so it won't work without 
+external MySQL/MariaDB instance connected.
 
 # Quick start
 
