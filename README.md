@@ -9,7 +9,7 @@ The image consists of the following:
 * ImageMagick + FFMpeg + Curl
 * Composer
 
-**Note**: the image does not conaint a database embed, so it won't work without 
+**Note**: the image does not contain a database embed, so it won't work without 
 external MySQL/MariaDB instance connected.
 
 # Quick start
