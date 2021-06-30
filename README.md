@@ -1,42 +1,76 @@
-# Containerized MediaWiki image
+# WikiTeq's MediaWiki Docker image
 
-## Briefly
+The image is based on `centos` and runs [MediaWiki](https://www.mediawiki.org/) software.
 
-This repo contains [Docker Compose](https://docs.docker.com/compose/) containers to run the [MediaWiki](https://www.mediawiki.org/) software.
+# Quick start
 
-Clone the repo. Then create and start the containers:
-```sh
-cd docker-wikiteq-mediawiki
-copy a database dump to the __intdb directory
-copy images to the `docker-wikiteq-mediawiki/_data/mediawiki/images` directory
-docker-compose up
+## From scratch via [Docker Compose](https://docs.docker.com/compose/)
+* Clone the sample stack repository https://github.com/WikiTeq/docker-wikiteq-stack
+* Copy `.env.example` to `.env`
+* Modify the `.env` file if necessary
+* Run `docker-compose up -d`
+
+## From existing wiki dump via [Docker Compose](https://docs.docker.com/compose/)
+* Clone the sample stack repository https://github.com/WikiTeq/docker-wikiteq-stack
+* Copy `.env.example` to `.env`
+* Modify the `.env` file if necessary
+* Copy your existing database dump to `__initdb` directory (both `.sql` and `.gz` formats are supported)
+* Copy your existing `images` directory to `_data/mediawiki/images`
+* Copy your wiki `LocalSettings.php` file to `_settings/LocalSettings.php`
+* Run `docker-compose up -d`
+
+See https://hub.docker.com/_/mysql/ for details on the database dumps importing.
+
+## [Docker Compose](https://docs.docker.com/compose/) base template
+The base minimal `docker-compose.yml` template could look like below:
+
+```yml
+version: '2'
+services:
+  db:
+    image: mysql:8.0
+    command: --default-authentication-plugin=mysql_native_password --expire_logs_days=3
+    restart: unless-stopped
+    environment:
+      - MYSQL_ROOT_HOST=%
+      - MYSQL_ROOT_PASSWORD=${MW_DB_INSTALLDB_PASS:-mediawiki}
+      - MYSQL_DATABASE=${MW_DB_NAME:-mediawiki}
+    volumes:
+      - ./__initdb:/docker-entrypoint-initdb.d
+      - ./_data/mysql:/var/lib/mysql
+
+  web:
+    image: ghcr.io/wikiteq/mediawiki:latest
+    restart: unless-stopped
+    ports:
+      - "${PORT:-80}:80"
+    links:
+      - db
+    environment:
+      # Use .env file to provide values
+      - MW_ADMIN_USER=${MW_ADMIN_USER:-admin}
+      - MW_ADMIN_PASS=${MW_ADMIN_PASS:-admin}
+      - MW_DB_NAME=${MW_DB_NAME:-mediawiki}
+      - MW_DB_INSTALLDB_USER=${MW_DB_INSTALLDB_USER:-root}
+      - MW_DB_INSTALLDB_PASS=${MW_DB_INSTALLDB_PASS:-mediawiki}
+      - MW_DB_USER=${MW_DB_USER:-root}
+      - MW_DB_PASS=${MW_DB_PASS:-mediawiki}
+      - MW_LOAD_SKINS=${MW_LOAD_SKINS:-Vector}
+      - MW_DEFAULT_SKIN=${MW_DEFAULT_SKIN:-Vector}
+      - MW_LOAD_EXTENSIONS=${MW_LOAD_EXTENSIONS:-ParserFunctions,WikiEditor}
+    volumes:
+      - ./_data/mediawiki:/mediawiki
+      - ./_logs/httpd:/var/log/httpd
+      - ./_logs/mediawiki:/var/log/mediawiki
 ```
-Wait for the completion of the build and initialization process and access it via `http://localhost:8081` in a browser.
 
-## Architecture of mediawiki containers
+The latest recommended version of the stack can be found at
+https://github.com/WikiTeq/docker-wikiteq-stack with details
+on the directories structure
 
-Running `sudo docker-compose up` will start the containers:
+# Environment variables
 
-- `db` - MySQL [container](https://hub.docker.com/r/pastakhov/mysql/), used as the database backend for MediaWiki.
-- `web` - Apache/MediaWiki container with PHP 7.4 and MediaWiki 1.35.0
-- `redis` - Redis is an open source key-value store that functions as a data structure server
-
-## Settings
-
-Settings are in the `docker-compose.yml` file, the *environment* sections
-
-also `_resources` contains favicon, logo and styles for chameleon skin
-`CustomSettings.php` contains settings for MediaWiki core and extensions; you should change the settings there.
-
-### db
-Was cloned from the official [mysql](https://hub.docker.com/_/mysql/) container and has the same environment variables.
-The reason that it is better than the official is the ability to automatically update the database when upgrading the version of mysql.
-The only one important environment variable for us is `MYSQL_ROOT_PASSWORD`; it specifies the password that will be set for the MySQL `root` superuser account.
-If changed, make sure that `MW_DB_INSTALLDB_PASS` in the web section was changed too.
-
-### web
-
-#### environment variables
+Below is the list of evironment variables used by the image:
 
 - `MW_SITE_SERVER` configures [$wgServer](https://www.mediawiki.org/wiki/Manual:$wgServer); set this to the server host and include the protocol like `http://my-wiki:8080`
 - `MW_SITE_NAME` configures [$wgSitename](https://www.mediawiki.org/wiki/Manual:$wgSitename)
@@ -86,7 +120,8 @@ docker-compose exec db /bin/bash -c 'mysqldump --all-databases -uroot -p"$MYSQL_
 docker-compose exec web /bin/bash -c 'tar -c $MW_VOLUME $MW_HOME/images 2>/dev/null | base64 -w 0' | base64 -d > backup_$(date +"%Y%m%d_%H%M%S").tar
 ```
 
-picking up the latest changes, stop, rebuld and start containers:
+pick up the latest changes, stop, rebuild and start containers:
+
 ```sh
 cd docker-wikiteq-mediawiki
 git pull
@@ -94,4 +129,5 @@ docker-compose build
 docker-compose stop
 docker-compose up
 ```
+
 The upgrade process is fully automated and includes the launch of all necessary maintenance scripts.
