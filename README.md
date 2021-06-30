@@ -110,24 +110,3 @@ Docker containers write files to these directories using internal users; most li
 
 Log files stored in `_logs` directory
 
-## Keeping up to date
-
-**Make a full backup of the wiki, including both the database and the files.**
-While the upgrade scripts are well-maintained and robust, things could still go awry.
-```sh
-cd docker-wikiteq-mediawiki
-docker-compose exec db /bin/bash -c 'mysqldump --all-databases -uroot -p"$MYSQL_ROOT_PASSWORD" 2>/dev/null | gzip | base64 -w 0' | base64 -d > backup_$(date +"%Y%m%d_%H%M%S").sql.gz
-docker-compose exec web /bin/bash -c 'tar -c $MW_VOLUME $MW_HOME/images 2>/dev/null | base64 -w 0' | base64 -d > backup_$(date +"%Y%m%d_%H%M%S").tar
-```
-
-pick up the latest changes, stop, rebuild and start containers:
-
-```sh
-cd docker-wikiteq-mediawiki
-git pull
-docker-compose build
-docker-compose stop
-docker-compose up
-```
-
-The upgrade process is fully automated and includes the launch of all necessary maintenance scripts.
