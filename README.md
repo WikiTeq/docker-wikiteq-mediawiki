@@ -120,3 +120,38 @@ Docker containers write files to these directories using internal users; most li
 
 Log files stored in `_logs` directory
 
+# Runtime directories structure
+
+* `/mediawiki` - the **volume** that stores `images`, `cache` and various extension persistent files like
+`compiled_templates` for `Widgets` or `config` files for SMW extension which are being symlinked into `/var/www/html/w`
+* `/mw_origin_files` - a temp/backup directory to toss some of original files and directories of the wiki core
+* `/var/www/html/w` - the main wiki web root
+* `/var/log/apache2` - logs for Apache web server
+
+# Service scripts
+
+* `run-apache.sh` - main entrypoint
+* `mwjobrunner.sh` - runs MediaWiki jobs via job queue
+* `mwtranscoder.sh` - runs transcoding jobs via job queue
+* `mwsitemapgen.sh` - generates sitemaps
+* `rotatelogs-compress.sh` - rotates and compresses the logs
+
+# Entrypoint
+
+The entrypoint is `run-apache.sh` script. This script does all the necessary stuff related to the
+initial container setup, detecting settings, detecting the need to do a fresh wiki install or
+database initialization. The script is also in response of stating all the rest of the service scripts.
+
+Simplified actions taken are as below:
+
+* Fetch necessary settings via `getMediawikiSettings.php`
+* Do necessary checks to ensure we're good to go
+* Syncs `/mw_origin_files` with `/var/www/html/w`
+* Sets directories permissions
+* Waits for other services to start
+* Starts `maintenance/install.php` (if it's a fresh installation) and appends the `DockerSettings.php` to the bottom
+of generated `/var/www/html/w/LocalSettings.php`
+* Or symlinks `/var/www/html/w/DockerSettings.php` -> `/mediawiki/LocalSettings.php`
+* Starts service scripts
+* Runs `maintenance/update.php` and SMW maintenance scripts
+* Starts the Apache

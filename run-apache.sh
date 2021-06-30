@@ -43,7 +43,7 @@ else
     echo "Add MW_SITE_HOST '172.17.0.1 $MW_SITE_HOST' to /etc/hosts"
     echo "172.17.0.1 $MW_SITE_HOST # MW_SITE_HOST" >> ~/hosts.new
 fi
-cp -f ~/hosts.new /etc/hosts
+cp -f ~/hosts.new /etc/hosts2
 
 # Create needed directories
 rsync -avh --ignore-existing "$MW_ORIGIN_FILES"/ "$MW_VOLUME"/
