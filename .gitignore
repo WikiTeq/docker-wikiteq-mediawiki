@@ -10,3 +10,4 @@ cscope.out
 *.orig
 .desktop
 .directory
+node_modules

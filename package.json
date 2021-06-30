@@ -1,0 +1,22 @@
+{
+  "name": "docker-wikiteq-mediawiki",
+  "private": true,
+  "version": "1.0.0",
+  "description": "The image is based on `centos` and runs [MediaWiki](https://www.mediawiki.org/) software. The image consists of the following:",
+  "scripts": {
+    "test": "dockerfilelint Dockerfile"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/WikiTeq/docker-wikiteq-mediawiki.git"
+  },
+  "author": "WikiTeq",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/WikiTeq/docker-wikiteq-mediawiki/issues"
+  },
+  "homepage": "https://github.com/WikiTeq/docker-wikiteq-mediawiki#readme",
+  "dependencies": {
+    "dockerfilelint": "^1.8.0"
+  }
+}

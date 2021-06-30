@@ -1,7 +1,6 @@
 FROM centos:7.9.2009 as base
 
-MAINTAINER pastakhov@yandex.ru
-
+LABEL maintainers="pastakhov@yandex.ru,alexey@wikiteq.com"
 LABEL org.opencontainers.image.source=https://github.com/WikiTeq/docker-wikiteq-mediawiki
 
 ENV MW_VERSION=REL1_35 \
