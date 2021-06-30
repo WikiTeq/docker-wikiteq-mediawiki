@@ -92,8 +92,166 @@ Below is the list of evironment variables used by the image:
 - `MW_SHOW_EXCEPTION_DETAILS` if `true` (by default) configures [$wgShowExceptionDetails](https://www.mediawiki.org/wiki/Manual:$wgShowExceptionDetails) as true.
 - `PHP_LOG_ERRORS` specifies `log_errors` parameter in `php.ini` file.
 - `PHP_ERROR_REPORTING` specifies `error_reporting` parameter in `php.ini` file. `E_ALL` by default, on production should be changed to `E_ALL & ~E_DEPRECATED & ~E_STRICT`.
+- `MW_ENABLE_SITEMAP_GENERATOR` defines if sitemap generation is enabled or not
+- `MW_SITEMAP_PAUSE_DAYS` if the above is enabled, sets the delys between sitemap regenerations
+- `PHP_UPLOAD_MAX_FILESIZE` sets max upload size
+- `PHP_POST_MAX_SIZE` sets max post size
+- `LOG_FILES_COMPRESS_DELAY` sets logs compression delay in seconds
+- `LOG_FILES_REMOVE_OLDER_THAN_DAYS` sets lifespan for old logs
+- `MW_ENABLE_TRANSCODER` defines if the transcoder service is enabled
+- `MW_JOB_TRANSCODER_PAUSE` sets the transcoder service delay in seconds
+- `MW_ENABLE_JOB_RUNNER` defines if the job runner service is enabled
+- `MW_JOB_RUNNER_PAUSE` sets the job runner service delay in seconds
+- `MW_ENABLE_EMAIL` controls the `$wgEnableEmail`
+- `MW_ENABLE_USER_EMAIL` controls the `$wgEnableUserEmail`
+- `MW_EMERGENCY_CONTACT` controls the `$wgEmergencyContact`
+- `MW_PASSWORD_SENDER` controls the `$wgPasswordSender`
+- `MW_DB_TYPE` controls the `$wgDBtype`
+- `MW_DB_SERVER` controls the `$wgDBserver`
+- `MW_DB_NAME` controls the `$wgDBname`
+- `MW_USE_CACHE_DIRECTORY` controls the `$wgCacheDirectory`, if set to `true` puts `$IP/cache` as a value
+- `MW_SECRET_KEY` controls the `$wgSecretKey`
+- `MW_USE_IMAGE_MAGIC` controls the `$wgUseImageMagick`
+- `MW_LOAD_SKINS` controls the list of skins to load via `wfLoadSkin`
+- `MW_LOAD_EXTENSIONS` controls the list of extension to enable out of the pre-installed exntesions list (see below)
 
-## LocalSettings.php
+# Pre-installed extensions
+
+The image has the following extensions pre-installed, there extensions can be enabled via `MW_LOAD_EXTENSIONS` env:
+
+* AdvancedSearch
+* AJAXPoll
+* AntiSpoof
+* ApprovedRevs
+* Arrays
+* BetaFeatures
+* Bootstrap
+* BreadCrumbs2
+* CategoryTree
+* ChangeAuthor
+* CharInsert
+* CheckUser
+* CirrusSearch
+* Elastica
+* Cite
+* CiteThisPage
+* CodeEditor
+* CodeMirror
+* Collection
+* CommentStreams
+* CommonsMetadata
+* ConfirmAccount
+* ConfirmEdit
+* ConfirmEdit/QuestyCaptcha
+* ConfirmEdit/ReCaptchaNoCaptcha
+* ContactPage
+* DataTransfer
+* Description2
+* Disambiguator
+* DisplayTitle
+* Echo
+* EditUser
+* EmbedVideo
+* EncryptedUploads
+* EventLogging
+* EventStreamConfig
+* Favorites
+* Flow
+* Gadgets
+* googleAnalytics
+* GoogleAnalyticsMetrics
+* GoogleDocCreator
+* GoogleDocTag
+* GTag
+* HeaderTabs
+* HeadScript
+* HTMLTags
+* IframePage
+* ImageMap
+* InputBox
+* Interwiki
+* Lazyload
+* LinkSuggest
+* LinkTarget
+* LiquidThreads
+* LocalisationUpdate
+* LockAuthor
+* Lockdown
+* LookupUser
+* Loops
+* Maps
+* MassMessage
+* MassMessageEmail
+* MassPasswordReset
+* Math
+* MathJax
+* Mendeley
+* MobileDetect
+* MsUpload
+* MultimediaViewer
+* MyVariables
+* NCBITaxonomyLookup
+* Nuke
+* OATHAuth
+* PageExchange
+* PageImages
+* ParserFunctions
+* PdfHandler
+* Poem
+* Popups
+* PubmedParser
+* Renameuser
+* ReplaceText
+* RottenLinks
+* SaveSpinner
+* Scopus
+* Scribunto
+* SecureLinkFixer
+* SelectCategory
+* SemanticExternalQueryLookup
+* SemanticExtraSpecialProperties
+* SemanticCompoundQueries
+* SemanticDrilldown
+* SemanticQueryInterface
+* SemanticResultFormats
+* ShowMe
+* SimpleChanges
+* Skinny
+* SkinPerNamespace
+* SkinPerPage
+* SocialProfile
+* SoundManager2Button
+* SpamBlacklist
+* SRFEventCalendarMod
+* Survey
+* Sync
+* SyntaxHighlight_GeSHi
+* Tabber
+* Tabs
+* TemplateData
+* TemplateStyles
+* TextExtracts
+* Thanks
+* TimedMediaHandler
+* TinyMCE
+* TitleBlacklist
+* TwitterTag
+* UniversalLanguageSelector
+* UploadWizard
+* UploadWizardExtraButtons
+* UrlGetParameters
+* UserMerge
+* Variables
+* VEForAll
+* VisualEditor
+* VoteNY
+* Widgets
+* WikiEditor
+* WikiForum
+* WikiSEO
+* YouTube
+
+# LocalSettings.php
 
 Depending on the setup approach the container will handle the settings files as below:
 
@@ -105,18 +263,18 @@ Depending on the setup approach the container will handle the settings files as 
 * Importing existing database:
 ** The `DockerSettings.php` is symlinked directly as root `LocalSettings.php`
 
-## Custom settings files
+# Custom settings files
 
 The container looks for a custom settings file at `_settings/LocalSettings.php` so
 you can mount the `_settings` directory to the container and put the `LocalSettings.php` file there.
 This file will be appended to the bottom of the `DockerSettings.php`
 
-## Data (images, database)
+# Data (images, database)
 
 Data like uploaded images and the database files stored in the `_data` directory
 Docker containers write files to these directories using internal users; most likely you cannot change/remove these directories until you change permissions
 
-## Log files
+# Log files
 
 Log files stored in `_logs` directory
 
