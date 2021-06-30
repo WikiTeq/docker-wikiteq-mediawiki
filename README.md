@@ -112,8 +112,8 @@ Below is the list of evironment variables used by the image:
 - `MW_USE_CACHE_DIRECTORY` controls the `$wgCacheDirectory`, if set to `true` puts `$IP/cache` as a value
 - `MW_SECRET_KEY` controls the `$wgSecretKey`
 - `MW_USE_IMAGE_MAGIC` controls the `$wgUseImageMagick`
-- `MW_LOAD_SKINS` controls the list of skins to load via `wfLoadSkin`
-- `MW_LOAD_EXTENSIONS` controls the list of extension to enable out of the pre-installed exntesions list (see below)
+- `MW_LOAD_SKINS` controls the list of extension to enable out of the pre-installed skins list (see below)
+- `MW_LOAD_EXTENSIONS` controls the list of extension to enable out of the pre-installed extensions list (see below)
 
 # Pre-installed extensions
 
@@ -250,6 +250,18 @@ The image has the following extensions pre-installed, there extensions can be en
 * WikiForum
 * WikiSEO
 * YouTube
+
+# Pre-installed skins
+
+The image has the following skins pre-installed, there extensions can be enabled via `MW_LOAD_SKINS` env:
+
+* chameleon
+* CologneBlue
+* Modern
+* MonoBook
+* Refreshed
+* Timeless
+* Vector
 
 # LocalSettings.php
 
