@@ -631,7 +631,7 @@ RUN set -x; \
 	cd $MW_HOME/skins/Refreshed \
 	&& patch -u -b includes/RefreshedTemplate.php -i /tmp/skin-refreshed.patch
 
-# WLDR-92, WLDR-125, probably need to be removed if there will be a similar \
+# WLDR-92, WLDR-125, probably need to be removed if there will be a similar
 # change of UserGroupManager on future wiki releases
 COPY patches/ugm.patch /tmp/ugm.patch
 RUN set -x; \

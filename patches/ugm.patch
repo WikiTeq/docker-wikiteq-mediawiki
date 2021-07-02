@@ -21,3 +21,4 @@ index f5cf251..b409bd9 100644
 +		}
  		return $this->userGroupCache[$userKey][self::CACHE_EFFECTIVE];
  	}
+
