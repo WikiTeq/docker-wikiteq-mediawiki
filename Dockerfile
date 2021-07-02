@@ -629,7 +629,14 @@ RUN set -x; \
 COPY patches/skin-refreshed.patch /tmp/skin-refreshed.patch
 RUN set -x; \
 	cd $MW_HOME/skins/Refreshed \
-	&& patch -u -b includes/RefreshedTemplate.php -i /tmp/skin-refreshed.patch
+	&& patch -u -b includes/RefreshedTemplate.php -i /tmp/skin-refreshed.patch \
+
+# WLDR-92, WLDR-125, probably need to be removed if there will be a similar \
+# change of UserGroupManager on future wiki releases
+COPY patches/ugm.patch /tmp/ugm.patch
+RUN set -x; \
+    cd $MW_HOME \
+    && git apply /tmp/ugm.patch
 
 # TODO: remove for 1.36+, see https://phabricator.wikimedia.org/T281043
 COPY patches/social-profile-REL1_35.44b4f89.diff /tmp/social-profile-REL1_35.44b4f89.diff
