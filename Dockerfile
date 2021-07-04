@@ -25,7 +25,7 @@ RUN set -x; \
 	&& yum -y install httpd php php-cli php-mysqlnd php-gd php-mbstring php-xml php-intl php-opcache php-pecl-apcu php-redis \
 		git composer mysql wget unzip ImageMagick python-pygments ssmtp patch vim mc ffmpeg curl monit clamav --exclude=clamav-update \
 # remove clamav virus signature data, because we use clamav outside of the docker container
-	&& rm -fr /var/lib/clamav/* \0
+	&& rm -fr /var/lib/clamav/* \
 	&& mkdir -p $MW_ORIGIN_FILES \
 	&& mkdir -p $MW_HOME
 
