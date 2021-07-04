@@ -7,6 +7,7 @@ LABEL org.opencontainers.image.source=https://github.com/WikiTeq/docker-wikiteq-
 ENV MW_VERSION=REL1_35 \
 	MW_CORE_VERSION=1.35.2 \
 	MW_HOME=/var/www/html/w \
+	MW_LOG=/var/log/mediawiki \
 	MW_VOLUME=/mediawiki \
 	MW_ORIGIN_FILES=/mw_origin_files \
 	WWW_USER=apache \
@@ -27,7 +28,8 @@ RUN set -x; \
 # remove clamav virus signature data, because we use clamav outside of the docker container
 	&& rm -fr /var/lib/clamav/* \
 	&& mkdir -p $MW_ORIGIN_FILES \
-	&& mkdir -p $MW_HOME
+	&& mkdir -p $MW_HOME \
+	&& mkdir -p $MW_LOG
 
 FROM base as source
 
