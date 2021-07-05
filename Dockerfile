@@ -6,6 +6,7 @@ LABEL org.opencontainers.image.source=https://github.com/WikiTeq/docker-wikiteq-
 ENV MW_VERSION=REL1_35 \
 	MW_CORE_VERSION=1.35.2 \
 	MW_HOME=/var/www/html/w \
+	MW_LOG=/var/log/mediawiki \
 	MW_VOLUME=/mediawiki \
 	MW_ORIGIN_FILES=/mw_origin_files \
 	WWW_USER=apache \
@@ -22,9 +23,12 @@ RUN set -x; \
 	&& yum-config-manager --enable remi-php74 \
 	&& yum -y update \
 	&& yum -y install httpd php php-cli php-mysqlnd php-gd php-mbstring php-xml php-intl php-opcache php-pecl-apcu php-redis \
-		git composer mysql wget unzip ImageMagick python-pygments ssmtp patch vim mc ffmpeg curl monit \
+		git composer mysql wget unzip ImageMagick python-pygments ssmtp patch vim mc ffmpeg curl monit clamav --exclude=clamav-update \
+# remove clamav virus signature data, because we use clamav outside of the docker container
+	&& rm -fr /var/lib/clamav/* \
 	&& mkdir -p $MW_ORIGIN_FILES \
-	&& mkdir -p $MW_HOME
+	&& mkdir -p $MW_HOME \
+	&& mkdir -p $MW_LOG
 
 FROM base as source
 
@@ -411,6 +415,7 @@ ENV MW_AUTOUPDATE=true \
 	LOG_FILES_REMOVE_OLDER_THAN_DAYS=10
 
 COPY ssmtp.conf /etc/ssmtp/ssmtp.conf
+COPY scan.conf /etc/clamd.d/scan.conf
 COPY php_error_reporting.ini php_upload_max_filesize.ini /etc/php.d/
 COPY mediawiki.conf /etc/httpd/conf.d/
 COPY robots.txt .htaccess /var/www/html/
