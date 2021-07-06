@@ -381,6 +381,12 @@ RUN set -x; \
 	cd $MW_HOME/skins/Refreshed \
 	&& patch -u -b includes/RefreshedTemplate.php -i /tmp/skin-refreshed.patch
 
+# TODO: remove for 1.36+, see https://phabricator.wikimedia.org/T281043
+COPY patches/social-profile-REL1_35.44b4f89.diff /tmp/social-profile-REL1_35.44b4f89.diff
+RUN set -x; \
+    cd $MW_HOME/extensions/SocialProfile \
+    && git apply /tmp/social-profile-REL1_35.44b4f89.diff
+
 FROM base as final
 
 COPY --from=source $MW_HOME $MW_HOME
