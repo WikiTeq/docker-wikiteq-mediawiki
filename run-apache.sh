@@ -54,6 +54,8 @@ chgrp -R "$WWW_GROUP" "$MW_VOLUME"
 chmod -R g=rwX "$MW_VOLUME"
 chgrp -R "$WWW_GROUP" /var/log/httpd
 chmod -R g=rwX /var/log/httpd
+chgrp -R "$WWW_GROUP" "$MW_LOG"
+chmod -R go=rwX "$MW_LOG"
 
 if [ "$WG_DB_TYPE" = "sqlite" ]; then
     mkdir -p "$WG_SQLITE_DATA_DIR"
