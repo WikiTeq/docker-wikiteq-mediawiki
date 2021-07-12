@@ -4,7 +4,7 @@ LABEL maintainers="pastakhov@yandex.ru,alexey@wikiteq.com"
 LABEL org.opencontainers.image.source=https://github.com/WikiTeq/docker-wikiteq-mediawiki
 
 ENV MW_VERSION=REL1_35 \
-	MW_CORE_VERSION=1.35.2 \
+	MW_CORE_VERSION=1.35.3 \
 	MW_HOME=/var/www/html/w \
 	MW_LOG=/var/log/mediawiki \
 	MW_VOLUME=/mediawiki \
