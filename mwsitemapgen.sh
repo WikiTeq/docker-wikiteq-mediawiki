@@ -1,8 +1,8 @@
 #!/bin/bash
 
-rotatelogs=( /usr/sbin/rotatelogs -c -f -l -L "$MW_LOG/mwsitemapgen_log.current" "$MW_LOG/mwsitemapgen_log_%Y%m%d" 86400 )
-
 SCRIPT=$MW_HOME/maintenance/generateSitemap.php
+logfileName=mwsitemapgen_log
+
 # Verify the delay is >= 1, otherwise fall back to 1
 if [ "$MW_SITEMAP_PAUSE_DAYS" -lt "1" ]; then
     MW_SITEMAP_PAUSE_DAYS=1
@@ -15,7 +15,15 @@ echo "Starting sitemap generator (in 30 seconds)..."
 sleep 30
 echo Sitemap generator started.
 while true; do
-    date | "${rotatelogs[@]}"
+    logFilePrev="$logfileNow"
+    logfileNow="$MW_LOG/$logfileName"_$(date +%Y%m%d)
+    if [ -n "$logFilePrev" ] && [ "$logFilePrev" != "$logfileNow" ]; then
+        /rotatelogs-compress.sh "$logfileNow" "$logFilePrev" &
+    fi
+
+    date >> "$logfileNow"
+
+    # generate the sitemap
     php "$SCRIPT" \
       --fspath="$MW_HOME/sitemap/" \
       --urlpath=w/sitemap/ \
@@ -23,9 +31,9 @@ while true; do
       --server="$MW_SITE_SERVER" \
       --skip-redirects \
       --identifier=mediawiki \
-      2>&1 | "${rotatelogs[@]}"
+      >> "$logfileNow" 2>&1
 
     # Wait some seconds to let the CPU do other things, like handling web requests, etc
-    echo mwsitemapgen waits for "$SLEEP_DAYS" seconds... | "${rotatelogs[@]}"
+    echo mwsitemapgen waits for "$SLEEP_DAYS" seconds... >> "$logfileNow"
     sleep "$SLEEP_DAYS"
 done
