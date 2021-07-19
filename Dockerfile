@@ -440,10 +440,6 @@ RUN set -x; \
 	&& git clone --single-branch -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/SemanticDrilldown $MW_HOME/extensions/SemanticDrilldown \
 	&& cd $MW_HOME/extensions/SemanticDrilldown \
 	&& git checkout -q 8e03672100457ebfcd65f4b94fd60af80c2eaf4a \
-	# VEForAll
-	&& git clone --single-branch -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/VEForAll $MW_HOME/extensions/VEForAll \
-	&& cd $MW_HOME/extensions/VEForAll \
-	&& git checkout -q 45858c5db1ad30784d4fbb63be16f80f64be7f07 \
 	# HeaderTabs
 	&& git clone --single-branch -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/HeaderTabs $MW_HOME/extensions/HeaderTabs \
 	&& cd $MW_HOME/extensions/HeaderTabs \
@@ -460,6 +456,13 @@ RUN set -x; \
 	&& git clone --single-branch -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/RandomInCategory $MW_HOME/extensions/RandomInCategory \
 	&& cd $MW_HOME/extensions/RandomInCategory \
 	&& git checkout -q 6281429fc91d96cd5c25952984eebd08c1182260
+
+# VEForAll TODO (version 0.3, master), switch back to REL_x for 1.36
+RUN set -x; \
+	cd $MW_HOME/extensions \
+	&& git clone --single-branch -b master https://gerrit.wikimedia.org/r/mediawiki/extensions/VEForAll \
+	&& cd VEForAll \
+	&& git checkout -q 8f83eb6e607b89f6e1a44966e8637cadd7942bd7
 
 # TODO move me above when REL1_35 branch will be created
 RUN set -x; \

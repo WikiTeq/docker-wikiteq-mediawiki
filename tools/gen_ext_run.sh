@@ -95,7 +95,6 @@ Extensions=(
 	"MassMessage"
 	"MassMessageEmail"
 	"SemanticDrilldown"
-	"VEForAll"
 	"HeaderTabs"
 	"UrlGetParameters"
 	"TinyMCE"
