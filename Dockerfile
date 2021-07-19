@@ -108,6 +108,70 @@ RUN set -x; \
 ### Extensions
 RUN set -x; \
 	cd $MW_HOME/extensions \
+	# AdminLinks
+	&& git clone --single-branch -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/AdminLinks $MW_HOME/extensions/AdminLinks \
+	&& cd $MW_HOME/extensions/AdminLinks \
+	&& git checkout -q ea76d25167320f5a0d8a63254bd38ff5582e4ff4 \
+	# ContributionScores
+	&& git clone --single-branch -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/ContributionScores $MW_HOME/extensions/ContributionScores \
+	&& cd $MW_HOME/extensions/ContributionScores \
+	&& git checkout -q de75d9f6904e9b41f7148417cc9fd491164da722 \
+	# ExternalData
+	&& git clone --single-branch -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/ExternalData $MW_HOME/extensions/ExternalData \
+	&& cd $MW_HOME/extensions/ExternalData \
+	&& git checkout -q 70116a96a53c78d1466219d5ddde384677e97c8a \
+	# DismissableSiteNotice
+	&& git clone --single-branch -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/DismissableSiteNotice $MW_HOME/extensions/DismissableSiteNotice \
+	&& cd $MW_HOME/extensions/DismissableSiteNotice \
+	&& git checkout -q ad3a7802f78498e748833886613e28b4f7cb91b8 \
+	# MobileFrontend
+	&& git clone --single-branch -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/MobileFrontend $MW_HOME/extensions/MobileFrontend \
+	&& cd $MW_HOME/extensions/MobileFrontend \
+	&& git checkout -q db7c7843189a9009dde59503e3e3d4cbcab8eaef \
+	# RevisionSlider
+	&& git clone --single-branch -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/RevisionSlider $MW_HOME/extensions/RevisionSlider \
+	&& cd $MW_HOME/extensions/RevisionSlider \
+	&& git checkout -q d1a6af207e26e220d93d16381a58055259575d3b \
+	# SandboxLink
+	&& git clone --single-branch -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/SandboxLink $MW_HOME/extensions/SandboxLink \
+	&& cd $MW_HOME/extensions/SandboxLink \
+	&& git checkout -q 2d7123c29b5e61f2c7d6e81168dc6d261ff93cbd \
+	# OpenIDConnect
+	&& git clone --single-branch -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/OpenIDConnect $MW_HOME/extensions/OpenIDConnect \
+	&& cd $MW_HOME/extensions/OpenIDConnect \
+	&& git checkout -q 19f422146969691ac2e3c9b5b33cf07116c7ee79 \
+	# PluggableAuth
+	&& git clone --single-branch -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/PluggableAuth $MW_HOME/extensions/PluggableAuth \
+	&& cd $MW_HOME/extensions/PluggableAuth \
+	&& git checkout -q d036ae0bf509ce160c4f6a1965c795d4fdae82b4 \
+	# WhoIsWatching
+	&& git clone --single-branch -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/WhoIsWatching $MW_HOME/extensions/WhoIsWatching \
+	&& cd $MW_HOME/extensions/WhoIsWatching \
+	&& git checkout -q 510e95a76fe140890ea83abf75be64ce97f7fd30 \
+	# LabeledSectionTransclusion
+	&& git clone --single-branch -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/LabeledSectionTransclusion $MW_HOME/extensions/LabeledSectionTransclusion \
+	&& cd $MW_HOME/extensions/LabeledSectionTransclusion \
+	&& git checkout -q 8b0ba6952488763201a0defef0499c743ef933f7 \
+	# GlobalNotice
+	&& git clone --single-branch -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/GlobalNotice $MW_HOME/extensions/GlobalNotice \
+	&& cd $MW_HOME/extensions/GlobalNotice \
+	&& git checkout -q f86637d27e6be7c60ec12bb8859f4b76cceb1be2 \
+	# FixedHeaderTable
+	&& git clone --single-branch -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/FixedHeaderTable $MW_HOME/extensions/FixedHeaderTable \
+	&& cd $MW_HOME/extensions/FixedHeaderTable \
+	&& git checkout -q 8f97dd5a1f78644c023f01c730e1a7d30bb07a20 \
+	# Lingo
+	&& git clone --single-branch -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/Lingo $MW_HOME/extensions/Lingo \
+	&& cd $MW_HOME/extensions/Lingo \
+	&& git checkout -q d52e9f595e4cb0db0ba86057a5ef6ac86e9f78d2 \
+	# OpenGraphMeta
+	&& git clone --single-branch -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/OpenGraphMeta $MW_HOME/extensions/OpenGraphMeta \
+	&& cd $MW_HOME/extensions/OpenGraphMeta \
+	&& git checkout -q 5bbb2754497515a08562ad6cf62ed51ab9e588bd \
+	# NumerAlpha
+	&& git clone --single-branch -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/NumerAlpha $MW_HOME/extensions/NumerAlpha \
+	&& cd $MW_HOME/extensions/NumerAlpha \
+	&& git checkout -q ab24279b72af1c199651d4630aa198d39344785f \
 	# DataTransfer
 	&& git clone --single-branch -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/DataTransfer $MW_HOME/extensions/DataTransfer \
 	&& cd $MW_HOME/extensions/DataTransfer \
@@ -359,7 +423,7 @@ RUN set -x; \
 	# CommentStreams
 	&& git clone --single-branch -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/CommentStreams $MW_HOME/extensions/CommentStreams \
 	&& cd $MW_HOME/extensions/CommentStreams \
-	&& git checkout -q 91161ea4cf31df54229b5881a7f96bcbd6fa48ff \
+	&& git checkout -q c40e1c36a1022dd66285b6dda15927c073b0c530 \
 	# GoogleAnalyticsMetrics
 	&& git clone --single-branch -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/GoogleAnalyticsMetrics $MW_HOME/extensions/GoogleAnalyticsMetrics \
 	&& cd $MW_HOME/extensions/GoogleAnalyticsMetrics \
@@ -376,10 +440,10 @@ RUN set -x; \
 	&& git clone --single-branch -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/SemanticDrilldown $MW_HOME/extensions/SemanticDrilldown \
 	&& cd $MW_HOME/extensions/SemanticDrilldown \
 	&& git checkout -q 8e03672100457ebfcd65f4b94fd60af80c2eaf4a \
-	# VEForAll TODO (version 0.3, master), switch back to REL_x for 1.36
-	&& git clone --single-branch -b master https://gerrit.wikimedia.org/r/mediawiki/extensions/VEForAll $MW_HOME/extensions/VEForAll \
+	# VEForAll
+	&& git clone --single-branch -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/VEForAll $MW_HOME/extensions/VEForAll \
 	&& cd $MW_HOME/extensions/VEForAll \
-	&& git checkout -q 8f83eb6e607b89f6e1a44966e8637cadd7942bd7 \
+	&& git checkout -q 45858c5db1ad30784d4fbb63be16f80f64be7f07 \
 	# HeaderTabs
 	&& git clone --single-branch -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/HeaderTabs $MW_HOME/extensions/HeaderTabs \
 	&& cd $MW_HOME/extensions/HeaderTabs \
@@ -467,6 +531,20 @@ RUN set -x; \
 	&& git clone https://github.com/xeyownt/mediawiki-mathjax.git MathJax \
 	&& cd MathJax \
 	&& git checkout -b $MW_VERSION 4afdc226f08f9c2b1471a523d3c64df716b25c6c
+
+# SimpleMathJax
+RUN set -x; \
+	cd $MW_HOME/extensions \
+	&& git clone https://github.com/jmnote/SimpleMathJax.git \
+	&& cd SimpleMathJax \
+	&& git checkout -b $MW_VERSION ddcac9ac1616aed794576f2914ee426879194f0f
+
+# Wiretap
+RUN set -x; \
+	cd $MW_HOME/extensions \
+	&& git clone https://github.com/enterprisemediawiki/Wiretap.git \
+	&& cd Wiretap \
+	&& git checkout -b $MW_VERSION a97b708c3093ea66e7cf625859b1b38178526bab
 
 # https://www.mediawiki.org/wiki/Extension:Skinny
 RUN set -x; \
