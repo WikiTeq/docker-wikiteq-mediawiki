@@ -336,10 +336,6 @@ RUN set -x; \
 	&& git clone --single-branch -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/GoogleDocTag $MW_HOME/extensions/GoogleDocTag \
 	&& cd $MW_HOME/extensions/GoogleDocTag \
 	&& git checkout -q f9fdb27250112fd02d9ff8eeb2a54ecd8c49b08d \
-	# EditUser
-	&& git clone --single-branch -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/EditUser $MW_HOME/extensions/EditUser \
-	&& cd $MW_HOME/extensions/EditUser \
-	&& git checkout -q 5a5f12d73f4f48cfb9198b7c0143e5e6e57d32f6 \
 	# EventLogging
 	&& git clone --single-branch -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/EventLogging $MW_HOME/extensions/EventLogging \
 	&& cd $MW_HOME/extensions/EventLogging \
@@ -417,6 +413,14 @@ RUN set -x; \
 	&& git clone https://gerrit.wikimedia.org/r/mediawiki/extensions/PageExchange \
 	&& cd PageExchange \
     && git checkout -b $MW_VERSION 339056ffba8db1a98ff166aa11f639e5bc1ac665
+
+# This is a commit from master branch
+RUN set -x; \
+        cd $MW_HOME/extensions \
+        # EditAccount
+        && git clone --single-branch -b master https://gerrit.wikimedia.org/r/mediawiki/extensions/EditAccount \
+        && cd EditAccount \
+        && git checkout -q 7da60b98d196dc7bab82ce73e1e88ec82ba03725
 
 RUN set -x; \
 	cd $MW_HOME/extensions \
