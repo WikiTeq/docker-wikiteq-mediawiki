@@ -8,6 +8,8 @@ Options -Indexes
 
 # VisualEditor support
 RewriteRule ^/?w/rest.php/ - [L,NC]
+# Image authorization support
+RewriteRule ^/?w/img_auth.php/ - [L,NC]
 
 # Redirect / to Main Page
 RewriteRule ^/*$ %{DOCUMENT_ROOT}/w/index.php [L]
