@@ -69,6 +69,7 @@ Extensions=(
 	"HeadScript"
 	"Favorites"
 	"GoogleDocTag"
+	EditUser
 	"EventLogging"
 	"EventStreamConfig"
 	"SaveSpinner"
