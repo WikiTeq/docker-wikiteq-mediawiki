@@ -92,6 +92,10 @@ RUN set -x; \
     && git clone -b $MW_VERSION --single-branch https://gerrit.wikimedia.org/r/mediawiki/skins/CologneBlue $MW_HOME/skins/CologneBlue \
     && cd $MW_HOME/skins/CologneBlue \
     && git checkout -q 515a545dfee9f534f74a42057b7a4509076716b4 \
+    # MinervaNeue
+    && git clone -b $MW_VERSION --single-branch https://gerrit.wikimedia.org/r/mediawiki/skins/MinervaNeue $MW_HOME/skins/MinervaNeue \
+    && cd $MW_HOME/skins/MinervaNeue \
+    && git checkout -q 516dda0fbf5a6aa46fe4879c7a8bd23e1aed80be \
     # Modern
     && git clone -b $MW_VERSION --single-branch https://gerrit.wikimedia.org/r/mediawiki/skins/Modern $MW_HOME/skins/Modern \
     && cd $MW_HOME/skins/Modern \

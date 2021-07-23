@@ -8,6 +8,7 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 const DOCKER_SKINS = [
 	'chameleon',
 	'CologneBlue',
+	'MinervaNeue',
 	'Modern',
 	'MonoBook', # bundled
 	'Refreshed',
