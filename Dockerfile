@@ -336,10 +336,10 @@ RUN set -x; \
 	&& git clone --single-branch -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/GoogleDocTag $MW_HOME/extensions/GoogleDocTag \
 	&& cd $MW_HOME/extensions/GoogleDocTag \
 	&& git checkout -q f9fdb27250112fd02d9ff8eeb2a54ecd8c49b08d \
-	# EditUser
-	&& git clone --single-branch -b master https://gerrit.wikimedia.org/r/mediawiki/extensions/EditUser $MW_HOME/extensions/EditUser \
-	&& cd $MW_HOME/extensions/EditUser \
-	&& git checkout -q c6b8cc08d351340f842a604d1b60373a75e96031 \
+	# EditAccount
+	&& git clone --single-branch -b master https://gerrit.wikimedia.org/r/mediawiki/extensions/EditAccount $MW_HOME/extensions/EditAccount \
+	&& cd $MW_HOME/extensions/EditAccount \
+	&& git checkout -q 7da60b98d196dc7bab82ce73e1e88ec82ba03725 \
 	# EventLogging
 	&& git clone --single-branch -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/EventLogging $MW_HOME/extensions/EventLogging \
 	&& cd $MW_HOME/extensions/EventLogging \
