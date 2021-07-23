@@ -427,7 +427,7 @@ RUN set -x; \
 	# CommentStreams
 	&& git clone --single-branch -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/CommentStreams $MW_HOME/extensions/CommentStreams \
 	&& cd $MW_HOME/extensions/CommentStreams \
-	&& git checkout -q c40e1c36a1022dd66285b6dda15927c073b0c530 \
+	&& git checkout -q 91161ea4cf31df54229b5881a7f96bcbd6fa48ff \
 	# GoogleAnalyticsMetrics
 	&& git clone --single-branch -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/GoogleAnalyticsMetrics $MW_HOME/extensions/GoogleAnalyticsMetrics \
 	&& cd $MW_HOME/extensions/GoogleAnalyticsMetrics \
@@ -444,6 +444,10 @@ RUN set -x; \
 	&& git clone --single-branch -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/SemanticDrilldown $MW_HOME/extensions/SemanticDrilldown \
 	&& cd $MW_HOME/extensions/SemanticDrilldown \
 	&& git checkout -q 8e03672100457ebfcd65f4b94fd60af80c2eaf4a \
+	# VEForAll TODO (version 0.3, master), switch back to REL_x for 1.36
+	&& git clone --single-branch -b master https://gerrit.wikimedia.org/r/mediawiki/extensions/VEForAll $MW_HOME/extensions/VEForAll \
+	&& cd $MW_HOME/extensions/VEForAll \
+	&& git checkout -q 8f83eb6e607b89f6e1a44966e8637cadd7942bd7 \
 	# HeaderTabs
 	&& git clone --single-branch -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/HeaderTabs $MW_HOME/extensions/HeaderTabs \
 	&& cd $MW_HOME/extensions/HeaderTabs \
@@ -460,13 +464,6 @@ RUN set -x; \
 	&& git clone --single-branch -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/RandomInCategory $MW_HOME/extensions/RandomInCategory \
 	&& cd $MW_HOME/extensions/RandomInCategory \
 	&& git checkout -q 6281429fc91d96cd5c25952984eebd08c1182260
-
-# VEForAll TODO (version 0.3, master), switch back to REL_x for 1.36
-RUN set -x; \
-	cd $MW_HOME/extensions \
-	&& git clone --single-branch -b master https://gerrit.wikimedia.org/r/mediawiki/extensions/VEForAll \
-	&& cd VEForAll \
-	&& git checkout -q 8f83eb6e607b89f6e1a44966e8637cadd7942bd7
 
 # TODO move me above when REL1_35 branch will be created
 RUN set -x; \
