@@ -47,7 +47,7 @@ const DOCKER_EXTENSIONS = [
 	'Disambiguator',
 	'DisplayTitle',
 	'Echo',
-	'EditUser',
+	'EditAccount',
 	'EmbedVideo',
 	'EncryptedUploads',
 	'EventLogging',

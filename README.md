@@ -160,7 +160,7 @@ The image has the following extensions pre-installed, there extensions can be en
 * Disambiguator
 * DisplayTitle
 * Echo
-* EditUser
+* EditAccount
 * EmbedVideo
 * EncryptedUploads
 * EventLogging
