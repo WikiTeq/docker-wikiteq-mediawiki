@@ -51,7 +51,7 @@ const DOCKER_EXTENSIONS = [
 	'DismissableSiteNotice',
 	'DisplayTitle',
 	'Echo',
-	'EditUser',
+	'EditAccount',
 	'EmbedVideo',
 	'EncryptedUploads',
 	'EventLogging',

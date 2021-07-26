@@ -163,7 +163,7 @@ The image has the following extensions pre-installed, there extensions can be en
 * DismissableSiteNotice
 * DisplayTitle
 * Echo
-* EditUser
+* EditAccount
 * EmbedVideo
 * EncryptedUploads
 * EventLogging
