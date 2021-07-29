@@ -637,6 +637,12 @@ RUN set -x; \
     cd $MW_HOME/extensions/SocialProfile \
     && git apply /tmp/social-profile-REL1_35.44b4f89.diff
 
+# WikiTeq's patch allowing to manage fields visibility site-wide
+COPY patches/SocialProfile-disable-fields.patch /tmp/SocialProfile-disable-fields.patch
+RUN set -x; \
+    cd $MW_HOME/extensions/SocialProfile \
+    && git apply /tmp/SocialProfile-disable-fields.patch
+
 # Cleanup all .git leftovers
 RUN set -x; \
     cd $MW_HOME \
