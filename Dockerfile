@@ -161,13 +161,13 @@ RUN set -x; \
 	&& cd $MW_HOME/extensions/GlobalNotice \
 	&& git checkout -q f86637d27e6be7c60ec12bb8859f4b76cceb1be2 \
 	# FixedHeaderTable
-	&& git clone --single-branch -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/FixedHeaderTable $MW_HOME/extensions/FixedHeaderTable \
+	&& git clone --single-branch -b master https://gerrit.wikimedia.org/r/mediawiki/extensions/FixedHeaderTable $MW_HOME/extensions/FixedHeaderTable \
 	&& cd $MW_HOME/extensions/FixedHeaderTable \
-	&& git checkout -q 8f97dd5a1f78644c023f01c730e1a7d30bb07a20 \
+	&& git checkout -q 5096d0f2cfc2409612484774541cd485494ee7ea \
 	# Lingo
-	&& git clone --single-branch -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/Lingo $MW_HOME/extensions/Lingo \
+	&& git clone --single-branch -b master https://gerrit.wikimedia.org/r/mediawiki/extensions/Lingo $MW_HOME/extensions/Lingo \
 	&& cd $MW_HOME/extensions/Lingo \
-	&& git checkout -q d52e9f595e4cb0db0ba86057a5ef6ac86e9f78d2 \
+	&& git checkout -q d59cdaf9afbb98a0a8b507afdb102a2755dd85a1 \
 	# OpenGraphMeta
 	&& git clone --single-branch -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/OpenGraphMeta $MW_HOME/extensions/OpenGraphMeta \
 	&& cd $MW_HOME/extensions/OpenGraphMeta \
