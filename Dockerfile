@@ -395,7 +395,11 @@ RUN set -x; \
 	# RandomInCategory
 	&& git clone --single-branch -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/RandomInCategory $MW_HOME/extensions/RandomInCategory \
 	&& cd $MW_HOME/extensions/RandomInCategory \
-	&& git checkout -q 6281429fc91d96cd5c25952984eebd08c1182260
+	&& git checkout -q 6281429fc91d96cd5c25952984eebd08c1182260 \
+    # DebugMode, see https://www.mediawiki.org/wiki/Extension:DebugMode
+    && git clone ---single-branch -b master https://github.com/wikimedia/mediawiki-extensions-DebugMode.git $MW_HOME/extensions/DebugMode \
+    && cd $MW_HOME/extensions/DebugMode \
+    && git checkout -q ea803a501175fb3009f0fcde7d9168ef8e374399
 
 # TODO move me above when REL1_35 branch will be created
 RUN set -x; \
@@ -686,7 +690,8 @@ ENV MW_AUTOUPDATE=true \
 	PHP_UPLOAD_MAX_FILESIZE=2M \
 	PHP_POST_MAX_SIZE=8M \
 	LOG_FILES_COMPRESS_DELAY=3600 \
-	LOG_FILES_REMOVE_OLDER_THAN_DAYS=10
+	LOG_FILES_REMOVE_OLDER_THAN_DAYS=10 \
+	MW_DEBUG_MODE=false
 
 COPY ssmtp.conf /etc/ssmtp/ssmtp.conf
 COPY scan.conf /etc/clamd.d/scan.conf
