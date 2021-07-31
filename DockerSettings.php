@@ -46,6 +46,7 @@ const DOCKER_EXTENSIONS = [
 	'ConfirmEdit/ReCaptchaNoCaptcha', # bundled
 	'ContactPage',
 	'DataTransfer',
+	'DebugMode',
 	'Description2',
 	'Disambiguator',
 	'DismissableSiteNotice',
