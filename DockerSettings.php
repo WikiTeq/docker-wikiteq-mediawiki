@@ -46,6 +46,7 @@ const DOCKER_EXTENSIONS = [
 	'ConfirmEdit/ReCaptchaNoCaptcha', # bundled
 	'ContactPage',
 	'DataTransfer',
+	'DebugMode',
 	'Description2',
 	'Disambiguator',
 	'DismissableSiteNotice',
@@ -449,3 +450,6 @@ if ( getenv('MW_ENABLE_SITEMAP_GENERATOR') === 'true' ) {
 		] );
 	};
 }
+
+# Debug mode
+$wgDebugMode = (bool)getenv('MW_DEBUG_MODE');
