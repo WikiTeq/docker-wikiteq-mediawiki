@@ -463,7 +463,15 @@ RUN set -x; \
 	# RandomInCategory
 	&& git clone --single-branch -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/RandomInCategory $MW_HOME/extensions/RandomInCategory \
 	&& cd $MW_HOME/extensions/RandomInCategory \
-	&& git checkout -q 6281429fc91d96cd5c25952984eebd08c1182260
+	&& git checkout -q 6281429fc91d96cd5c25952984eebd08c1182260 \
+	# SimpleMathJax
+	&& git clone --single-branch https://github.com/jmnote/SimpleMathJax.git $MW_HOME/extensions/SimpleMathJax \
+	&& cd $MW_HOME/extensions/SimpleMathJax \
+	&& git checkout -q ddcac9ac1616aed794576f2914ee426879194f0f \
+	# Wiretap
+	&& git clone https://github.com/enterprisemediawiki/Wiretap.git $MW_HOME/extensions/Wiretap \
+	&& cd $MW_HOME/extensions/Wiretap \
+	&& git checkout -q a97b708c3093ea66e7cf625859b1b38178526bab
 
 # TODO move me above when REL1_35 branch will be created
 RUN set -x; \
@@ -535,20 +543,6 @@ RUN set -x; \
 	&& git clone https://github.com/xeyownt/mediawiki-mathjax.git MathJax \
 	&& cd MathJax \
 	&& git checkout -b $MW_VERSION 4afdc226f08f9c2b1471a523d3c64df716b25c6c
-
-# SimpleMathJax
-RUN set -x; \
-	cd $MW_HOME/extensions \
-	&& git clone https://github.com/jmnote/SimpleMathJax.git \
-	&& cd SimpleMathJax \
-	&& git checkout -b $MW_VERSION ddcac9ac1616aed794576f2914ee426879194f0f
-
-# Wiretap
-RUN set -x; \
-	cd $MW_HOME/extensions \
-	&& git clone https://github.com/enterprisemediawiki/Wiretap.git \
-	&& cd Wiretap \
-	&& git checkout -b $MW_VERSION a97b708c3093ea66e7cf625859b1b38178526bab
 
 # https://www.mediawiki.org/wiki/Extension:Skinny
 RUN set -x; \
