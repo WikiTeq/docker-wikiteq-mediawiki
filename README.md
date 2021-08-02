@@ -8,6 +8,7 @@ The image consists of the following:
 * Monit
 * ImageMagick + FFMpeg + Curl
 * Composer
+* ClamAV client
 
 **Note**: the image does not contain a database embed, so it won't work without 
 external MySQL/MariaDB instance connected.
@@ -272,6 +273,32 @@ The image has the following skins pre-installed, there extensions can be enabled
 * Refreshed
 * Timeless
 * Vector
+
+# ClamAV client
+
+The image has the ClamAV client installed, it expects to have a ClamD installed on the Docker host machine (or somewhere else) and won’t work without it.
+ClamAV client does not contain the viruses signature database and sends files for scanning to ClamD via TCP Socket (172.17.0.1:3310 by default).
+
+You can install and configure ClamD on the Docker host machine to listen on `TCPSocket 3310` (ClamD default TCP port) and `TCPAddr 172.17.0.1` (Docker default gateway IP available for all containers).
+Just add these parameters to `/etc/clamav/clamd.conf` file.
+And define the antivirus configuration in `LocalSettings.php` file:
+```
+# Antivirus configuration
+$wgAntivirusSetup = [
+	'clamavD' => [
+	    'command' => "/usr/bin/clamdscan --no-summary --fdpass %f",
+	    'codemap' => [
+	        "0"   =>  AV_NO_VIRUS,     #no virus
+	        "1"   =>  AV_VIRUS_FOUND,  #virus found
+	        "52"  =>  AV_SCAN_ABORTED, #unsupported file format (probably immune)
+	        "*"   =>  AV_SCAN_FAILED,  #else scan failed
+	    ],
+	    'messagepattern' => '/.*?:(.*)/sim', 
+	], 
+];
+# Use daemonized scanner through socket
+$wgAntivirus = "clamavD";
+```
 
 # LocalSettings.php
 
