@@ -8,6 +8,7 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 const DOCKER_SKINS = [
 	'chameleon',
 	'CologneBlue',
+	'MinervaNeue',
 	'Modern',
 	'MonoBook', # bundled
 	'Refreshed',
@@ -16,6 +17,7 @@ const DOCKER_SKINS = [
 ];
 
 const DOCKER_EXTENSIONS = [
+	'AdminLinks',
 	'AdvancedSearch',
 	'AJAXPoll',
 	'AntiSpoof',
@@ -29,6 +31,7 @@ const DOCKER_EXTENSIONS = [
 	'CharInsert',
 	'CheckUser',
 	'CirrusSearch',
+	'ContributionScores',
 	'Elastica',
 	'Cite', # bundled
 	'CiteThisPage', # bundled
@@ -45,6 +48,7 @@ const DOCKER_EXTENSIONS = [
 	'DataTransfer',
 	'Description2',
 	'Disambiguator',
+	'DismissableSiteNotice',
 	'DisplayTitle',
 	'Echo',
 	'EditAccount',
@@ -52,14 +56,18 @@ const DOCKER_EXTENSIONS = [
 	'EncryptedUploads',
 	'EventLogging',
 	'EventStreamConfig',
+	'ExternalData',
 	'Favorites',
+	'FixedHeaderTable',
 	'Flow',
 	'Gadgets', # bundled
+	'GlobalNotice',
 	'googleAnalytics',
 	'GoogleAnalyticsMetrics',
 	'GoogleDocCreator',
 	'GoogleDocTag',
 	'GTag',
+	'HeaderFooter',
 	'HeaderTabs',
 	'HeadScript',
 	'HTMLTags',
@@ -67,7 +75,9 @@ const DOCKER_EXTENSIONS = [
 	'ImageMap', # bundled
 	'InputBox', # bundled
 	'Interwiki', # bundled
+	'LabeledSectionTransclusion',
 	'Lazyload',
+	'Lingo',
 	'LinkSuggest',
 	'LinkTarget',
 	'LiquidThreads',
@@ -84,23 +94,30 @@ const DOCKER_EXTENSIONS = [
 	'MathJax',
 	'Mendeley',
 	'MobileDetect',
+	'MobileFrontend',
 	'MsUpload',
 	'MultimediaViewer', # bundled
 	'MyVariables',
 	'NCBITaxonomyLookup',
 	'Nuke', # bundled
+	'NumerAlpha',
 	'OATHAuth', # bundled
+	'OpenGraphMeta',
+	'OpenIDConnect',
 	'PageExchange',
 	'PageImages', # bundled
 //	'PageForms',   must be enabled manually after enableSemantics()
 	'ParserFunctions', # bundled
 	'PdfHandler', # bundled
+	'PluggableAuth',
 	'Poem', # bundled
 	'Popups',
 	'PubmedParser',
 	'Renameuser', # bundled
 	'ReplaceText', # bundled
+	'RevisionSlider',
 	'RottenLinks',
+	'SandboxLink',
 	'SaveSpinner',
 	'Scopus',
 	'Scribunto', # bundled
@@ -112,8 +129,10 @@ const DOCKER_EXTENSIONS = [
 	'SemanticDrilldown',
 	'SemanticQueryInterface',
 	'SemanticResultFormats',
+	'SemanticScribunto',
 	'ShowMe',
 	'SimpleChanges',
+	'SimpleMathJax',
 	'Skinny',
 	'SkinPerNamespace',
 	'SkinPerPage',
@@ -121,11 +140,13 @@ const DOCKER_EXTENSIONS = [
 	'SoundManager2Button',
 	'SpamBlacklist', # bundled
 	'SRFEventCalendarMod',
+	'SubPageList',
 	'Survey',
 	'Sync',
 	'SyntaxHighlight_GeSHi', # bundled
 	'Tabber',
 	'Tabs',
+	'TalkRight',
 	'TemplateData', # bundled
 	'TemplateStyles',
 	'TextExtracts', # bundled
@@ -143,10 +164,12 @@ const DOCKER_EXTENSIONS = [
 	'VEForAll',
 	'VisualEditor', # bundled
 	'VoteNY',
+	'WhoIsWatching',
 	'Widgets',
 	'WikiEditor', # bundled
 	'WikiForum',
 	'WikiSEO',
+	'Wiretap',
 	'YouTube',
 ];
 

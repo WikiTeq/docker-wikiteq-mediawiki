@@ -130,6 +130,7 @@ Below is the list of evironment variables used by the image:
 
 The image has the following extensions pre-installed, there extensions can be enabled via `MW_LOAD_EXTENSIONS` env:
 
+* AdminLinks
 * AdvancedSearch
 * AJAXPoll
 * AntiSpoof
@@ -143,6 +144,7 @@ The image has the following extensions pre-installed, there extensions can be en
 * CharInsert
 * CheckUser
 * CirrusSearch
+* ContributionScores
 * Elastica
 * Cite
 * CiteThisPage
@@ -159,6 +161,7 @@ The image has the following extensions pre-installed, there extensions can be en
 * DataTransfer
 * Description2
 * Disambiguator
+* DismissableSiteNotice
 * DisplayTitle
 * Echo
 * EditAccount
@@ -166,14 +169,18 @@ The image has the following extensions pre-installed, there extensions can be en
 * EncryptedUploads
 * EventLogging
 * EventStreamConfig
+* ExternalData
 * Favorites
+* FixedHeaderTable
 * Flow
 * Gadgets
+* GlobalNotice
 * googleAnalytics
 * GoogleAnalyticsMetrics
 * GoogleDocCreator
 * GoogleDocTag
 * GTag
+* HeaderFooter
 * HeaderTabs
 * HeadScript
 * HTMLTags
@@ -181,7 +188,9 @@ The image has the following extensions pre-installed, there extensions can be en
 * ImageMap
 * InputBox
 * Interwiki
+* LabeledSectionTransclusion
 * Lazyload
+* Lingo
 * LinkSuggest
 * LinkTarget
 * LiquidThreads
@@ -198,22 +207,29 @@ The image has the following extensions pre-installed, there extensions can be en
 * MathJax
 * Mendeley
 * MobileDetect
+* MobileFrontend
 * MsUpload
 * MultimediaViewer
 * MyVariables
 * NCBITaxonomyLookup
 * Nuke
+* NumerAlpha
 * OATHAuth
+* OpenGraphMeta
+* OpenIDConnect
 * PageExchange
 * PageImages
 * ParserFunctions
 * PdfHandler
+* PluggableAuth
 * Poem
 * Popups
 * PubmedParser
 * Renameuser
 * ReplaceText
+* RevisionSlider
 * RottenLinks
+* SandboxLink
 * SaveSpinner
 * Scopus
 * Scribunto
@@ -225,8 +241,10 @@ The image has the following extensions pre-installed, there extensions can be en
 * SemanticDrilldown
 * SemanticQueryInterface
 * SemanticResultFormats
+* SemanticScribunto
 * ShowMe
 * SimpleChanges
+* SimpleMathJax
 * Skinny
 * SkinPerNamespace
 * SkinPerPage
@@ -234,11 +252,13 @@ The image has the following extensions pre-installed, there extensions can be en
 * SoundManager2Button
 * SpamBlacklist
 * SRFEventCalendarMod
+* SubPageList
 * Survey
 * Sync
 * SyntaxHighlight_GeSHi
 * Tabber
 * Tabs
+* TalkRight
 * TemplateData
 * TemplateStyles
 * TextExtracts
@@ -256,10 +276,12 @@ The image has the following extensions pre-installed, there extensions can be en
 * VEForAll
 * VisualEditor
 * VoteNY
+* WhoIsWatching
 * Widgets
 * WikiEditor
 * WikiForum
 * WikiSEO
+* Wiretap
 * YouTube
 
 # Pre-installed skins
@@ -268,6 +290,7 @@ The image has the following skins pre-installed, there extensions can be enabled
 
 * chameleon
 * CologneBlue
+* MinervaNeue
 * Modern
 * MonoBook
 * Refreshed
