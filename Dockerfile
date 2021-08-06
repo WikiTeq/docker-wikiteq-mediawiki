@@ -471,7 +471,11 @@ RUN set -x; \
 	# Wiretap
 	&& git clone https://github.com/enterprisemediawiki/Wiretap.git $MW_HOME/extensions/Wiretap \
 	&& cd $MW_HOME/extensions/Wiretap \
-	&& git checkout -q a97b708c3093ea66e7cf625859b1b38178526bab
+	&& git checkout -q a97b708c3093ea66e7cf625859b1b38178526bab \
+    # PDFEmbed
+    && git clone https://github.com/WolfgangFahl/PDFEmbed.git $MW_HOME/extensions/PDFEmbed \
+    && cd $MW_HOME/extensions/PDFEmbed \
+    && git checkout -q 04f5712db04cdd6deb28a60858aa16f9a269be72
 
 # TODO move me above when REL1_35 branch will be created
 RUN set -x; \

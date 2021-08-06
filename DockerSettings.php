@@ -108,6 +108,7 @@ const DOCKER_EXTENSIONS = [
 	'PageImages', # bundled
 //	'PageForms',   must be enabled manually after enableSemantics()
 	'ParserFunctions', # bundled
+	'PDFEmbed',
 	'PdfHandler', # bundled
 	'PluggableAuth',
 	'Poem', # bundled
