@@ -48,6 +48,7 @@ RUN set -x; \
 	 curl \
 	 monit \
 	 clamav \
+	 cronie \
 	 --exclude=clamav-update \
 	&& yum clean all \
 	# remove clamav virus signature data, because we use clamav outside of the docker container
@@ -766,7 +767,8 @@ ENV MW_AUTOUPDATE=true \
 	PHP_UPLOAD_MAX_FILESIZE=2M \
 	PHP_POST_MAX_SIZE=8M \
 	LOG_FILES_COMPRESS_DELAY=3600 \
-	LOG_FILES_REMOVE_OLDER_THAN_DAYS=10
+	LOG_FILES_REMOVE_OLDER_THAN_DAYS=10 \
+    MEDIAWIKI_MAINTENANCE_AUTO_ENABLED=false
 
 COPY ssmtp.conf /etc/ssmtp/ssmtp.conf
 COPY scan.conf /etc/clamd.d/scan.conf
@@ -775,6 +777,14 @@ COPY mediawiki.conf /etc/httpd/conf.d/
 COPY robots.txt .htaccess /var/www/html/
 COPY run-apache.sh mwjobrunner.sh mwsitemapgen.sh mwtranscoder.sh monit-slack.sh rotatelogs-compress.sh getMediawikiSettings.php /
 COPY DockerSettings.php $MW_HOME/DockerSettings.php
+
+# Installs mediawiki-maintenance-automation scripts
+# This is disabled by default. You can enable this by adding
+# MEDIAWIKI_MAINTENANCE_AUTO_ENABLED=true environment variable to docker-compose.yml
+COPY --from=ghcr.io/wikiteq/mediawiki-maintenance-automation:latest /root/mediawiki-maintenance-automation /root/mediawiki-maintenance-automation
+RUN set -x; \
+	cd /root/mediawiki-maintenance-automation \
+	&& ./setupWikiCron.sh $MW_HOME --silent
 
 # update packages every time!
 RUN set -x; \
