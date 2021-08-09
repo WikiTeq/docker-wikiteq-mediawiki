@@ -399,7 +399,7 @@ RUN set -x; \
 	# Favorites
 	&& git clone --single-branch -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/Favorites $MW_HOME/extensions/Favorites \
 	&& cd $MW_HOME/extensions/Favorites \
-	&& git checkout -q 782afc856a35c37b1a508ce37f7402954cc32efb \
+	&& git checkout -q 8222dad4f31c39d0a83f9996405c36ea374237f7 \
 	# GoogleDocTag
 	&& git clone --single-branch -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/GoogleDocTag $MW_HOME/extensions/GoogleDocTag \
 	&& cd $MW_HOME/extensions/GoogleDocTag \
