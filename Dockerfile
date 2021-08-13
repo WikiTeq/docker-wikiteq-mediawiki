@@ -711,6 +711,12 @@ RUN set -x; \
 	cd $MW_HOME/skins/Refreshed \
 	&& patch -u -b includes/RefreshedTemplate.php -i /tmp/skin-refreshed.patch
 
+# Allow to modify headelement in the Vector skin, see https://wikiteq.atlassian.net/browse/FAM-7
+COPY patches/skin-vector-addVectorGeneratedSkinDataHook.patch /tmp/skin-vector-addVectorGeneratedSkinDataHook.patch
+RUN set -x; \
+	cd $MW_HOME/skins/Vector \
+	&& git apply /tmp/skin-vector-addVectorGeneratedSkinDataHook.patch
+
 # WLDR-92, WLDR-125, probably need to be removed if there will be a similar
 # change of UserGroupManager on future wiki releases
 COPY patches/ugm.patch /tmp/ugm.patch
