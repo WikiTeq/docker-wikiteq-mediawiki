@@ -770,7 +770,7 @@ ENV MW_AUTOUPDATE=true \
 
 COPY ssmtp.conf /etc/ssmtp/ssmtp.conf
 COPY scan.conf /etc/clamd.d/scan.conf
-COPY php_error_reporting.ini php_upload_max_filesize.ini /etc/php.d/
+COPY php_max_execution_time.ini php_error_reporting.ini php_upload_max_filesize.ini /etc/php.d/
 COPY mediawiki.conf /etc/httpd/conf.d/
 COPY robots.txt .htaccess /var/www/html/
 COPY run-apache.sh mwjobrunner.sh mwsitemapgen.sh mwtranscoder.sh monit-slack.sh rotatelogs-compress.sh getMediawikiSettings.php /
