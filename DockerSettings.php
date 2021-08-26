@@ -405,6 +405,9 @@ if ( $tmpProxy ) {
 		// Proxy can be set as a name of proxy container
 		if ( !$trusted ) {
 			foreach ( $wgCdnServers as $proxy ) {
+				if ( strpos( $proxy, ':' ) !== false ) { // trim port part away
+					$proxy = strstr( $proxy, ':', true );
+				}
 				if ( !ip2long( $proxy ) ) { // If proxy is a hostname
 					if ( gethostbyname( $proxy ) === $ip ) { // And hostname resolves into provided IP
 						$trusted = true;
