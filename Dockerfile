@@ -730,6 +730,11 @@ RUN set -x; \
     cd $MW_HOME/extensions/SocialProfile \
     && git apply /tmp/SocialProfile-disable-fields.patch
 
+COPY patches/CommentStreams.REL1_35.showSearchHitTitle.diff /tmp/CommentStreams.REL1_35.showSearchHitTitle.diff
+RUN  set -x; \
+     cd $MW_HOME/extensions/CommentStreams \
+     && git apply /tmp/CommentStreams.REL1_35.showSearchHitTitle.diff
+
 # Cleanup all .git leftovers
 RUN set -x; \
     cd $MW_HOME \
