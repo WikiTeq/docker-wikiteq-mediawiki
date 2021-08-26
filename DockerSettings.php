@@ -259,11 +259,6 @@ $wgRightsIcon = "";
 # Path to the GNU diff3 utility. Used for conflict resolution.
 $wgDiff3 = "/usr/bin/diff3";
 
-# see https://www.mediawiki.org/wiki/Manual:$wgCdnServersNoPurge
-$wgUseCdn = true;
-$wgCdnServersNoPurge = [];
-$wgCdnServersNoPurge[] = '172.16.0.0/12';
-
 if ( getenv( 'MW_SHOW_EXCEPTION_DETAILS' ) === 'true' ) {
 	$wgShowExceptionDetails = true;
 }
@@ -402,16 +397,16 @@ switch ( getenv( 'MW_MAIN_CACHE_TYPE' ) ) {
 $tmpProxy = getenv( 'MW_PROXY_SERVERS' );
 if ( $tmpProxy ) {
 	# https://www.mediawiki.org/wiki/Manual:Varnish_caching
-	$wgUseSquid = true;
-	$wgSquidServers = explode( ',', $tmpProxy );
+	$wgUseCdn = true;
+	$wgCdnServers = explode( ',', $tmpProxy );
 	$wgUsePrivateIPs = true;
 	$wgHooks['IsTrustedProxy'][] = function( $ip, &$trusted ) {
+		global $wgCdnServers;
 		// Proxy can be set as a name of proxy container
 		if ( !$trusted ) {
-			global $wgSquidServers;
-			foreach ( $wgSquidServers as $proxy ) {
-				if ( !ip2long( $proxy ) ) { // It is name of proxy
-					if ( gethostbyname( $proxy ) === $ip ) {
+			foreach ( $wgCdnServers as $proxy ) {
+				if ( !ip2long( $proxy ) ) { // If proxy is a hostname
+					if ( gethostbyname( $proxy ) === $ip ) { // And hostname resolves into provided IP
 						$trusted = true;
 						return;
 					}
@@ -420,8 +415,6 @@ if ( $tmpProxy ) {
 		}
 	};
 }
-//Use $wgSquidServersNoPurge if you don't want MediaWiki to purge modified pages
-//$wgSquidServersNoPurge = array('127.0.0.1');
 
 ########################### VisualEditor ###########################
 //$tmpRestDomain = getenv( 'MW_REST_DOMAIN' );
