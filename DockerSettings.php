@@ -91,7 +91,6 @@ const DOCKER_EXTENSIONS = [
 	'MassMessageEmail',
 	'MassPasswordReset',
 	'Math',
-	'MathJax',
 	'Mendeley',
 	'MobileDetect',
 	'MobileFrontend',

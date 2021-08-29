@@ -541,13 +541,6 @@ RUN set -x; \
 	&& cd NCBITaxonomyLookup \
 	&& git checkout -b $MW_VERSION 512a390a62fbe6f3a7480641f6582126678e5a7c
 
-# MathJax
-RUN set -x; \
-	cd $MW_HOME/extensions \
-	&& git clone https://github.com/xeyownt/mediawiki-mathjax.git MathJax \
-	&& cd MathJax \
-	&& git checkout -b $MW_VERSION 4afdc226f08f9c2b1471a523d3c64df716b25c6c
-
 # https://www.mediawiki.org/wiki/Extension:Skinny
 RUN set -x; \
 	cd $MW_HOME/extensions \
