@@ -196,9 +196,6 @@ if ( getenv( 'MW_SITE_SERVER' ) ) {
 	$wgServer = getenv( 'MW_SITE_SERVER' );
 }
 
-# Internal server name as known to Squid, if different than $wgServer.
-#$wgInternalServer = false;
-
 ## The URL path to static resources (images, scripts, etc.)
 $wgResourceBasePath = $wgScriptPath;
 
@@ -261,10 +258,6 @@ $wgDiff3 = "/usr/bin/diff3";
 
 # see https://www.mediawiki.org/wiki/Manual:$wgCdnServersNoPurge
 $wgCdnServersNoPurge = [ '172.16.0.0/12' ]; # Add docker network as CDN
-# Use HTTP protocol for internal connections like PURGE request to Varnish
-if ( strncasecmp( $wgServer, 'https', 5 ) === 0 ) {
-	$wgInternalServer = 'http' . substr( $wgServer, 5 ); // Replaces HTTPS with HTTP
-}
 
 if ( getenv( 'MW_SHOW_EXCEPTION_DETAILS' ) === 'true' ) {
 	$wgShowExceptionDetails = true;
@@ -407,6 +400,10 @@ if ( $tmpProxy ) {
 	$wgUseCdn = true;
 	$wgCdnServers = explode( ',', $tmpProxy );
 	$wgUsePrivateIPs = true;
+	# Use HTTP protocol for internal connections like PURGE request to Varnish
+	if ( strncasecmp( $wgServer, 'https://', 8 ) === 0 ) {
+		$wgInternalServer = 'http://' . substr( $wgServer, 8 ); // Replaces HTTPS with HTTP
+	}
 }
 
 ######################### Custom Settings ##########################
