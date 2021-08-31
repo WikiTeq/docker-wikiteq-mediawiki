@@ -218,6 +218,7 @@ The image has the following extensions pre-installed, there extensions can be en
 * OpenGraphMeta
 * OpenIDConnect
 * PageExchange
+* PageForms
 * PageImages
 * ParserFunctions
 * PdfHandler
