@@ -235,6 +235,7 @@ The image has the following extensions pre-installed, there extensions can be en
 * Scribunto
 * SecureLinkFixer
 * SelectCategory
+* SemanticMediaWiki
 * SemanticExternalQueryLookup
 * SemanticExtraSpecialProperties
 * SemanticCompoundQueries
