@@ -128,7 +128,12 @@ Below is the list of evironment variables used by the image:
 
 # Pre-installed extensions
 
-The image has the following extensions pre-installed, there extensions can be enabled via `MW_LOAD_EXTENSIONS` env:
+The image has the following extensions pre-installed:
+
+* SemanticMediaWiki
+* PageForms
+
+## Pre-installed extensions enabled via `MW_LOAD_EXTENSIONS` env:
 
 * AdminLinks
 * AdvancedSearch
@@ -235,7 +240,6 @@ The image has the following extensions pre-installed, there extensions can be en
 * Scribunto
 * SecureLinkFixer
 * SelectCategory
-* SemanticMediaWiki
 * SemanticExternalQueryLookup
 * SemanticExtraSpecialProperties
 * SemanticCompoundQueries
