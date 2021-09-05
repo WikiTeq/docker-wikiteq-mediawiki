@@ -4,7 +4,7 @@ set -x
 
 if ! mountpoint -q -- "$MW_VOLUME"; then
     echo "Folder $MW_VOLUME contains important data and must be mounted to persistent storage!"
-    if "$MW_ALLOW_UNMOUNTED_VOLUME" != true; then
+    if [ "$MW_ALLOW_UNMOUNTED_VOLUME" != true ]; then
         exit 1
     fi
 fi
