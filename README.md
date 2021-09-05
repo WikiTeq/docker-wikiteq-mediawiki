@@ -340,7 +340,7 @@ Depending on the setup approach the container will handle the settings files as 
 The container looks for a custom settings file at `_settings/LocalSettings.php` so
 you can mount the `_settings` directory to the container and put the `LocalSettings.php` file there.
 This file will be appended to the bottom of the `DockerSettings.php`
-
+.
 # Data (images, database)
 
 Data like uploaded images and the database files stored in the `_data` directory
@@ -353,7 +353,10 @@ Log files stored in `_logs` directory
 # Runtime directories structure
 
 * `/mediawiki` - the **volume** that stores `images`, `cache` and various extension persistent files like
-`compiled_templates` for `Widgets` or `config` files for SMW extension which are being symlinked into `/var/www/html/w`
+`compiled_templates` for `Widgets` or `config` files for SMW extension which are being symlinked into `/var/www/html/w`.
+  The volume **must** be mounted to persistent storage like a folder outside the docker container (`./_data/mediawiki` for example).
+  The container will not start if `/mediawiki` is not mounted to a folder, but if you know what you do,
+  you can allow to start the container without mounting `/mediawiki` if you set `MW_ALLOW_UNMOUNTED_VOLUME` environment variable as `true`.
 * `/mw_origin_files` - a temp/backup directory to toss some of original files and directories of the wiki core
 * `/var/www/html/w` - the main wiki web root
 * `/var/log/apache2` - logs for Apache web server
