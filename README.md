@@ -340,7 +340,7 @@ Depending on the setup approach the container will handle the settings files as 
 The container looks for a custom settings file at `_settings/LocalSettings.php` so
 you can mount the `_settings` directory to the container and put the `LocalSettings.php` file there.
 This file will be appended to the bottom of the `DockerSettings.php`
-.
+
 # Data (images, database)
 
 Data like uploaded images and the database files stored in the `_data` directory
