@@ -7,6 +7,7 @@ if ! mountpoint -q -- "$MW_VOLUME"; then
     if [ "$MW_ALLOW_UNMOUNTED_VOLUME" != true ]; then
         exit 1
     fi
+    echo "You allowed to continue because MW_ALLOW_UNMOUNTED_VOLUME is set as true"
 fi
 
 # read variables from LocalSettings.php
