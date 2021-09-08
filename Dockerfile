@@ -112,6 +112,10 @@ RUN set -x; \
 ### Extensions
 RUN set -x; \
 	cd $MW_HOME/extensions \
+	# PageSchemas
+	&& git clone --single-branch -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/PageSchemas $MW_HOME/extensions/PageSchemas \
+	&& cd $MW_HOME/extensions/PageSchemas \
+	&& git checkout -q 2f602017201dc2d518e813c967b8668f5d7a2817 \
 	# AdminLinks
 	&& git clone --single-branch -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/AdminLinks $MW_HOME/extensions/AdminLinks \
 	&& cd $MW_HOME/extensions/AdminLinks \
