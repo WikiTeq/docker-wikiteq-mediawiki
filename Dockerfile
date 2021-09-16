@@ -732,6 +732,11 @@ RUN  set -x; \
      cd $MW_HOME/extensions/CommentStreams \
      && git apply /tmp/CommentStreams.REL1_35.showSearchHitTitle.diff
 
+COPY patches/DisplayTitleHooks.fragment.master.patch /tmp/DisplayTitleHooks.fragment.master.patch
+RUN  set -x; \
+     cd $MW_HOME/extensions/DisplayTitle \
+     && git apply /tmp/DisplayTitleHooks.fragment.master.patch
+
 # Cleanup all .git leftovers
 RUN set -x; \
     cd $MW_HOME \
