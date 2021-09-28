@@ -327,7 +327,6 @@ if ( isset( $dockerLoadExtensions['Scribunto'] ) ) {
 	$wgScribuntoDefaultEngine = 'luastandalone';
 	$wgScribuntoUseGeSHi = boolval( $dockerLoadExtensions['SyntaxHighlight_GeSHi'] ?? false );
 	$wgScribuntoUseCodeEditor = boolval( $dockerLoadExtensions['CodeEditor'] ?? false );
-	$wgScribuntoEngineConf['luastandalone']['errorFile'] = "/var/log/httpd/lua.log";
 	$wgScribuntoEngineConf['luastandalone']['luaPath'] = "$IP/extensions/Scribunto/includes/engines/LuaStandalone/binaries/lua5_1_5_linux_64_generic/lua";
 }
 

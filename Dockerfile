@@ -23,6 +23,7 @@ RUN set -x; \
 	&& yum-config-manager --enable remi-php74 \
 	&& yum -y update \
 	&& yum -y install \
+	 applydeltarpm \
 	 httpd \
 	 php \
 	 php-cli \
