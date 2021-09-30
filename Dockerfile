@@ -688,7 +688,7 @@ RUN set -x; cd $MW_HOME && composer update --no-dev
 COPY patches/parsoid.0.12.1.diff /tmp/parsoid.0.12.1.diff
 RUN set -x; \
 	cd $MW_HOME/vendor/wikimedia/parsoid/src/Utils/ \
-	&& patch -p1 PHPUtils.php /tmp/parsoid.0.12.1.diff
+	&& patch --verbose --ignore-whitespace --fuzz 3 PHPUtils.php /tmp/parsoid.0.12.1.diff
 
 # SemanticResultFormats, see https://github.com/WikiTeq/SemanticResultFormats/compare/master...WikiTeq:fix1_35
 COPY patches/semantic-result-formats.patch /tmp/semantic-result-formats.patch
