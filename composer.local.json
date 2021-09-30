@@ -11,8 +11,7 @@
 		"mediawiki/bootstrap-components": "4.0.1",
 		"mediawiki/sub-page-list": "1.6.1",
 		"mediawiki/header-footer": "3.0.1",
-		"mediawiki/talk-right": "2.0.0",
-		"wikimedia/parsoid": "0.13.1"
+		"mediawiki/talk-right": "2.0.0"
 	},
 	"extra": {
 		"merge-plugin": {

@@ -684,6 +684,12 @@ COPY composer.local.json $MW_HOME/composer.local.json
 RUN set -x; cd $MW_HOME && composer update --no-dev
 
 # PATCHES
+# Parsoid assertValidUTF8 back-port from 0.13.1
+COPY patches/parsoid.0.12.1.diff /tmp/parsoid.0.12.1.diff
+RUN set -x; \
+	cd $MW_HOME/vendor/wikimedia/parsoid \
+	&& patch -p1 src/Utils/PHPUtils.php /tmp/parsoid.0.12.1.diff
+
 # SemanticResultFormats, see https://github.com/WikiTeq/SemanticResultFormats/compare/master...WikiTeq:fix1_35
 COPY patches/semantic-result-formats.patch /tmp/semantic-result-formats.patch
 RUN set -x; \
