@@ -40,7 +40,7 @@ jobs:
 
       -
         name: Run linter (hadolint)
-        uses: brpaz/hadolint-action@master
+        uses: hadolint/hadolint-action@v1.5.0
         with:
           dockerfile: "Dockerfile"
           config: "hadolint.yaml"
