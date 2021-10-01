@@ -44,7 +44,6 @@ jobs:
         with:
           dockerfile: "Dockerfile"
           config: "hadolint.yaml"
-          failure-threshold: "error"
 
   # Push image to GitHub Packages.
   # The image tag pattern is:
