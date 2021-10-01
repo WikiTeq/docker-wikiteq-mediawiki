@@ -451,7 +451,7 @@ if ( getenv('MW_ENABLE_SITEMAP_GENERATOR') === 'true' ) {
 }
 
 # Debug mode
-$wgDebugMode = (bool)getenv('MW_DEBUG_MODE');
+$wgDebugMode = getenv('MW_DEBUG_MODE') === 'true';
 if( $wgDebugMode ) {
 	wfLoadExtension( 'DebugMode' );
 }
