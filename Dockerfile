@@ -684,6 +684,12 @@ COPY composer.local.json $MW_HOME/composer.local.json
 RUN set -x; cd $MW_HOME && composer update --no-dev
 
 # PATCHES
+# Parsoid assertValidUTF8 back-port from 0.13.1
+COPY patches/parsoid.0.12.1.diff /tmp/parsoid.0.12.1.diff
+RUN set -x; \
+	cd $MW_HOME/vendor/wikimedia/parsoid/src/Utils/ \
+	&& patch --verbose --ignore-whitespace --fuzz 3 PHPUtils.php /tmp/parsoid.0.12.1.diff
+
 # SemanticResultFormats, see https://github.com/WikiTeq/SemanticResultFormats/compare/master...WikiTeq:fix1_35
 COPY patches/semantic-result-formats.patch /tmp/semantic-result-formats.patch
 RUN set -x; \
@@ -773,12 +779,13 @@ ENV MW_AUTOUPDATE=true \
 	MW_SITEMAP_PAUSE_DAYS=1 \
 	PHP_UPLOAD_MAX_FILESIZE=2M \
 	PHP_POST_MAX_SIZE=8M \
+	PHP_MEMORY_LIMIT=128M \
 	LOG_FILES_COMPRESS_DELAY=3600 \
 	LOG_FILES_REMOVE_OLDER_THAN_DAYS=10
 
 COPY ssmtp.conf /etc/ssmtp/ssmtp.conf
 COPY scan.conf /etc/clamd.d/scan.conf
-COPY php_max_execution_time.ini php_error_reporting.ini php_upload_max_filesize.ini /etc/php.d/
+COPY php_memory_limit.ini php_max_execution_time.ini php_error_reporting.ini php_upload_max_filesize.ini /etc/php.d/
 COPY mediawiki.conf /etc/httpd/conf.d/
 COPY robots.txt .htaccess /var/www/html/
 COPY run-apache.sh mwjobrunner.sh mwsitemapgen.sh mwtranscoder.sh monit-slack.sh rotatelogs-compress.sh getMediawikiSettings.php /
