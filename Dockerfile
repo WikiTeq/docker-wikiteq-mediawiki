@@ -58,7 +58,7 @@ RUN set -x; \
 	&& mkdir -p $MW_LOG
 
 # Composer
-RUN set -x; \
+RUN set -x -o pipefail; \
 	curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer \
     && composer self-update 2.1.3
 
@@ -661,10 +661,7 @@ RUN set -x; \
 	&& git checkout -b $MW_VERSION f56b956521f383221737261ad68aef2367466b76
 
 # GTag1
-COPY sources/GTag1.2.0.tar.gz /tmp/
-RUN set -x; \
-	tar -xvf /tmp/GTag*.tar.gz -C $MW_HOME/extensions \
-	&& rm /tmp/GTag*.tar.gz
+ADD sources/GTag1.2.0.tar.gz $MW_HOME/extensions/
 
 # SemanticExternalQueryLookup (WikiTeq's fork)
 RUN set -x; \
