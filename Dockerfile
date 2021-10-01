@@ -571,6 +571,10 @@ RUN set -x; \
     # DebugMode, see https://www.mediawiki.org/wiki/Extension:DebugMode
     && git clone ---single-branch -b master https://github.com/wikimedia/mediawiki-extensions-DebugMode.git $MW_HOME/extensions/DebugMode \
     && cd $MW_HOME/extensions/DebugMode \
+    && git checkout -q ea803a501175fb3009f0fcde7d9168ef8e374399 \
+    # DebugMode, see https://www.mediawiki.org/wiki/Extension:DebugMode
+    && git clone --single-branch -b master https://github.com/wikimedia/mediawiki-extensions-DebugMode.git $MW_HOME/extensions/DebugMode \
+    && cd $MW_HOME/extensions/DebugMode \
     && git checkout -q ea803a501175fb3009f0fcde7d9168ef8e374399
 
 # GTag1
