@@ -692,6 +692,7 @@ RUN  set -x; \
 # Cleanup all .git leftovers
 RUN set -x; \
     cd $MW_HOME \
+    && ls -al \
     && find . \( -name ".git" -o -name ".gitignore" -o -name ".gitmodules" -o -name ".gitattributes" \) -exec rm -rf -- {} +
 
 FROM base as final
@@ -739,7 +740,6 @@ COPY DockerSettings.php $MW_HOME/DockerSettings.php
 # update packages every time!
 RUN set -x; \
 	yum -y update \
-	&& ls -al \
 	&& sed -i '/<Directory "\/var\/www\/html">/,/<\/Directory>/ s/AllowOverride None/AllowOverride All/' /etc/httpd/conf/httpd.conf \
 	&& chmod -v +x /*.sh \
 	&& mkdir $MW_HOME/sitemap \
