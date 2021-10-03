@@ -62,50 +62,13 @@ RUN set -x -o pipefail; \
 	curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer \
     && composer self-update 2.1.3
 
-FROM base as source
+FROM base as extensions
 
-##### MediaWiki Core setup
+# Extensions
+# This stage install all the necessary extensions into $MW_HOME/extensions & applies their patches
 RUN set -x; \
-	git clone --depth 1 -b $MW_CORE_VERSION https://gerrit.wikimedia.org/r/mediawiki/core.git $MW_HOME \
-	&& cd $MW_HOME \
-	&& git submodule update --init \
-	# VisualEditor
-	&& cd $MW_HOME/extensions/VisualEditor \
-	&& git submodule update --init \
-	# Toss directories
-	&& mv $MW_HOME/images $MW_ORIGIN_FILES/ \
-	&& mv $MW_HOME/cache $MW_ORIGIN_FILES/ \
-	&& ln -s $MW_VOLUME/images $MW_HOME/images \
-	&& ln -s $MW_VOLUME/cache $MW_HOME/cache
-
-### Skins
-
-RUN set -x; \
-	cd $MW_HOME/skins \
-    # CologneBlue, Modern, Refreshed skins
-    && git clone -b $MW_VERSION --single-branch https://gerrit.wikimedia.org/r/mediawiki/skins/CologneBlue $MW_HOME/skins/CologneBlue \
-    && cd $MW_HOME/skins/CologneBlue \
-    && git checkout -q 515a545dfee9f534f74a42057b7a4509076716b4 \
-    # MinervaNeue
-    && git clone -b $MW_VERSION --single-branch https://gerrit.wikimedia.org/r/mediawiki/skins/MinervaNeue $MW_HOME/skins/MinervaNeue \
-    && cd $MW_HOME/skins/MinervaNeue \
-    && git checkout -q 6c99418af845a7761c246ee5a50fbb82715f4003 \
-    # Modern
-    && git clone -b $MW_VERSION --single-branch https://gerrit.wikimedia.org/r/mediawiki/skins/Modern $MW_HOME/skins/Modern \
-    && cd $MW_HOME/skins/Modern \
-    && git checkout -q d0a04c91132105f712df4de44a99d3643e7afbba \
-    # Refreshed
-    && git clone -b $MW_VERSION --single-branch https://gerrit.wikimedia.org/r/mediawiki/skins/Refreshed $MW_HOME/skins/Refreshed \
-    && cd $MW_HOME/skins/Refreshed \
-    && git checkout -q 3fad8765c3ec8082bb899239f502199f651818cb \
-	# Pivot
-	&& git clone -b v2.3.0 https://github.com/Hutchy68/pivot.git $MW_HOME/skins/pivot \
-    && cd $MW_HOME/skins/pivot \
-    && git checkout -q -b $MW_VERSION 0d3d6b03a83afd7e1cb170aa41bdf23c0ce3e93b
-
-### Extensions
-RUN set -x; \
-	cd $MW_HOME/extensions \
+	mkdir -p $MW_HOME/extensions \
+	&& cd $MW_HOME/extensions \
 	# PageSchemas
 	&& git clone --single-branch -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/PageSchemas $MW_HOME/extensions/PageSchemas \
 	&& cd $MW_HOME/extensions/PageSchemas \
@@ -609,50 +572,32 @@ RUN set -x; \
 # GTag1
 ADD sources/GTag1.2.0.tar.gz $MW_HOME/extensions/
 
-# PageForms, PATCHED
-COPY patches/pageforms-xss-cherry-picked.patch /tmp/pageforms-xss-cherry-picked.patch
+FROM base as skins
+# Skins
+# This stage installs all the necessary skins into $MW_HOME/skins & applies their patches
 RUN set -x; \
-	cd $MW_HOME/extensions \
-	&& git clone https://gerrit.wikimedia.org/r/mediawiki/extensions/PageForms \
-	&& cd PageForms \
-	&& git checkout -b $MW_VERSION d2e48e51eef1 \
-	&& git apply /tmp/pageforms-xss-cherry-picked.patch
-
-# Resolve composer conflicts for GoogleAnalyticsMetrics extension TODO remove me when update the core or extension
-COPY patches/core-fix-composer-for-GoogleAnalyticsMetrics.diff /tmp/core-fix-composer-for-GoogleAnalyticsMetrics.diff
-RUN set -x; \
-	cd $MW_HOME \
-	&& git apply /tmp/core-fix-composer-for-GoogleAnalyticsMetrics.diff
-
-# we should run composer update before patches because we need to patch installed extensions by composer too
-COPY composer.local.json $MW_HOME/composer.local.json
-RUN set -x; cd $MW_HOME && composer update --no-dev
-
-# PATCHES
-# Parsoid assertValidUTF8 back-port from 0.13.1
-COPY patches/parsoid.0.12.1.diff /tmp/parsoid.0.12.1.diff
-RUN set -x; \
-	cd $MW_HOME/vendor/wikimedia/parsoid/src/Utils/ \
-	&& patch --verbose --ignore-whitespace --fuzz 3 PHPUtils.php /tmp/parsoid.0.12.1.diff
-
-# SemanticResultFormats, see https://github.com/WikiTeq/SemanticResultFormats/compare/master...WikiTeq:fix1_35
-COPY patches/semantic-result-formats.patch /tmp/semantic-result-formats.patch
-RUN set -x; \
-	cd $MW_HOME/extensions/SemanticResultFormats \
-	&& patch < /tmp/semantic-result-formats.patch
-
-# Fixes PHP parsoid errors when user replies on a flow message, see https://phabricator.wikimedia.org/T260648#6645078
-COPY patches/flow-conversion-utils.patch /tmp/flow-conversion-utils.patch
-RUN set -x; \
-	cd $MW_HOME/extensions/Flow \
-	&& git checkout d37f94241d8cb94ac96c7946f83c1038844cf7e6 \
-	&& git apply /tmp/flow-conversion-utils.patch
-
-# SWM maintenance page returns 503 (Service Unavailable) status code, PR: https://github.com/SemanticMediaWiki/SemanticMediaWiki/pull/4967
-COPY patches/smw-maintenance-503.patch /tmp/smw-maintenance-503.patch
-RUN set -x; \
-	cd $MW_HOME/extensions/SemanticMediaWiki \
-	&& patch -u -b src/SetupCheck.php -i /tmp/smw-maintenance-503.patch
+	mkdir -p $MW_HOME/skins \
+	&& cd $MW_HOME/skins \
+    # CologneBlue, Modern, Refreshed skins
+    && git clone -b $MW_VERSION --single-branch https://gerrit.wikimedia.org/r/mediawiki/skins/CologneBlue $MW_HOME/skins/CologneBlue \
+    && cd $MW_HOME/skins/CologneBlue \
+    && git checkout -q 515a545dfee9f534f74a42057b7a4509076716b4 \
+    # MinervaNeue
+    && git clone -b $MW_VERSION --single-branch https://gerrit.wikimedia.org/r/mediawiki/skins/MinervaNeue $MW_HOME/skins/MinervaNeue \
+    && cd $MW_HOME/skins/MinervaNeue \
+    && git checkout -q 6c99418af845a7761c246ee5a50fbb82715f4003 \
+    # Modern
+    && git clone -b $MW_VERSION --single-branch https://gerrit.wikimedia.org/r/mediawiki/skins/Modern $MW_HOME/skins/Modern \
+    && cd $MW_HOME/skins/Modern \
+    && git checkout -q d0a04c91132105f712df4de44a99d3643e7afbba \
+    # Refreshed
+    && git clone -b $MW_VERSION --single-branch https://gerrit.wikimedia.org/r/mediawiki/skins/Refreshed $MW_HOME/skins/Refreshed \
+    && cd $MW_HOME/skins/Refreshed \
+    && git checkout -q 3fad8765c3ec8082bb899239f502199f651818cb \
+	# Pivot
+	&& git clone -b v2.3.0 https://github.com/Hutchy68/pivot.git $MW_HOME/skins/pivot \
+    && cd $MW_HOME/skins/pivot \
+    && git checkout -q -b $MW_VERSION 0d3d6b03a83afd7e1cb170aa41bdf23c0ce3e93b
 
 # TODO send to upstream, see https://wikiteq.atlassian.net/browse/MW-64 and https://wikiteq.atlassian.net/browse/MW-81
 COPY patches/skin-refreshed.patch /tmp/skin-refreshed.patch
@@ -660,39 +605,101 @@ RUN set -x; \
 	cd $MW_HOME/skins/Refreshed \
 	&& patch -u -b includes/RefreshedTemplate.php -i /tmp/skin-refreshed.patch
 
+FROM base as source
+
+# MediaWiki core setup
+# This stage installs mediawiki core into $MW_HOME & crease all the necessary symlinks & patches
+# and imports skins & extensions files from related stages
+RUN set -x; \
+	git clone --depth 1 -b $MW_CORE_VERSION https://gerrit.wikimedia.org/r/mediawiki/core.git $MW_HOME \
+	&& cd $MW_HOME \
+	&& git submodule update --init \
+	# VisualEditor
+	&& cd $MW_HOME/extensions/VisualEditor \
+	&& git submodule update --init \
+	# Toss directories
+	&& mv $MW_HOME/images $MW_ORIGIN_FILES/ \
+	&& mv $MW_HOME/cache $MW_ORIGIN_FILES/ \
+	&& ln -s $MW_VOLUME/images $MW_HOME/images \
+	&& ln -s $MW_VOLUME/cache $MW_HOME/cache
+
+# Skins files from skins stage
+COPY --from=skins $MW_HOME/skins $MW_HOME/skins
+
+# Extensions files from extensions stage
+COPY --from=extensions $MW_HOME/extensions $MW_HOME/extensions
+
+# Patches
+COPY patches /tmp/patches
+
 # WLDR-92, WLDR-125, probably need to be removed if there will be a similar
 # change of UserGroupManager on future wiki releases
-COPY patches/ugm.patch /tmp/ugm.patch
 RUN set -x; \
     cd $MW_HOME \
-    && git apply /tmp/ugm.patch
+    && git apply /tmp/patches/ugm.patch
+
+# Resolve composer conflicts for GoogleAnalyticsMetrics extension TODO remove me when update the core or extension
+RUN set -x; \
+	cd $MW_HOME \
+	&& git apply /tmp/patches/core-fix-composer-for-GoogleAnalyticsMetrics.diff
+
+# We should run composer update before patches because we also need to patch extensions installed by composer
+COPY composer.local.json $MW_HOME/composer.local.json
+RUN set -x; \
+	cd $MW_HOME \
+	&& composer update --no-dev
+
+# PageForms, PATCHED
+RUN set -x; \
+	cd $MW_HOME/extensions \
+	&& git clone https://gerrit.wikimedia.org/r/mediawiki/extensions/PageForms \
+	&& cd PageForms \
+	&& git checkout -b $MW_VERSION d2e48e51eef1 \
+	&& git apply /tmp/patches/pageforms-xss-cherry-picked.patch
+
+# PATCHES
+# Parsoid assertValidUTF8 back-port from 0.13.1
+RUN set -x; \
+	cd $MW_HOME/vendor/wikimedia/parsoid/src/Utils/ \
+	&& patch --verbose --ignore-whitespace --fuzz 3 PHPUtils.php /tmp/patches/parsoid.0.12.1.diff
+
+# SemanticResultFormats, see https://github.com/WikiTeq/SemanticResultFormats/compare/master...WikiTeq:fix1_35
+RUN set -x; \
+	cd $MW_HOME/extensions/SemanticResultFormats \
+	&& patch < /tmp/patches/semantic-result-formats.patch
+
+# Fixes PHP parsoid errors when user replies on a flow message, see https://phabricator.wikimedia.org/T260648#6645078
+RUN set -x; \
+	cd $MW_HOME/extensions/Flow \
+	&& git checkout d37f94241d8cb94ac96c7946f83c1038844cf7e6 \
+	&& git apply /tmp/patches/flow-conversion-utils.patch
+
+# SWM maintenance page returns 503 (Service Unavailable) status code, PR: https://github.com/SemanticMediaWiki/SemanticMediaWiki/pull/4967
+RUN set -x; \
+	cd $MW_HOME/extensions/SemanticMediaWiki \
+	&& patch -u -b src/SetupCheck.php -i /tmp/patches/smw-maintenance-503.patch
 
 # TODO: remove for 1.36+, see https://phabricator.wikimedia.org/T281043
-COPY patches/social-profile-REL1_35.44b4f89.diff /tmp/social-profile-REL1_35.44b4f89.diff
 RUN set -x; \
     cd $MW_HOME/extensions/SocialProfile \
-    && git apply /tmp/social-profile-REL1_35.44b4f89.diff
+    && git apply /tmp/patches/social-profile-REL1_35.44b4f89.diff
 
 # WikiTeq's patch allowing to manage fields visibility site-wide
-COPY patches/SocialProfile-disable-fields.patch /tmp/SocialProfile-disable-fields.patch
 RUN set -x; \
     cd $MW_HOME/extensions/SocialProfile \
-    && git apply /tmp/SocialProfile-disable-fields.patch
+    && git apply /tmp/patches/SocialProfile-disable-fields.patch
 
-COPY patches/CommentStreams.REL1_35.showSearchHitTitle.diff /tmp/CommentStreams.REL1_35.showSearchHitTitle.diff
-RUN  set -x; \
+RUN set -x; \
      cd $MW_HOME/extensions/CommentStreams \
-     && git apply /tmp/CommentStreams.REL1_35.showSearchHitTitle.diff
+     && git apply /tmp/patches/CommentStreams.REL1_35.showSearchHitTitle.diff
 
-COPY patches/DisplayTitleHooks.fragment.master.patch /tmp/DisplayTitleHooks.fragment.master.patch
 RUN  set -x; \
      cd $MW_HOME/extensions/DisplayTitle \
-     && git apply /tmp/DisplayTitleHooks.fragment.master.patch
+     && git apply /tmp/patches/DisplayTitleHooks.fragment.master.patch
 
 # Cleanup all .git leftovers
 RUN set -x; \
     cd $MW_HOME \
-    && ls -al \
     && find . \( -name ".git" -o -name ".gitignore" -o -name ".gitmodules" -o -name ".gitattributes" \) -exec rm -rf -- {} +
 
 FROM base as final
