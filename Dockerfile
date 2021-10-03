@@ -82,10 +82,6 @@ RUN set -x; \
 
 RUN set -x; \
 	cd $MW_HOME/skins \
-	# Chameleon
-	&& git clone https://github.com/ProfessionalWiki/chameleon.git $MW_HOME/skins/chameleon \
-	&& cd $MW_HOME/skins/chameleon \
-	&& git checkout -q -b $MW_VERSION c817e3a89193ecb8e2ec37800d4534b4747e6903 \
     # CologneBlue, Modern, Refreshed skins
     && git clone -b $MW_VERSION --single-branch https://gerrit.wikimedia.org/r/mediawiki/skins/CologneBlue $MW_HOME/skins/CologneBlue \
     && cd $MW_HOME/skins/CologneBlue \
