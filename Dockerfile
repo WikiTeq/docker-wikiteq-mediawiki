@@ -739,6 +739,7 @@ COPY DockerSettings.php $MW_HOME/DockerSettings.php
 # update packages every time!
 RUN set -x; \
 	yum -y update \
+	&& ls -al \
 	&& sed -i '/<Directory "\/var\/www\/html">/,/<\/Directory>/ s/AllowOverride None/AllowOverride All/' /etc/httpd/conf/httpd.conf \
 	&& chmod -v +x /*.sh \
 	&& mkdir $MW_HOME/sitemap \

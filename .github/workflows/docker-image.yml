@@ -1,6 +1,6 @@
 name: Docker build and push
 
-# limit concurrency!
+# limit concurrency
 # https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions#examples-using-concurrency-and-the-default-behavior
 concurrency: docker_wikiteq_main
 
