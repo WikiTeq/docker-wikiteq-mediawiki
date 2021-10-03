@@ -644,6 +644,11 @@ RUN set -x; \
 	&& git apply /tmp/patches/core-fix-composer-for-GoogleAnalyticsMetrics.diff
 
 # Cache non frequently changing core packages
+# NOTE: the lockfile might need to be updated (not frequently), mainly for major core releases
+# just to keep the benefits on this extra step, eg:
+#   docker run -it <IMAGE_ID> bash -c 'rm -rf vendor && rm composer.lock \
+#       && rm composer.local.json && composer install -q --no-scripts --no-interaction \
+#       && --no-autoloader --no-dev --prefer-dist && cat composer.lock' > composer.lock
 COPY composer.lock $MW_HOME/composer.lock
 RUN set -x; \
     cd $MW_HOME \
