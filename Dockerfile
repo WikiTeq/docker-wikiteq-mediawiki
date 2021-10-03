@@ -4,7 +4,7 @@ LABEL maintainers="pastakhov@yandex.ru,alexey@wikiteq.com"
 LABEL org.opencontainers.image.source=https://github.com/WikiTeq/docker-wikiteq-mediawiki
 
 ENV MW_VERSION=REL1_35 \
-	MW_CORE_VERSION=1.35.3 \
+	MW_CORE_VERSION=1.35.4 \
 	MW_HOME=/var/www/html/w \
 	MW_LOG=/var/log/mediawiki \
 	MW_VOLUME=/mediawiki \
@@ -82,10 +82,6 @@ RUN set -x; \
 
 RUN set -x; \
 	cd $MW_HOME/skins \
-	# Chameleon
-	&& git clone https://github.com/ProfessionalWiki/chameleon.git $MW_HOME/skins/chameleon \
-	&& cd $MW_HOME/skins/chameleon \
-	&& git checkout -q -b $MW_VERSION c817e3a89193ecb8e2ec37800d4534b4747e6903 \
     # CologneBlue, Modern, Refreshed skins
     && git clone -b $MW_VERSION --single-branch https://gerrit.wikimedia.org/r/mediawiki/skins/CologneBlue $MW_HOME/skins/CologneBlue \
     && cd $MW_HOME/skins/CologneBlue \
