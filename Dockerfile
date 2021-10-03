@@ -643,11 +643,18 @@ RUN set -x; \
 	cd $MW_HOME \
 	&& git apply /tmp/patches/core-fix-composer-for-GoogleAnalyticsMetrics.diff
 
+# Cache non frequently changing core packages
+COPY composer.lock $MW_HOME/composer.lock
+RUN set -x; \
+    cd $MW_HOME \
+    && composer install --no-scripts --no-interaction --no-autoloader --no-dev --prefer-dist
+
+# Install 3rd party composer dependencies from composer.loca.json
 # We should run composer update before patches because we also need to patch extensions installed by composer
 COPY composer.local.json $MW_HOME/composer.local.json
 RUN set -x; \
 	cd $MW_HOME \
-	&& composer update --no-dev
+	&& composer update --no-dev --no-interaction --prefer-dist
 
 # PageForms, PATCHED
 RUN set -x; \
