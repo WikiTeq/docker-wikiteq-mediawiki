@@ -4,7 +4,7 @@ LABEL maintainers="pastakhov@yandex.ru,alexey@wikiteq.com"
 LABEL org.opencontainers.image.source=https://github.com/WikiTeq/docker-wikiteq-mediawiki
 
 ENV MW_VERSION=REL1_35 \
-	MW_CORE_VERSION=1.35.3 \
+	MW_CORE_VERSION=1.35.4 \
 	MW_HOME=/var/www/html/w \
 	MW_LOG=/var/log/mediawiki \
 	MW_VOLUME=/mediawiki \
@@ -58,7 +58,7 @@ RUN set -x; \
 	&& mkdir -p $MW_LOG
 
 # Composer
-RUN set -x; \
+RUN set -x -o pipefail; \
 	curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer \
     && composer self-update 2.1.3
 
@@ -68,15 +68,12 @@ FROM base as source
 RUN set -x; \
 	git clone --depth 1 -b $MW_CORE_VERSION https://gerrit.wikimedia.org/r/mediawiki/core.git $MW_HOME \
 	&& cd $MW_HOME \
-	&& git submodule update --init
-
-# VisualEditor
-RUN set -x; \
-	cd $MW_HOME/extensions/VisualEditor \
-	&& git submodule update --init
-
-RUN set -x; \
-	mv $MW_HOME/images $MW_ORIGIN_FILES/ \
+	&& git submodule update --init \
+	# VisualEditor
+	&& cd $MW_HOME/extensions/VisualEditor \
+	&& git submodule update --init \
+	# Toss directories
+	&& mv $MW_HOME/images $MW_ORIGIN_FILES/ \
 	&& mv $MW_HOME/cache $MW_ORIGIN_FILES/ \
 	&& ln -s $MW_VOLUME/images $MW_HOME/images \
 	&& ln -s $MW_VOLUME/cache $MW_HOME/cache
@@ -85,10 +82,6 @@ RUN set -x; \
 
 RUN set -x; \
 	cd $MW_HOME/skins \
-	# Chameleon
-	&& git clone https://github.com/ProfessionalWiki/chameleon.git $MW_HOME/skins/chameleon \
-	&& cd $MW_HOME/skins/chameleon \
-	&& git checkout -q -b $MW_VERSION c817e3a89193ecb8e2ec37800d4534b4747e6903 \
     # CologneBlue, Modern, Refreshed skins
     && git clone -b $MW_VERSION --single-branch https://gerrit.wikimedia.org/r/mediawiki/skins/CologneBlue $MW_HOME/skins/CologneBlue \
     && cd $MW_HOME/skins/CologneBlue \
@@ -480,57 +473,143 @@ RUN set -x; \
     # PDFEmbed
     && git clone https://github.com/WolfgangFahl/PDFEmbed.git $MW_HOME/extensions/PDFEmbed \
     && cd $MW_HOME/extensions/PDFEmbed \
-    && git checkout -q 04f5712db04cdd6deb28a60858aa16f9a269be72
-
-# TODO move me above when REL1_35 branch will be created
-RUN set -x; \
-	cd $MW_HOME/extensions \
+    && git checkout -q 04f5712db04cdd6deb28a60858aa16f9a269be72 \
+	# LockAuthor
+	&& cd $MW_HOME/extensions \
 	&& git clone https://gerrit.wikimedia.org/r/mediawiki/extensions/LockAuthor \
 	&& cd LockAuthor \
-	&& git checkout -b $MW_VERSION ee5ab1ed2bc34ab1b08c799fb1e14e0d5de65953
-
-# TODO move me above when REL1_35 branch will be created
-RUN set -x; \
-	cd $MW_HOME/extensions \
+	&& git checkout -b $MW_VERSION ee5ab1ed2bc34ab1b08c799fb1e14e0d5de65953 \
+	# EncryptedUploads
+	&& cd $MW_HOME/extensions \
 	&& git clone https://gerrit.wikimedia.org/r/mediawiki/extensions/EncryptedUploads \
 	&& cd EncryptedUploads \
-	&& git checkout -b $MW_VERSION 51e3482462f1852e289d5863849b164e1b1a7ea9
-
-# TODO move me above, we use master because of compatibility issues of REL1_35 branch of the extension with core 1.35.1 tag
-RUN set -x; \
-	cd $MW_HOME/extensions \
+	&& git checkout -b $MW_VERSION 51e3482462f1852e289d5863849b164e1b1a7ea9 \
+	# PageExchange, we use master because of compatibility issues of REL1_35 branch of the extension with core 1.35.1 tag
+	&& cd $MW_HOME/extensions \
 	&& git clone https://gerrit.wikimedia.org/r/mediawiki/extensions/PageExchange \
 	&& cd PageExchange \
-    && git checkout -b $MW_VERSION 339056ffba8db1a98ff166aa11f639e5bc1ac665
-
-RUN set -x; \
-	cd $MW_HOME/extensions \
+    && git checkout -b $MW_VERSION 339056ffba8db1a98ff166aa11f639e5bc1ac665 \
+	# LinkTarget
+	&& cd $MW_HOME/extensions \
 	&& git clone https://gerrit.wikimedia.org/r/mediawiki/extensions/LinkTarget \
 	&& cd LinkTarget \
-	&& git checkout -b $MW_VERSION ab1aba0a4a138f80c4cd9c86cc53259ca0fe4545
-
-RUN set -x; \
-	cd $MW_HOME/extensions \
+	&& git checkout -b $MW_VERSION ab1aba0a4a138f80c4cd9c86cc53259ca0fe4545 \
+	# Widgets
+	&& cd $MW_HOME/extensions \
 	&& git clone -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/Widgets \
 	&& cd Widgets \
 	&& git checkout e9ebcb7a60e04a4b6054538032d1d2e1badf9934 \
 	&& mkdir -p $MW_ORIGIN_FILES/extensions/Widgets \
 	&& mv compiled_templates $MW_ORIGIN_FILES/extensions/Widgets/ \
-	&& ln -s $MW_VOLUME/extensions/Widgets/compiled_templates compiled_templates
-
-RUN set -x; \
-	cd $MW_HOME/extensions \
+	&& ln -s $MW_VOLUME/extensions/Widgets/compiled_templates compiled_templates \
+	# SimpleTooltip
+	&& cd $MW_HOME/extensions \
 	&& git clone https://github.com/Fannon/SimpleTooltip.git \
 	&& cd SimpleTooltip \
-	&& git checkout -b $MW_VERSION 2476bff8f4555f86795c26ca5fdb7db99bfe58d1
-
-RUN set -x; \
-	cd $MW_HOME/extensions \
+	&& git checkout -b $MW_VERSION 2476bff8f4555f86795c26ca5fdb7db99bfe58d1 \
+	# PubmedParser
+	&& cd $MW_HOME/extensions \
 	&& git clone https://github.com/bovender/PubmedParser.git \
 	&& cd PubmedParser \
-	&& git checkout -b $MW_VERSION 9cd01d828b23853e3e790dc7bf49cdd230847272
+	&& git checkout -b $MW_VERSION 9cd01d828b23853e3e790dc7bf49cdd230847272 \
+	# NCBITaxonomyLookup
+	&& cd $MW_HOME/extensions \
+    && git clone https://gerrit.wikimedia.org/r/mediawiki/extensions/NCBITaxonomyLookup \
+    && cd NCBITaxonomyLookup \
+    && git checkout -b $MW_VERSION 512a390a62fbe6f3a7480641f6582126678e5a7c \
+    # Skinny
+    && cd $MW_HOME/extensions \
+    && git clone https://github.com/tinymighty/skinny.git Skinny \
+    && cd Skinny \
+    && git checkout -b $MW_VERSION 41ba4e90522f6fa971a136fab072c3911750e35c \
+    # BreadCrumbs2
+    # TODO: update once https://gerrit.wikimedia.org/r/c/mediawiki/extensions/BreadCrumbs2/+/701603 is merged
+    && cd $MW_HOME/extensions \
+    && git clone https://gerrit.wikimedia.org/r/mediawiki/extensions/BreadCrumbs2.git \
+    && cd BreadCrumbs2 \
+    && git fetch "https://gerrit.wikimedia.org/r/mediawiki/extensions/BreadCrumbs2" refs/changes/03/701603/1 \
+    && git checkout FETCH_HEAD \
+    # RottenLinks version 1.0.11
+	&& cd $MW_HOME/extensions \
+	&& git clone https://github.com/miraheze/RottenLinks.git \
+	&& cd RottenLinks \
+	&& git checkout -b $MW_VERSION 4e7e675bb26fc39b85dd62c9ad37e29d8f705a41 \
+    # EmbedVideo
+    && cd $MW_HOME/extensions \
+    && git clone https://gitlab.com/hydrawiki/extensions/EmbedVideo.git \
+    && cd EmbedVideo \
+    && git checkout -b $MW_VERSION 85c5219593cc86367ffb17bfb650f73ca3eb9b11 \
+    # Lazyload
+    # TODO change me when https://github.com/mudkipme/mediawiki-lazyload/pull/15 will be merged
+    && cd $MW_HOME/extensions \
+	#	&& git clone https://github.com/mudkipme/mediawiki-lazyload.git Lazyload \
+    && git clone https://github.com/WikiTeq/mediawiki-lazyload.git Lazyload \
+    && cd Lazyload \
+    && git checkout -b $MW_VERSION 92172c30ee5ac764627e397b19eddd536155394e \
+    # WikiSEO Dont change me without testing well!
+    && cd $MW_HOME/extensions \
+    && git clone https://gerrit.wikimedia.org/r/mediawiki/extensions/WikiSEO \
+    && cd WikiSEO \
+    && git checkout -b $MW_VERSION 30bb8c323e8cd44df52c7537f97f8518de2557df \
+    # GoogleDocCreator
+    && cd $MW_HOME/extensions \
+    && git clone https://github.com/nischayn22/GoogleDocCreator.git \
+    && cd GoogleDocCreator \
+    && git checkout -b $MW_VERSION 63aecabb4292ad9d4e8336a93aec25f977ee633e \
+    # MassPasswordReset
+    && cd $MW_HOME/extensions \
+    && git clone https://github.com/nischayn22/MassPasswordReset.git \
+    && cd MassPasswordReset \
+    && git checkout -b $MW_VERSION affaeee6620f9a70b9dc80c53879a35c9aed92c6 \
+    # Tabber
+    && cd $MW_HOME/extensions \
+    && git clone https://gitlab.com/hydrawiki/extensions/Tabber.git \
+    && cd Tabber \
+    && git checkout -b $MW_VERSION 6c67baf4d18518fa78e07add4c032d62dd384b06 \
+    # UploadWizardExtraButtons
+    && cd $MW_HOME/extensions \
+    && git clone https://github.com/vedmaka/mediawiki-extension-UploadWizardExtraButtons.git UploadWizardExtraButtons \
+    && cd UploadWizardExtraButtons \
+    && git checkout -b $MW_VERSION accba1b9b6f50e67d709bd727c9f4ad6de78c0c0 \
+    # Mendeley
+    && cd $MW_HOME/extensions \
+    && git clone https://github.com/nischayn22/Mendeley.git \
+    && cd Mendeley \
+    && git checkout -b $MW_VERSION b866c3608ada025ce8a3e161e4605cd9106056c4 \
+    # Scopus
+    && cd $MW_HOME/extensions \
+    && git clone https://github.com/nischayn22/Scopus.git \
+    && cd Scopus \
+    && git checkout -b $MW_VERSION 4fe8048459d9189626d82d9d93a0d5f906c43746 \
+    # SemanticQueryInterface
+    && cd $MW_HOME/extensions \
+    && git clone https://github.com/vedmaka/SemanticQueryInterface.git \
+    && cd SemanticQueryInterface \
+    && git checkout -b $MW_VERSION 0016305a95ecbb6ed4709bfa3fc6d9995d51336f \
+    && mv SemanticQueryInterface/* . \
+    && rmdir SemanticQueryInterface \
+    && ln -s SQI.php SemanticQueryInterface.php \
+    && rm -fr .git \
+    # SRFEventCalendarMod
+    && cd $MW_HOME/extensions \
+    && git clone https://github.com/vedmaka/mediawiki-extension-SRFEventCalendarMod.git SRFEventCalendarMod \
+    && cd SRFEventCalendarMod \
+    && git checkout -b $MW_VERSION e0dfa797af0709c90f9c9295d217bbb6d564a7a8 \
+    # Sync
+    && cd $MW_HOME/extensions \
+    && git clone https://github.com/nischayn22/Sync.git \
+    && cd Sync \
+    && git checkout -b $MW_VERSION f56b956521f383221737261ad68aef2367466b76 \
+    # SemanticExternalQueryLookup (WikiTeq's fork)
+    && cd $MW_HOME/extensions \
+    && git clone https://github.com/WikiTeq/SemanticExternalQueryLookup.git \
+    && cd SemanticExternalQueryLookup \
+    && git checkout -b $MW_VERSION dd7810061f2f1a9eef7be5ee09da999cbf9ecd8a
 
-# PageForms
+# GTag1
+ADD sources/GTag1.2.0.tar.gz $MW_HOME/extensions/
+
+# PageForms, PATCHED
 COPY patches/pageforms-xss-cherry-picked.patch /tmp/pageforms-xss-cherry-picked.patch
 RUN set -x; \
 	cd $MW_HOME/extensions \
@@ -538,140 +617,6 @@ RUN set -x; \
 	&& cd PageForms \
 	&& git checkout -b $MW_VERSION d2e48e51eef1 \
 	&& git apply /tmp/pageforms-xss-cherry-picked.patch
-
-# NCBITaxonomyLookup
-RUN set -x; \
-	cd $MW_HOME/extensions \
-	&& git clone https://gerrit.wikimedia.org/r/mediawiki/extensions/NCBITaxonomyLookup \
-	&& cd NCBITaxonomyLookup \
-	&& git checkout -b $MW_VERSION 512a390a62fbe6f3a7480641f6582126678e5a7c
-
-# https://www.mediawiki.org/wiki/Extension:Skinny
-RUN set -x; \
-	cd $MW_HOME/extensions \
-	&& git clone https://github.com/tinymighty/skinny.git Skinny \
-	&& cd Skinny \
-	&& git checkout -b $MW_VERSION 41ba4e90522f6fa971a136fab072c3911750e35c
-
-# BreadCrumbs2
-# TODO: update once https://gerrit.wikimedia.org/r/c/mediawiki/extensions/BreadCrumbs2/+/701603 is merged
-RUN set -x; \
-	cd $MW_HOME/extensions \
-	&& git clone https://gerrit.wikimedia.org/r/mediawiki/extensions/BreadCrumbs2.git \
-	&& cd BreadCrumbs2 \
-	&& git fetch "https://gerrit.wikimedia.org/r/mediawiki/extensions/BreadCrumbs2" refs/changes/03/701603/1 \
-    && git checkout FETCH_HEAD
-
-# https://www.mediawiki.org/wiki/Extension:RottenLinks version 1.0.11
-RUN set -x; \
-	cd $MW_HOME/extensions \
-	&& git clone https://github.com/miraheze/RottenLinks.git \
-	&& cd RottenLinks \
-	&& git checkout -b $MW_VERSION 4e7e675bb26fc39b85dd62c9ad37e29d8f705a41
-
-# EmbedVideo
-RUN set -x; \
-	cd $MW_HOME/extensions \
-	&& git clone https://gitlab.com/hydrawiki/extensions/EmbedVideo.git \
-	&& cd EmbedVideo \
-	&& git checkout -b $MW_VERSION 85c5219593cc86367ffb17bfb650f73ca3eb9b11
-
-# Lazyload
-# TODO change me when https://github.com/mudkipme/mediawiki-lazyload/pull/15 will be merged
-RUN set -x; \
-	cd $MW_HOME/extensions \
-#	&& git clone https://github.com/mudkipme/mediawiki-lazyload.git Lazyload \
-	&& git clone https://github.com/WikiTeq/mediawiki-lazyload.git Lazyload \
-	&& cd Lazyload \
-	&& git checkout -b $MW_VERSION 92172c30ee5ac764627e397b19eddd536155394e
-
-# WikiSEO Dont change me without well testing!
-RUN set -x; \
-	cd $MW_HOME/extensions \
-	&& git clone https://gerrit.wikimedia.org/r/mediawiki/extensions/WikiSEO \
-	&& cd WikiSEO \
-	&& git checkout -b $MW_VERSION 30bb8c323e8cd44df52c7537f97f8518de2557df
-
-# GoogleDocCreator
-RUN set -x; \
-	cd $MW_HOME/extensions \
-	&& git clone https://github.com/nischayn22/GoogleDocCreator.git \
-	&& cd GoogleDocCreator \
-	&& git checkout -b $MW_VERSION 63aecabb4292ad9d4e8336a93aec25f977ee633e
-
-# MassPasswordReset
-RUN set -x; \
-	cd $MW_HOME/extensions \
-	&& git clone https://github.com/nischayn22/MassPasswordReset.git \
-	&& cd MassPasswordReset \
-	&& git checkout -b $MW_VERSION affaeee6620f9a70b9dc80c53879a35c9aed92c6
-
-# Tabber
-RUN set -x; \
-	cd $MW_HOME/extensions \
-	&& git clone https://gitlab.com/hydrawiki/extensions/Tabber.git \
-	&& cd Tabber \
-	&& git checkout -b $MW_VERSION 6c67baf4d18518fa78e07add4c032d62dd384b06
-
-# UploadWizardExtraButtons
-RUN set -x; \
-	cd $MW_HOME/extensions \
-	&& git clone https://github.com/vedmaka/mediawiki-extension-UploadWizardExtraButtons.git UploadWizardExtraButtons \
-	&& cd UploadWizardExtraButtons \
-	&& git checkout -b $MW_VERSION accba1b9b6f50e67d709bd727c9f4ad6de78c0c0
-
-# Mendeley
-RUN set -x; \
-	cd $MW_HOME/extensions \
-	&& git clone https://github.com/nischayn22/Mendeley.git \
-	&& cd Mendeley \
-	&& git checkout -b $MW_VERSION b866c3608ada025ce8a3e161e4605cd9106056c4
-
-# Scopus
-RUN set -x; \
-	cd $MW_HOME/extensions \
-	&& git clone https://github.com/nischayn22/Scopus.git \
-	&& cd Scopus \
-	&& git checkout -b $MW_VERSION 4fe8048459d9189626d82d9d93a0d5f906c43746
-
-# SemanticQueryInterface
-RUN set -x; \
-	cd $MW_HOME/extensions \
-	&& git clone https://github.com/vedmaka/SemanticQueryInterface.git \
-	&& cd SemanticQueryInterface \
-	&& git checkout -b $MW_VERSION 0016305a95ecbb6ed4709bfa3fc6d9995d51336f \
-	# FIXME in the repo
-	&& mv SemanticQueryInterface/* . \
-	&& rmdir SemanticQueryInterface \
-	&& ln -s SQI.php SemanticQueryInterface.php \
-	&& rm -fr .git
-
-# SRFEventCalendarMod
-RUN set -x; \
-	cd $MW_HOME/extensions \
-	&& git clone https://github.com/vedmaka/mediawiki-extension-SRFEventCalendarMod.git SRFEventCalendarMod \
-	&& cd SRFEventCalendarMod \
-	&& git checkout -b $MW_VERSION e0dfa797af0709c90f9c9295d217bbb6d564a7a8
-
-# Sync
-RUN set -x; \
-	cd $MW_HOME/extensions \
-	&& git clone https://github.com/nischayn22/Sync.git \
-	&& cd Sync \
-	&& git checkout -b $MW_VERSION f56b956521f383221737261ad68aef2367466b76
-
-# GTag1
-COPY sources/GTag1.2.0.tar.gz /tmp/
-RUN set -x; \
-	tar -xvf /tmp/GTag*.tar.gz -C $MW_HOME/extensions \
-	&& rm /tmp/GTag*.tar.gz
-
-# SemanticExternalQueryLookup (WikiTeq's fork)
-RUN set -x; \
-	cd $MW_HOME/extensions \
-	&& git clone https://github.com/WikiTeq/SemanticExternalQueryLookup.git \
-	&& cd SemanticExternalQueryLookup \
-	&& git checkout -b $MW_VERSION dd7810061f2f1a9eef7be5ee09da999cbf9ecd8a
 
 # Resolve composer conflicts for GoogleAnalyticsMetrics extension TODO remove me when update the core or extension
 COPY patches/core-fix-composer-for-GoogleAnalyticsMetrics.diff /tmp/core-fix-composer-for-GoogleAnalyticsMetrics.diff
@@ -684,6 +629,12 @@ COPY composer.local.json $MW_HOME/composer.local.json
 RUN set -x; cd $MW_HOME && composer update --no-dev
 
 # PATCHES
+# Parsoid assertValidUTF8 back-port from 0.13.1
+COPY patches/parsoid.0.12.1.diff /tmp/parsoid.0.12.1.diff
+RUN set -x; \
+	cd $MW_HOME/vendor/wikimedia/parsoid/src/Utils/ \
+	&& patch --verbose --ignore-whitespace --fuzz 3 PHPUtils.php /tmp/parsoid.0.12.1.diff
+
 # SemanticResultFormats, see https://github.com/WikiTeq/SemanticResultFormats/compare/master...WikiTeq:fix1_35
 COPY patches/semantic-result-formats.patch /tmp/semantic-result-formats.patch
 RUN set -x; \
@@ -773,12 +724,13 @@ ENV MW_AUTOUPDATE=true \
 	MW_SITEMAP_PAUSE_DAYS=1 \
 	PHP_UPLOAD_MAX_FILESIZE=2M \
 	PHP_POST_MAX_SIZE=8M \
+	PHP_MEMORY_LIMIT=128M \
 	LOG_FILES_COMPRESS_DELAY=3600 \
 	LOG_FILES_REMOVE_OLDER_THAN_DAYS=10
 
 COPY conf/ssmtp.conf /etc/ssmtp/ssmtp.conf
 COPY conf/scan.conf /etc/clamd.d/scan.conf
-COPY conf/php/php_max_execution_time.ini conf/php/php_error_reporting.ini conf/php/php_upload_max_filesize.ini /etc/php.d/
+COPY conf/php/php_memory_limit.ini conf/php/php_max_execution_time.ini conf/php/php_error_reporting.ini conf/php/php_upload_max_filesize.ini /etc/php.d/
 COPY conf/apache/mediawiki.conf conf/apache/log.conf /etc/httpd/conf.d/
 COPY robots.txt .htaccess /var/www/html/
 COPY scripts/run-apache.sh scripts/mwjobrunner.sh scripts/mwsitemapgen.sh scripts/mwtranscoder.sh scripts/monit-slack.sh scripts/rotatelogs-compress.sh scripts/getMediawikiSettings.php /

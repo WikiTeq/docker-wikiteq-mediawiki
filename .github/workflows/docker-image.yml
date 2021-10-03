@@ -40,11 +40,10 @@ jobs:
 
       -
         name: Run linter (hadolint)
-        uses: brpaz/hadolint-action@master
+        uses: vedmaka/hadolint-action@master
         with:
           dockerfile: "Dockerfile"
           config: "hadolint.yaml"
-          failure-threshold: "error"
 
   # Push image to GitHub Packages.
   # The image tag pattern is:
