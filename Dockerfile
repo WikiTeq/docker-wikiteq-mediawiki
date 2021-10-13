@@ -643,6 +643,11 @@ RUN set -x; \
 	cd $MW_HOME \
 	&& git apply /tmp/patches/core-fix-composer-for-GoogleAnalyticsMetrics.diff
 
+# Fix composer dependencies for MassPasswordReset extension
+RUN set -x; \
+    cd $MW_HOME/extensions/MassPasswordReset \
+    && git apply /tmp/patches/MassPasswordReset-fix-composer.patch
+
 # Cache non frequently changing core packages
 # NOTE: the lockfile might need to be updated (not frequently), mainly for major core releases
 # just to keep the benefits on this extra step, eg:
@@ -700,10 +705,6 @@ RUN set -x; \
 RUN set -x; \
     cd $MW_HOME/extensions/SocialProfile \
     && git apply /tmp/patches/SocialProfile-disable-fields.patch \
-
-RUN set -x; \
-    cd $MW_HOME/extensions/MassPasswordReset \
-    && git apply /tmp/patches/MassPasswordReset-fix-composer.patch
 
 RUN set -x; \
      cd $MW_HOME/extensions/CommentStreams \
