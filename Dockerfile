@@ -53,6 +53,7 @@ RUN set -x; \
 	&& yum clean all \
 	# remove clamav virus signature data, because we use clamav outside of the docker container
 	&& rm -fr /var/lib/clamav/* \
+    && curl https://curl.haxx.se/ca/cacert.pem --output /etc/ssl/cacert.pem
 	&& mkdir -p $MW_ORIGIN_FILES \
 	&& mkdir -p $MW_HOME \
 	&& mkdir -p $MW_LOG
@@ -750,7 +751,7 @@ ENV MW_AUTOUPDATE=true \
 
 COPY conf/ssmtp.conf /etc/ssmtp/ssmtp.conf
 COPY conf/scan.conf /etc/clamd.d/scan.conf
-COPY conf/php/php_memory_limit.ini conf/php/php_max_execution_time.ini conf/php/php_error_reporting.ini conf/php/php_upload_max_filesize.ini /etc/php.d/
+COPY conf/php/php_memory_limit.ini conf/php/php_max_execution_time.ini conf/php/php_error_reporting.ini conf/php/php_upload_max_filesize.ini conf/php/php_curl_cainfo.ini /etc/php.d/
 COPY conf/apache/mediawiki.conf conf/apache/log.conf /etc/httpd/conf.d/
 COPY robots.txt .htaccess /var/www/html/
 COPY scripts/run-apache.sh scripts/mwjobrunner.sh scripts/mwsitemapgen.sh scripts/mwtranscoder.sh scripts/monit-slack.sh scripts/rotatelogs-compress.sh scripts/getMediawikiSettings.php /
