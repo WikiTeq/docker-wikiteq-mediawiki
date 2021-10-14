@@ -53,7 +53,7 @@ RUN set -x; \
 	&& yum clean all \
 	# remove clamav virus signature data, because we use clamav outside of the docker container
 	&& rm -fr /var/lib/clamav/* \
-    && curl https://curl.haxx.se/ca/cacert.pem --output /etc/ssl/cacert.pem
+    && curl https://curl.haxx.se/ca/cacert.pem --output /etc/ssl/cacert.pem \
 	&& mkdir -p $MW_ORIGIN_FILES \
 	&& mkdir -p $MW_HOME \
 	&& mkdir -p $MW_LOG
