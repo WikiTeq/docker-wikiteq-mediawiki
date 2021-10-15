@@ -643,6 +643,12 @@ RUN set -x; \
 	cd $MW_HOME \
 	&& git apply /tmp/patches/core-fix-composer-for-GoogleAnalyticsMetrics.diff
 
+# Fix composer dependencies for MassPasswordReset extension \
+# TODO: remove when PR merged https://github.com/nischayn22/MassPasswordReset/pull/1
+RUN set -x; \
+    cd $MW_HOME/extensions/MassPasswordReset \
+    && git apply /tmp/patches/MassPasswordReset.patch
+
 # Cache non frequently changing core packages
 # NOTE: the lockfile might need to be updated (not frequently), mainly for major core releases
 # just to keep the benefits on this extra step, eg:
@@ -699,7 +705,7 @@ RUN set -x; \
 # WikiTeq's patch allowing to manage fields visibility site-wide
 RUN set -x; \
     cd $MW_HOME/extensions/SocialProfile \
-    && git apply /tmp/patches/SocialProfile-disable-fields.patch
+    && git apply /tmp/patches/SocialProfile-disable-fields.patch \
 
 RUN set -x; \
      cd $MW_HOME/extensions/CommentStreams \
