@@ -454,5 +454,7 @@ if ( getenv('MW_ENABLE_SITEMAP_GENERATOR') === 'true' ) {
 # Debug mode
 $wgDebugMode = getenv('MW_DEBUG_MODE') === 'true';
 if( $wgDebugMode ) {
-	wfLoadExtension( 'DebugMode' );
+	if( isset( $wgDebugModeForIP ) && $_SERVER['REMOTE_ADDR'] == $wgDebugModeForIP ) {
+		wfLoadExtension( 'DebugMode' );
+	}
 }
