@@ -46,6 +46,7 @@ const DOCKER_EXTENSIONS = [
 	'ConfirmEdit/ReCaptchaNoCaptcha', # bundled
 	'ContactPage',
 	'DataTransfer',
+	'DebugMode',
 	'Description2',
 	'Disambiguator',
 	'DismissableSiteNotice',
@@ -448,4 +449,12 @@ if ( getenv('MW_ENABLE_SITEMAP_GENERATOR') === 'true' ) {
 			'href' => $wgScriptPath . '/sitemap/sitemap-index-mediawiki.xml'
 		] );
 	};
+}
+
+# Debug mode
+$wgDebugMode = getenv('MW_DEBUG_MODE') === 'true';
+if( $wgDebugMode ) {
+	if( isset( $wgDebugModeForIP ) && $_SERVER['REMOTE_ADDR'] == $wgDebugModeForIP ) {
+		wfLoadExtension( 'DebugMode' );
+	}
 }
