@@ -569,7 +569,7 @@ RUN set -x; \
     && cd SemanticExternalQueryLookup \
     && git checkout -b $MW_VERSION dd7810061f2f1a9eef7be5ee09da999cbf9ecd8a \
     # DebugMode, see https://www.mediawiki.org/wiki/Extension:DebugMode
-    && git clone ---single-branch -b master https://github.com/wikimedia/mediawiki-extensions-DebugMode.git $MW_HOME/extensions/DebugMode \
+    && git clone --single-branch -b master https://github.com/wikimedia/mediawiki-extensions-DebugMode.git $MW_HOME/extensions/DebugMode \
     && cd $MW_HOME/extensions/DebugMode \
     && git checkout -q ea803a501175fb3009f0fcde7d9168ef8e374399
 
