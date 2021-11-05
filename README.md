@@ -159,6 +159,7 @@ The image has the following extensions pre-installed, there extensions can be en
 * ConfirmEdit/ReCaptchaNoCaptcha
 * ContactPage
 * DataTransfer
+* DebugMode
 * Description2
 * Disambiguator
 * DismissableSiteNotice
@@ -388,3 +389,8 @@ of generated `/var/www/html/w/LocalSettings.php`
 * Starts service scripts
 * Runs `maintenance/update.php` and SMW maintenance scripts
 * Starts the Apache
+
+# Debugging
+
+The image is bundled with [DebugMode](https://www.mediawiki.org/wiki/Extension:DebugMode) extension which can be enabled via `MW_DEBUG_MODE=true` environment variable
+plus adding your IP address to `$wgDebugModeForIP` array
