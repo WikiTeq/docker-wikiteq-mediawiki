@@ -2,6 +2,14 @@
 
 set -x
 
+if ! mountpoint -q -- "$MW_VOLUME"; then
+    echo "Folder $MW_VOLUME contains important data and must be mounted to persistent storage!"
+    if [ "$MW_ALLOW_UNMOUNTED_VOLUME" != true ]; then
+        exit 1
+    fi
+    echo "You allowed to continue because MW_ALLOW_UNMOUNTED_VOLUME is set as true"
+fi
+
 # read variables from LocalSettings.php
 get_mediawiki_variable () {
     php /getMediawikiSettings.php --variable="$1" --format="${2:-string}"
@@ -49,13 +57,31 @@ cp -f ~/hosts.new /etc/hosts
 rsync -avh --ignore-existing "$MW_ORIGIN_FILES"/ "$MW_VOLUME"/
 mkdir -p "$MW_VOLUME"/extensions/SemanticMediaWiki/config
 
-# Allow to write to the directories
+# Write log files to $MW_VOLUME/log directory if target folders are not mounted
+if ! mountpoint -q -- /var/log/httpd/; then
+    mkdir -p "$MW_VOLUME/log/httpd"
+    rsync -avh --ignore-existing /var/log/httpd/ "$MW_VOLUME/log/httpd/"
+    mv /var/log/httpd /var/log/httpd_old
+    ln -s "$MW_VOLUME/log/httpd" /var/log/httpd
+else
+    chgrp -R "$WWW_GROUP" /var/log/httpd
+    chmod -R g=rwX /var/log/httpd
+fi
+
+if ! mountpoint -q -- "$MW_LOG"; then
+    mkdir -p "$MW_VOLUME/log/mediawiki"
+    rsync -avh --ignore-existing "$MW_LOG/" "$MW_VOLUME/log/mediawiki/"
+    mv "$MW_LOG" "${MW_LOG}_old"
+    ln -s "$MW_VOLUME/log/mediawiki" "$MW_LOG"
+    chmod -R o=rwX "$MW_VOLUME/log/mediawiki"
+else
+    chgrp -R "$WWW_GROUP" "$MW_LOG"
+    chmod -R go=rwX "$MW_LOG"
+fi
+
+# Allow $WWW_GROUP to write to the $MW_VOLUME directories
 chgrp -R "$WWW_GROUP" "$MW_VOLUME"
 chmod -R g=rwX "$MW_VOLUME"
-chgrp -R "$WWW_GROUP" /var/log/httpd
-chmod -R g=rwX /var/log/httpd
-chgrp -R "$WWW_GROUP" "$MW_LOG"
-chmod -R go=rwX "$MW_LOG"
 
 if [ "$WG_DB_TYPE" = "sqlite" ]; then
     mkdir -p "$WG_SQLITE_DATA_DIR"

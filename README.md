@@ -159,6 +159,7 @@ The image has the following extensions pre-installed, there extensions can be en
 * ConfirmEdit/ReCaptchaNoCaptcha
 * ContactPage
 * DataTransfer
+* DebugMode
 * Description2
 * Disambiguator
 * DismissableSiteNotice
@@ -204,7 +205,6 @@ The image has the following extensions pre-installed, there extensions can be en
 * MassMessageEmail
 * MassPasswordReset
 * Math
-* MathJax
 * Mendeley
 * MobileDetect
 * MobileFrontend
@@ -219,6 +219,7 @@ The image has the following extensions pre-installed, there extensions can be en
 * OpenIDConnect
 * PageExchange
 * PageImages
+* PageSchemas
 * ParserFunctions
 * PdfHandler
 * PluggableAuth
@@ -353,7 +354,10 @@ Log files stored in `_logs` directory
 # Runtime directories structure
 
 * `/mediawiki` - the **volume** that stores `images`, `cache` and various extension persistent files like
-`compiled_templates` for `Widgets` or `config` files for SMW extension which are being symlinked into `/var/www/html/w`
+`compiled_templates` for `Widgets` or `config` files for SMW extension which are being symlinked into `/var/www/html/w`.
+  The volume **must** be mounted to persistent storage like a folder outside the docker container (`./_data/mediawiki` for example).
+  The container will not start if `/mediawiki` is not mounted to a folder, but if you know what you do,
+  you can allow to start the container without mounting `/mediawiki` if you set `MW_ALLOW_UNMOUNTED_VOLUME` environment variable as `true`.
 * `/mw_origin_files` - a temp/backup directory to toss some of original files and directories of the wiki core
 * `/var/www/html/w` - the main wiki web root
 * `/var/log/apache2` - logs for Apache web server
@@ -385,3 +389,8 @@ of generated `/var/www/html/w/LocalSettings.php`
 * Starts service scripts
 * Runs `maintenance/update.php` and SMW maintenance scripts
 * Starts the Apache
+
+# Debugging
+
+The image is bundled with [DebugMode](https://www.mediawiki.org/wiki/Extension:DebugMode) extension which can be enabled via `MW_DEBUG_MODE=true` environment variable
+plus adding your IP address to `$wgDebugModeForIP` array
