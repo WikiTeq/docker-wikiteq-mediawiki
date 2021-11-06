@@ -699,26 +699,13 @@ RUN set -x; \
 # SWM maintenance page returns 503 (Service Unavailable) status code, PR: https://github.com/SemanticMediaWiki/SemanticMediaWiki/pull/4967
 RUN set -x; \
 	cd $MW_HOME/extensions/SemanticMediaWiki \
-	&& patch -u -b src/SetupCheck.php -i /tmp/smw-maintenance-503.patch
-
-# TODO send to upstream, see https://wikiteq.atlassian.net/browse/MW-64 and https://wikiteq.atlassian.net/browse/MW-81
-COPY patches/skin-refreshed.patch /tmp/skin-refreshed.patch
-RUN set -x; \
-	cd $MW_HOME/skins/Refreshed \
-	&& patch -u -b includes/RefreshedTemplate.php -i /tmp/skin-refreshed.patch
+	&& patch -u -b src/SetupCheck.php -i /tmp/patches/smw-maintenance-503.patch
 
 # Allow to modify headelement in the Vector skin, see https://wikiteq.atlassian.net/browse/FAM-7
-COPY patches/skin-vector-addVectorGeneratedSkinDataHook.patch /tmp/skin-vector-addVectorGeneratedSkinDataHook.patch
+COPY patches/skin-vector-addVectorGeneratedSkinDataHook.patch /tmp/patches/skin-vector-addVectorGeneratedSkinDataHook.patch
 RUN set -x; \
 	cd $MW_HOME/skins/Vector \
-	&& git apply /tmp/skin-vector-addVectorGeneratedSkinDataHook.patch
-
-# WLDR-92, WLDR-125, probably need to be removed if there will be a similar
-# change of UserGroupManager on future wiki releases
-COPY patches/ugm.patch /tmp/ugm.patch
-RUN set -x; \
-    cd $MW_HOME \
-    && git apply /tmp/ugm.patch
+	&& git apply /tmp/patches/skin-vector-addVectorGeneratedSkinDataHook.patch
 
 # TODO: remove for 1.36+, see https://phabricator.wikimedia.org/T281043
 RUN set -x; \
