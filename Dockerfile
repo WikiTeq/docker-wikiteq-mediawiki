@@ -404,7 +404,7 @@ RUN set -x; \
 	# SemanticDrilldown
 	&& git clone --single-branch -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/SemanticDrilldown $MW_HOME/extensions/SemanticDrilldown \
 	&& cd $MW_HOME/extensions/SemanticDrilldown \
-	&& git checkout -q 8e03672100457ebfcd65f4b94fd60af80c2eaf4a \
+	&& git checkout -q 9d7ad4a38951db13d72408ffce7d3474fbe757ac \
 	# VEForAll TODO (version 0.3, master), switch back to REL_x for 1.36
 	&& git clone --single-branch -b master https://gerrit.wikimedia.org/r/mediawiki/extensions/VEForAll $MW_HOME/extensions/VEForAll \
 	&& cd $MW_HOME/extensions/VEForAll \
