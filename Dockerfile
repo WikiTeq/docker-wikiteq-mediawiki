@@ -402,9 +402,9 @@ RUN set -x; \
 	&& cd $MW_HOME/extensions/MassMessageEmail \
 	&& git checkout -q 2424d03ac7b53844d49379cba3cceb5d9f4b578e \
 	# SemanticDrilldown
-	&& git clone --single-branch -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/SemanticDrilldown $MW_HOME/extensions/SemanticDrilldown \
+	&& git clone --single-branch -b master https://gerrit.wikimedia.org/r/mediawiki/extensions/SemanticDrilldown $MW_HOME/extensions/SemanticDrilldown \
 	&& cd $MW_HOME/extensions/SemanticDrilldown \
-	&& git checkout -q 9d7ad4a38951db13d72408ffce7d3474fbe757ac \
+	&& git checkout -q c9f0770512d9c34efc1fa1235a7ccf894e8aef9e \
 	# VEForAll TODO (version 0.3, master), switch back to REL_x for 1.36
 	&& git clone --single-branch -b master https://gerrit.wikimedia.org/r/mediawiki/extensions/VEForAll $MW_HOME/extensions/VEForAll \
 	&& cd $MW_HOME/extensions/VEForAll \
