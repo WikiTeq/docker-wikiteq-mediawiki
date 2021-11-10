@@ -3,6 +3,7 @@ Allow: /w/load.php?
 Allow: /w/resources
 Allow: /w/skins
 Allow: /w/extensions
+Allow: /w/sitemap
 Disallow: /w/
 Disallow: /Special:
 Disallow: /wiki/Special:
