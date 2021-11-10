@@ -394,3 +394,4 @@ of generated `/var/www/html/w/LocalSettings.php`
 
 The image is bundled with [DebugMode](https://www.mediawiki.org/wiki/Extension:DebugMode) extension which can be enabled via `MW_DEBUG_MODE=true` environment variable
 plus adding your IP address to `$wgDebugModeForIP` array
+
