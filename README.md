@@ -128,12 +128,7 @@ Below is the list of evironment variables used by the image:
 
 # Pre-installed extensions
 
-The image has the following extensions pre-installed:
-
-* SemanticMediaWiki
-* PageForms
-
-**These pre-installed extensions can be enabled via `MW_LOAD_EXTENSIONS` env:**
+The image has the following extensions pre-installed. **These pre-installed extensions can be enabled via `MW_LOAD_EXTENSIONS` env:**
 
 * AdminLinks
 * AdvancedSearch
@@ -222,6 +217,7 @@ The image has the following extensions pre-installed:
 * OpenGraphMeta
 * OpenIDConnect
 * PageExchange
+* PageForms
 * PageImages
 * ParserFunctions
 * PdfHandler
@@ -243,6 +239,7 @@ The image has the following extensions pre-installed:
 * SemanticExtraSpecialProperties
 * SemanticCompoundQueries
 * SemanticDrilldown
+* SemanticMediaWiki
 * SemanticQueryInterface
 * SemanticResultFormats
 * SemanticScribunto
