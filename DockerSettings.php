@@ -8,6 +8,7 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 const DOCKER_SKINS = [
 	'chameleon',
 	'CologneBlue',
+	'MinervaNeue',
 	'Modern',
 	'MonoBook', # bundled
 	'Refreshed',
@@ -16,6 +17,7 @@ const DOCKER_SKINS = [
 ];
 
 const DOCKER_EXTENSIONS = [
+	'AdminLinks',
 	'AdvancedSearch',
 	'AJAXPoll',
 	'AntiSpoof',
@@ -29,6 +31,7 @@ const DOCKER_EXTENSIONS = [
 	'CharInsert',
 	'CheckUser',
 	'CirrusSearch',
+	'ContributionScores',
 	'Elastica',
 	'Cite', # bundled
 	'CiteThisPage', # bundled
@@ -43,8 +46,10 @@ const DOCKER_EXTENSIONS = [
 	'ConfirmEdit/ReCaptchaNoCaptcha', # bundled
 	'ContactPage',
 	'DataTransfer',
+	'DebugMode',
 	'Description2',
 	'Disambiguator',
+	'DismissableSiteNotice',
 	'DisplayTitle',
 	'Echo',
 	'EditAccount',
@@ -52,14 +57,18 @@ const DOCKER_EXTENSIONS = [
 	'EncryptedUploads',
 	'EventLogging',
 	'EventStreamConfig',
+	'ExternalData',
 	'Favorites',
+	'FixedHeaderTable',
 	'Flow',
 	'Gadgets', # bundled
+	'GlobalNotice',
 	'googleAnalytics',
 	'GoogleAnalyticsMetrics',
 	'GoogleDocCreator',
 	'GoogleDocTag',
 	'GTag',
+	'HeaderFooter',
 	'HeaderTabs',
 	'HeadScript',
 	'HTMLTags',
@@ -67,7 +76,9 @@ const DOCKER_EXTENSIONS = [
 	'ImageMap', # bundled
 	'InputBox', # bundled
 	'Interwiki', # bundled
+	'LabeledSectionTransclusion',
 	'Lazyload',
+	'Lingo',
 	'LinkSuggest',
 	'LinkTarget',
 	'LiquidThreads',
@@ -81,26 +92,34 @@ const DOCKER_EXTENSIONS = [
 	'MassMessageEmail',
 	'MassPasswordReset',
 	'Math',
-	'MathJax',
 	'Mendeley',
 	'MobileDetect',
+	'MobileFrontend',
 	'MsUpload',
 	'MultimediaViewer', # bundled
 	'MyVariables',
 	'NCBITaxonomyLookup',
 	'Nuke', # bundled
+	'NumerAlpha',
 	'OATHAuth', # bundled
+	'OpenGraphMeta',
+	'OpenIDConnect',
 	'PageExchange',
 	'PageImages', # bundled
 //	'PageForms',   must be enabled manually after enableSemantics()
+	'PageSchemas',
 	'ParserFunctions', # bundled
+	'PDFEmbed',
 	'PdfHandler', # bundled
+	'PluggableAuth',
 	'Poem', # bundled
 	'Popups',
 	'PubmedParser',
 	'Renameuser', # bundled
 	'ReplaceText', # bundled
+	'RevisionSlider',
 	'RottenLinks',
+	'SandboxLink',
 	'SaveSpinner',
 	'Scopus',
 	'Scribunto', # bundled
@@ -112,8 +131,10 @@ const DOCKER_EXTENSIONS = [
 	'SemanticDrilldown',
 	'SemanticQueryInterface',
 	'SemanticResultFormats',
+	'SemanticScribunto',
 	'ShowMe',
 	'SimpleChanges',
+	'SimpleMathJax',
 	'Skinny',
 	'SkinPerNamespace',
 	'SkinPerPage',
@@ -121,11 +142,13 @@ const DOCKER_EXTENSIONS = [
 	'SoundManager2Button',
 	'SpamBlacklist', # bundled
 	'SRFEventCalendarMod',
+	'SubPageList',
 	'Survey',
 	'Sync',
 	'SyntaxHighlight_GeSHi', # bundled
 	'Tabber',
 	'Tabs',
+	'TalkRight',
 	'TemplateData', # bundled
 	'TemplateStyles',
 	'TextExtracts', # bundled
@@ -143,10 +166,12 @@ const DOCKER_EXTENSIONS = [
 	'VEForAll',
 	'VisualEditor', # bundled
 	'VoteNY',
+	'WhoIsWatching',
 	'Widgets',
 	'WikiEditor', # bundled
 	'WikiForum',
 	'WikiSEO',
+	'Wiretap',
 	'YouTube',
 ];
 
@@ -171,9 +196,6 @@ $wgScriptExtension = ".php";
 if ( getenv( 'MW_SITE_SERVER' ) ) {
 	$wgServer = getenv( 'MW_SITE_SERVER' );
 }
-
-# Internal server name as known to Squid, if different than $wgServer.
-#$wgInternalServer = false;
 
 ## The URL path to static resources (images, scripts, etc.)
 $wgResourceBasePath = $wgScriptPath;
@@ -236,9 +258,7 @@ $wgRightsIcon = "";
 $wgDiff3 = "/usr/bin/diff3";
 
 # see https://www.mediawiki.org/wiki/Manual:$wgCdnServersNoPurge
-$wgUseCdn = true;
-$wgCdnServersNoPurge = [];
-$wgCdnServersNoPurge[] = '172.16.0.0/12';
+$wgCdnServersNoPurge = [ '172.16.0.0/12' ]; # Add docker network as CDN
 
 if ( getenv( 'MW_SHOW_EXCEPTION_DETAILS' ) === 'true' ) {
 	$wgShowExceptionDetails = true;
@@ -308,7 +328,6 @@ if ( isset( $dockerLoadExtensions['Scribunto'] ) ) {
 	$wgScribuntoDefaultEngine = 'luastandalone';
 	$wgScribuntoUseGeSHi = boolval( $dockerLoadExtensions['SyntaxHighlight_GeSHi'] ?? false );
 	$wgScribuntoUseCodeEditor = boolval( $dockerLoadExtensions['CodeEditor'] ?? false );
-	$wgScribuntoEngineConf['luastandalone']['errorFile'] = "/var/log/httpd/lua.log";
 	$wgScribuntoEngineConf['luastandalone']['luaPath'] = "$IP/extensions/Scribunto/includes/engines/LuaStandalone/binaries/lua5_1_5_linux_64_generic/lua";
 }
 
@@ -378,72 +397,14 @@ switch ( getenv( 'MW_MAIN_CACHE_TYPE' ) ) {
 $tmpProxy = getenv( 'MW_PROXY_SERVERS' );
 if ( $tmpProxy ) {
 	# https://www.mediawiki.org/wiki/Manual:Varnish_caching
-	$wgUseSquid = true;
-	$wgSquidServers = explode( ',', $tmpProxy );
+	$wgUseCdn = true;
+	$wgCdnServers = explode( ',', $tmpProxy );
 	$wgUsePrivateIPs = true;
-	$wgHooks['IsTrustedProxy'][] = function( $ip, &$trusted ) {
-		// Proxy can be set as a name of proxy container
-		if ( !$trusted ) {
-			global $wgSquidServers;
-			foreach ( $wgSquidServers as $proxy ) {
-				if ( !ip2long( $proxy ) ) { // It is name of proxy
-					if ( gethostbyname( $proxy ) === $ip ) {
-						$trusted = true;
-						return;
-					}
-				}
-			}
-		}
-	};
+	# Use HTTP protocol for internal connections like PURGE request to Varnish
+	if ( strncasecmp( $wgServer, 'https://', 8 ) === 0 ) {
+		$wgInternalServer = 'http://' . substr( $wgServer, 8 ); // Replaces HTTPS with HTTP
+	}
 }
-//Use $wgSquidServersNoPurge if you don't want MediaWiki to purge modified pages
-//$wgSquidServersNoPurge = array('127.0.0.1');
-
-########################### VisualEditor ###########################
-//$tmpRestDomain = getenv( 'MW_REST_DOMAIN' );
-//$tmpRestParsoidUrl = getenv( 'MW_REST_PARSOID_URL' );
-//if ( $tmpRestDomain && $tmpRestParsoidUrl ) {
-//	wfLoadExtension( 'VisualEditor' );
-//
-//	// Enable by default for everybody
-//	$wgDefaultUserOptions['visualeditor-enable'] = 1;
-//
-//	// Optional: Set VisualEditor as the default for anonymous users
-//	// otherwise they will have to switch to VE
-//	// $wgDefaultUserOptions['visualeditor-editor'] = "visualeditor";
-//
-//	// Don't allow users to disable it
-//	$wgHiddenPrefs[] = 'visualeditor-enable';
-//
-//	// OPTIONAL: Enable VisualEditor's experimental code features
-//	#$wgDefaultUserOptions['visualeditor-enable-experimental'] = 1;
-//
-//	$wgVirtualRestConfig['modules']['parsoid'] = [
-//		// URL to the Parsoid instance
-//		'url' => $tmpRestParsoidUrl,
-//		// Parsoid "domain", see below (optional)
-//		'domain' => $tmpRestDomain,
-//		// Parsoid "prefix", see below (optional)
-//		'prefix' => $tmpRestDomain,
-//	];
-//
-//	$tmpRestRestbaseUrl = getenv( 'MW_REST_RESTBASE_URL' );
-//	if ( $tmpRestRestbaseUrl ) {
-//		$wgVirtualRestConfig['modules']['restbase'] = [
-//			'url' => $tmpRestRestbaseUrl,
-//			'domain' => $tmpRestDomain,
-//			'parsoidCompat' => false
-//		];
-//
-//		$tmpRestProxyPath = getenv( 'MW_REST_RESTBASE_PROXY_PATH' );
-//		if ( $tmpProxy && $tmpRestProxyPath ) {
-//			$wgVisualEditorFullRestbaseURL = $wgServer . $tmpRestProxyPath;
-//		} else {
-//			$wgVisualEditorFullRestbaseURL = $wgServer . ':' . getenv( 'MW_REST_RESTBASE_PORT' ) . "/$tmpRestDomain/";
-//		}
-//		$wgVisualEditorRestbaseURL = $wgVisualEditorFullRestbaseURL . 'v1/page/html/';
-//	}
-//}
 
 ######################### Custom Settings ##########################
 if ( file_exists( "$IP/_settings/LocalSettings.php" ) ) {
@@ -488,4 +449,12 @@ if ( getenv('MW_ENABLE_SITEMAP_GENERATOR') === 'true' ) {
 			'href' => $wgScriptPath . '/sitemap/sitemap-index-mediawiki.xml'
 		] );
 	};
+}
+
+# Debug mode
+$wgDebugMode = getenv('MW_DEBUG_MODE') === 'true';
+if( $wgDebugMode ) {
+	if( isset( $wgDebugModeForIP ) && $_SERVER['REMOTE_ADDR'] == $wgDebugModeForIP ) {
+		wfLoadExtension( 'DebugMode' );
+	}
 }

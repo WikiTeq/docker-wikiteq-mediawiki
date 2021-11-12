@@ -12,6 +12,22 @@ if [[ -z "$BRANCH" ]]; then
 fi
 
 Extensions=(
+    AdminLinks
+    ContributionScores
+    ExternalData
+    DismissableSiteNotice
+    MobileFrontend
+    RevisionSlider
+    SandboxLink
+    OpenIDConnect
+    PluggableAuth
+    WhoIsWatching
+    LabeledSectionTransclusion
+    GlobalNotice
+    FixedHeaderTable
+    Lingo
+    OpenGraphMeta
+    NumerAlpha
 	"DataTransfer"
 	"Variables"
 	"Loops"

@@ -8,6 +8,7 @@ The image consists of the following:
 * Monit
 * ImageMagick + FFMpeg + Curl
 * Composer
+* ClamAV client
 
 **Note**: the image does not contain a database embed, so it won't work without 
 external MySQL/MariaDB instance connected.
@@ -129,6 +130,7 @@ Below is the list of evironment variables used by the image:
 
 The image has the following extensions pre-installed, there extensions can be enabled via `MW_LOAD_EXTENSIONS` env:
 
+* AdminLinks
 * AdvancedSearch
 * AJAXPoll
 * AntiSpoof
@@ -142,6 +144,7 @@ The image has the following extensions pre-installed, there extensions can be en
 * CharInsert
 * CheckUser
 * CirrusSearch
+* ContributionScores
 * Elastica
 * Cite
 * CiteThisPage
@@ -156,8 +159,10 @@ The image has the following extensions pre-installed, there extensions can be en
 * ConfirmEdit/ReCaptchaNoCaptcha
 * ContactPage
 * DataTransfer
+* DebugMode
 * Description2
 * Disambiguator
+* DismissableSiteNotice
 * DisplayTitle
 * Echo
 * EditAccount
@@ -165,14 +170,18 @@ The image has the following extensions pre-installed, there extensions can be en
 * EncryptedUploads
 * EventLogging
 * EventStreamConfig
+* ExternalData
 * Favorites
+* FixedHeaderTable
 * Flow
 * Gadgets
+* GlobalNotice
 * googleAnalytics
 * GoogleAnalyticsMetrics
 * GoogleDocCreator
 * GoogleDocTag
 * GTag
+* HeaderFooter
 * HeaderTabs
 * HeadScript
 * HTMLTags
@@ -180,7 +189,9 @@ The image has the following extensions pre-installed, there extensions can be en
 * ImageMap
 * InputBox
 * Interwiki
+* LabeledSectionTransclusion
 * Lazyload
+* Lingo
 * LinkSuggest
 * LinkTarget
 * LiquidThreads
@@ -194,25 +205,32 @@ The image has the following extensions pre-installed, there extensions can be en
 * MassMessageEmail
 * MassPasswordReset
 * Math
-* MathJax
 * Mendeley
 * MobileDetect
+* MobileFrontend
 * MsUpload
 * MultimediaViewer
 * MyVariables
 * NCBITaxonomyLookup
 * Nuke
+* NumerAlpha
 * OATHAuth
+* OpenGraphMeta
+* OpenIDConnect
 * PageExchange
 * PageImages
+* PageSchemas
 * ParserFunctions
 * PdfHandler
+* PluggableAuth
 * Poem
 * Popups
 * PubmedParser
 * Renameuser
 * ReplaceText
+* RevisionSlider
 * RottenLinks
+* SandboxLink
 * SaveSpinner
 * Scopus
 * Scribunto
@@ -224,8 +242,10 @@ The image has the following extensions pre-installed, there extensions can be en
 * SemanticDrilldown
 * SemanticQueryInterface
 * SemanticResultFormats
+* SemanticScribunto
 * ShowMe
 * SimpleChanges
+* SimpleMathJax
 * Skinny
 * SkinPerNamespace
 * SkinPerPage
@@ -233,11 +253,13 @@ The image has the following extensions pre-installed, there extensions can be en
 * SoundManager2Button
 * SpamBlacklist
 * SRFEventCalendarMod
+* SubPageList
 * Survey
 * Sync
 * SyntaxHighlight_GeSHi
 * Tabber
 * Tabs
+* TalkRight
 * TemplateData
 * TemplateStyles
 * TextExtracts
@@ -255,10 +277,12 @@ The image has the following extensions pre-installed, there extensions can be en
 * VEForAll
 * VisualEditor
 * VoteNY
+* WhoIsWatching
 * Widgets
 * WikiEditor
 * WikiForum
 * WikiSEO
+* Wiretap
 * YouTube
 
 # Pre-installed skins
@@ -267,11 +291,38 @@ The image has the following skins pre-installed, there extensions can be enabled
 
 * chameleon
 * CologneBlue
+* MinervaNeue
 * Modern
 * MonoBook
 * Refreshed
 * Timeless
 * Vector
+
+# ClamAV client
+
+The image has the ClamAV client installed, it expects to have a ClamD installed on the Docker host machine (or somewhere else) and won’t work without it.
+ClamAV client does not contain the viruses signature database and sends files for scanning to ClamD via TCP Socket (172.17.0.1:3310 by default).
+
+You can install and configure ClamD on the Docker host machine to listen on `TCPSocket 3310` (ClamD default TCP port) and `TCPAddr 172.17.0.1` (Docker default gateway IP available for all containers).
+Just add these parameters to `/etc/clamav/clamd.conf` file.
+And define the antivirus configuration in `LocalSettings.php` file:
+```
+# Antivirus configuration
+$wgAntivirusSetup = [
+	'clamavD' => [
+	    'command' => "/usr/bin/clamdscan --no-summary --fdpass %f",
+	    'codemap' => [
+	        "0"   =>  AV_NO_VIRUS,     #no virus
+	        "1"   =>  AV_VIRUS_FOUND,  #virus found
+	        "52"  =>  AV_SCAN_ABORTED, #unsupported file format (probably immune)
+	        "*"   =>  AV_SCAN_FAILED,  #else scan failed
+	    ],
+	    'messagepattern' => '/.*?:(.*)/sim', 
+	], 
+];
+# Use daemonized scanner through socket
+$wgAntivirus = "clamavD";
+```
 
 # LocalSettings.php
 
@@ -303,7 +354,10 @@ Log files stored in `_logs` directory
 # Runtime directories structure
 
 * `/mediawiki` - the **volume** that stores `images`, `cache` and various extension persistent files like
-`compiled_templates` for `Widgets` or `config` files for SMW extension which are being symlinked into `/var/www/html/w`
+`compiled_templates` for `Widgets` or `config` files for SMW extension which are being symlinked into `/var/www/html/w`.
+  The volume **must** be mounted to persistent storage like a folder outside the docker container (`./_data/mediawiki` for example).
+  The container will not start if `/mediawiki` is not mounted to a folder, but if you know what you do,
+  you can allow to start the container without mounting `/mediawiki` if you set `MW_ALLOW_UNMOUNTED_VOLUME` environment variable as `true`.
 * `/mw_origin_files` - a temp/backup directory to toss some of original files and directories of the wiki core
 * `/var/www/html/w` - the main wiki web root
 * `/var/log/apache2` - logs for Apache web server
@@ -335,3 +389,9 @@ of generated `/var/www/html/w/LocalSettings.php`
 * Starts service scripts
 * Runs `maintenance/update.php` and SMW maintenance scripts
 * Starts the Apache
+
+# Debugging
+
+The image is bundled with [DebugMode](https://www.mediawiki.org/wiki/Extension:DebugMode) extension which can be enabled via `MW_DEBUG_MODE=true` environment variable
+plus adding your IP address to `$wgDebugModeForIP` array
+

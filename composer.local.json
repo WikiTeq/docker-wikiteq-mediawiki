@@ -1,12 +1,17 @@
 {
 	"require": {
 		"elasticsearch/elasticsearch": "6.7.2",
-		"mediawiki/bootstrap": "4.4.1",
+		"mediawiki/chameleon-skin": "^3.3.0",
 		"mediawiki/maps": "8.0.0",
 		"mediawiki/semantic-media-wiki": "3.2.3",
 		"mediawiki/semantic-result-formats": "3.2.0",
 		"mediawiki/semantic-compound-queries": "2.1.0",
-		"mediawiki/semantic-extra-special-properties": "2.1.0"
+		"mediawiki/semantic-extra-special-properties": "2.1.0",
+		"mediawiki/semantic-scribunto": "2.1.0",
+		"mediawiki/bootstrap-components": "4.0.1",
+		"mediawiki/sub-page-list": "1.6.1",
+		"mediawiki/header-footer": "3.0.1",
+		"mediawiki/talk-right": "2.0.0"
 	},
 	"extra": {
 		"merge-plugin": {
@@ -15,12 +20,14 @@
 				"extensions/Elastica/composer.json",
 				"extensions/OATHAuth/composer.json",
 				"extensions/Flow/composer.json",
+				"extensions/MassPasswordReset/composer.json",
 				"extensions/TimedMediaHandler/composer.json",
 				"extensions/AntiSpoof/composer.json",
 				"extensions/TemplateStyles/composer.json",
 				"extensions/Widgets/composer.json",
 				"extensions/GoogleAnalyticsMetrics/composer.json",
-				"extensions/SemanticExternalQueryLookup/composer.json"
+				"extensions/SemanticExternalQueryLookup/composer.json",
+				"extensions/OpenIDConnect/composer.json"
 			]
 		}
 	}

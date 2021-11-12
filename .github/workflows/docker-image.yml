@@ -40,11 +40,10 @@ jobs:
 
       -
         name: Run linter (hadolint)
-        uses: brpaz/hadolint-action@master
+        uses: vedmaka/hadolint-action@master
         with:
           dockerfile: "Dockerfile"
           config: "hadolint.yaml"
-          failure-threshold: "error"
 
   # Push image to GitHub Packages.
   # The image tag pattern is:
@@ -72,6 +71,8 @@ jobs:
 
           # Extract MW version from Dockerfile
           MEDIAWIKI_VERSION=$(sed -nr 's/MW_CORE_VERSION\=([0-9\.]+)/\1/p' Dockerfile | sed "s/ \\\//" | sed "s/\t//")
+          # Extract MW major version (like 1.35)
+          MEDIAWIKI_MAJOR_VERSION=${MEDIAWIKI_VERSION%.*}
 
           # Change all uppercase to lowercase, just in case
           IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
@@ -95,7 +96,7 @@ jobs:
           REGISTRY_TAGS=$IMAGE_ID:$VERSION
 
           # For master branch also supply an extra tag: <MW_VERSION>-latest,<MW_VERSION>-<DATE>-<SHA>
-          [ "$VERSION" == "latest" ] && REGISTRY_TAGS=$REGISTRY_TAGS,$IMAGE_ID:$MEDIAWIKI_VERSION-latest,$IMAGE_ID:$MEDIAWIKI_VERSION-$BDATE-$(git rev-parse --short HEAD)
+          [ "$VERSION" == "latest" ] && REGISTRY_TAGS=$REGISTRY_TAGS,$IMAGE_ID:$MEDIAWIKI_MAJOR_VERSION-latest,$IMAGE_ID:$MEDIAWIKI_VERSION-latest,$IMAGE_ID:$MEDIAWIKI_VERSION-$BDATE-$(git rev-parse --short HEAD)
 
           echo IMAGE_ID=$IMAGE_ID
           echo VERSION=$VERSION
@@ -105,12 +106,10 @@ jobs:
           echo "Final image tag to be pushed:"
           echo $REGISTRY_TAGS
           echo "::set-output name=REGISTRY_TAGS::$REGISTRY_TAGS"
-      -
-        name: Set up QEMU
-        uses: docker/setup-qemu-action@v1
+
       -
         name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
+        uses: docker/setup-buildx-action@master
       -
         name: Cache Docker layers
         uses: actions/cache@v2
