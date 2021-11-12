@@ -604,10 +604,14 @@ RUN set -x; \
     && git checkout -q -b $MW_VERSION 0d3d6b03a83afd7e1cb170aa41bdf23c0ce3e93b
 
 # TODO send to upstream, see https://wikiteq.atlassian.net/browse/MW-64 and https://wikiteq.atlassian.net/browse/MW-81
-COPY patches/skin-refreshed.patch /tmp/skin-refreshed.patch
+COPY patches /tmp/patches
 RUN set -x; \
 	cd $MW_HOME/skins/Refreshed \
-	&& patch -u -b includes/RefreshedTemplate.php -i /tmp/skin-refreshed.patch
+    # TODO push the patch to the repo?
+	&& patch -u -b includes/RefreshedTemplate.php -i /tmp/patches/skin-refreshed.patch \
+    # TODO remove me when https://gerrit.wikimedia.org/r/c/mediawiki/skins/Refreshed/+/737080 merged \
+    # Fix PHP Warning in RefreshedTemplate::makeElementWithIconHelper()
+    && patch -u -b includes/RefreshedTemplate.php -i /tmp/patches/skin-refreshed-737080.patch
 
 FROM base as source
 
