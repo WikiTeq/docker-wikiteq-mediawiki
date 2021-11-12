@@ -611,7 +611,7 @@ RUN set -x; \
 	&& patch -u -b includes/RefreshedTemplate.php -i /tmp/patches/skin-refreshed.patch \
     # TODO remove me when https://gerrit.wikimedia.org/r/c/mediawiki/skins/Refreshed/+/737080 merged \
     # Fix PHP Warning in RefreshedTemplate::makeElementWithIconHelper()
-    && patch -u -b includes/RefreshedTemplate.php -i /tmp/patches/skin-refreshed-737080.patch
+    && git apply /tmp/patches/skin-refreshed-737080.diff
 
 FROM base as source
 
