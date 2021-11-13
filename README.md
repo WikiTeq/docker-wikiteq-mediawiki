@@ -1,5 +1,7 @@
 # WikiTeq's MediaWiki Docker image
 
+[![Docker build and push](https://github.com/WikiTeq/docker-wikiteq-mediawiki/actions/workflows/docker-image.yml/badge.svg)](https://github.com/WikiTeq/docker-wikiteq-mediawiki/actions/workflows/docker-image.yml)
+
 The image is based on `centos` and runs [MediaWiki](https://www.mediawiki.org/) software.
 The image consists of the following:
 
