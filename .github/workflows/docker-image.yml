@@ -45,6 +45,23 @@ jobs:
           dockerfile: "Dockerfile"
           config: "hadolint.yaml"
 
+  phpunit:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' || github.event_name == 'pull_request'
+    steps:
+      - uses: actions/checkout@v2
+      - uses: addnab/docker-run-action@v3
+      - uses: docker/build-push-action@v2
+        with:
+          tags: test-image:latest
+          push: false
+      - uses: addnab/docker-run-action@v3
+        with:
+          image: test-image:latest
+          shell: bash
+          run: echo "Test" && ls -al
+
+
   # Push image to GitHub Packages.
   # The image tag pattern is:
   # for pull-requests: <MW_CORE_VERSION>-<DATE>-<PR_NUMBER>, eg: 1.35.2-20210125-25
@@ -52,7 +69,7 @@ jobs:
   # for `master` branch: latest + <MW_VERSION>-latest + <MW_CORE_VERSION>-<DATE>-<SHA>
   # <MW_CORE_VERSION> being parsed from the Dockerfile
   push:
-    needs: [test]
+    needs: [test,phpunit]
     runs-on: ubuntu-latest
     if: github.event_name == 'push' || github.event_name == 'pull_request'
     steps:
@@ -131,7 +148,8 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: .
-          push: true
+          # TODO: set back to 'true' once done
+          push: false
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache-new
           tags: ${{ steps.generate.outputs.REGISTRY_TAGS }}
