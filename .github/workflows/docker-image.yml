@@ -50,7 +50,6 @@ jobs:
     if: github.event_name == 'push' || github.event_name == 'pull_request'
     steps:
       - uses: actions/checkout@v2
-      - uses: addnab/docker-run-action@v3
       - uses: docker/build-push-action@v2
         with:
           tags: test-image:latest
