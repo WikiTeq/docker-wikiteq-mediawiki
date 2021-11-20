@@ -447,7 +447,8 @@ RUN set -x; \
 	&& cd $MW_HOME/extensions \
 	&& git clone https://gerrit.wikimedia.org/r/mediawiki/extensions/EncryptedUploads \
 	&& cd EncryptedUploads \
-	&& git checkout -b $MW_VERSION 51e3482462f1852e289d5863849b164e1b1a7ea9 \
+	# TODO: update once https://gerrit.wikimedia.org/r/c/mediawiki/extensions/EncryptedUploads/+/740299 is merged
+	&& git fetch https://gerrit.wikimedia.org/r/mediawiki/extensions/EncryptedUploads refs/changes/99/740299/1 && git checkout FETCH_HEAD \
 	# PageExchange, we use master because of compatibility issues of REL1_35 branch of the extension with core 1.35.1 tag
 	&& cd $MW_HOME/extensions \
 	&& git clone https://gerrit.wikimedia.org/r/mediawiki/extensions/PageExchange \
