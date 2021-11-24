@@ -27,7 +27,8 @@
 				"extensions/Widgets/composer.json",
 				"extensions/GoogleAnalyticsMetrics/composer.json",
 				"extensions/SemanticExternalQueryLookup/composer.json",
-				"extensions/OpenIDConnect/composer.json"
+				"extensions/OpenIDConnect/composer.json",
+				"extensions/EncryptedUploads/composer.json"
 			]
 		}
 	}
