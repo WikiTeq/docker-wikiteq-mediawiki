@@ -1,23 +1,8 @@
-From 37a9e60ca5bc3ff0efc090292988f6b40a7f7bef Mon Sep 17 00:00:00 2001
-From: Cindy Cicalese <cindom@gmail.com>
-Date: Mon, 27 Sep 2021 22:28:12 -0400
-Subject: [PATCH] Add SpecialExportGetExtraPagesHook
-
-This hook allows extensions to add additional pages to the list of
-pages being exported. For example, if an extension creates supplemental
-pages that must be exported along with a content page, this hook will
-allow the extension to export the supplemental pages automatically when
-the content page is exported.
-
-Bug: T292378
-Change-Id: I3b6b466b6ed32b1939674872df9e431bd6941645
----
-
 diff --git a/autoload.php b/autoload.php
-index 60b748b..6174cf1 100644
+index 805ebb2..507225b 100644
 --- a/autoload.php
 +++ b/autoload.php
-@@ -1010,6 +1010,7 @@
+@@ -1025,6 +1025,7 @@ $wgAutoloadLocalClasses = [
  	'MediaWiki\\Hook\\SpecialContributionsBeforeMainOutputHook' => __DIR__ . '/includes/specials/Hook/SpecialContributionsBeforeMainOutputHook.php',
  	'MediaWiki\\Hook\\SpecialContributions__formatRow__flagsHook' => __DIR__ . '/includes/specials/Hook/SpecialContributions__formatRow__flagsHook.php',
  	'MediaWiki\\Hook\\SpecialContributions__getForm__filtersHook' => __DIR__ . '/includes/specials/Hook/SpecialContributions__getForm__filtersHook.php',
@@ -26,10 +11,10 @@ index 60b748b..6174cf1 100644
  	'MediaWiki\\Hook\\SpecialListusersFormatRowHook' => __DIR__ . '/includes/specials/Hook/SpecialListusersFormatRowHook.php',
  	'MediaWiki\\Hook\\SpecialListusersHeaderFormHook' => __DIR__ . '/includes/specials/Hook/SpecialListusersHeaderFormHook.php',
 diff --git a/includes/HookContainer/HookRunner.php b/includes/HookContainer/HookRunner.php
-index 38123b7..8b9c833 100644
+index f77b9c2..32b5e44 100644
 --- a/includes/HookContainer/HookRunner.php
 +++ b/includes/HookContainer/HookRunner.php
-@@ -332,6 +332,7 @@
+@@ -332,6 +332,7 @@ class HookRunner implements
  	\MediaWiki\Hook\SpecialBlockModifyFormFieldsHook,
  	\MediaWiki\Hook\SpecialContributionsBeforeMainOutputHook,
  	\MediaWiki\Hook\SpecialContributions__formatRow__flagsHook,
@@ -37,7 +22,7 @@ index 38123b7..8b9c833 100644
  	\MediaWiki\Hook\SpecialContributions__getForm__filtersHook,
  	\MediaWiki\Hook\SpecialListusersDefaultQueryHook,
  	\MediaWiki\Hook\SpecialListusersFormatRowHook,
-@@ -3512,6 +3513,13 @@
+@@ -3666,6 +3667,13 @@ class HookRunner implements
  		);
  	}
  
@@ -52,24 +37,29 @@ index 38123b7..8b9c833 100644
  		return $this->container->run(
  			'SpecialListusersDefaultQuery',
 diff --git a/includes/specialpage/SpecialPageFactory.php b/includes/specialpage/SpecialPageFactory.php
-index fdaa7df..00c5e85 100644
+index 59ecef8..12a7d64 100644
 --- a/includes/specialpage/SpecialPageFactory.php
 +++ b/includes/specialpage/SpecialPageFactory.php
-@@ -757,6 +757,7 @@
- 			'services' => [
- 				'DBLoadBalancer',
- 				'WikiExporterFactory',
-+				'TitleFormatter',
- 			]
- 		],
- 		'Import' => [
+@@ -187,6 +187,12 @@ class SpecialPageFactory {
+ 
+ 		// Page tools
+ 		'ComparePages' => \SpecialComparePages::class,
++		'Export' => [
++			'class' => \SpecialExport::class,
++			'services' => [
++				'TitleFormatter'
++			]
++		],
+ 		'Export' => \SpecialExport::class,
+ 		'Import' => \SpecialImport::class,
+ 		'Undelete' => \SpecialUndelete::class,
 diff --git a/includes/specials/Hook/SpecialExportGetExtraPagesHook.php b/includes/specials/Hook/SpecialExportGetExtraPagesHook.php
 new file mode 100644
-index 0000000..3536ab2
+index 0000000..9ecda05
 --- /dev/null
 +++ b/includes/specials/Hook/SpecialExportGetExtraPagesHook.php
 @@ -0,0 +1,25 @@
-+<?php
+++<?php
 +
 +namespace MediaWiki\Hook;
 +
@@ -95,35 +85,29 @@ index 0000000..3536ab2
 +	public function onSpecialExportGetExtraPages( array $inputPages, array &$extraPages );
 +}
 diff --git a/includes/specials/SpecialExport.php b/includes/specials/SpecialExport.php
-index 199debc..f3509619 100644
+index 05f3a16..1e636d9 100644
 --- a/includes/specials/SpecialExport.php
 +++ b/includes/specials/SpecialExport.php
-@@ -41,17 +41,23 @@
- 	/** @var WikiExporterFactory */
- 	private $wikiExporterFactory;
+@@ -34,8 +34,17 @@ use MediaWiki\MediaWikiServices;
+ class SpecialExport extends SpecialPage {
+ 	protected $curonly, $doExport, $pageLinkDepth, $templates;
  
+-	public function __construct() {
 +	/** @var TitleFormatter */
 +	private $titleFormatter;
 +
- 	/**
- 	 * @param ILoadBalancer $loadBalancer
- 	 * @param WikiExporterFactory $wikiExporterFactory
++	/**
 +	 * @param TitleFormatter $titleFormatter
- 	 */
- 	public function __construct(
- 		ILoadBalancer $loadBalancer,
--		WikiExporterFactory $wikiExporterFactory
-+		WikiExporterFactory $wikiExporterFactory,
-+		TitleFormatter $titleFormatter
- 	) {
++	 */
++	public function __construct(
++		$titleFormatter
++	) {
  		parent::__construct( 'Export' );
- 		$this->loadBalancer = $loadBalancer;
- 		$this->wikiExporterFactory = $wikiExporterFactory;
 +		$this->titleFormatter = $titleFormatter;
  	}
  
  	public function execute( $par ) {
-@@ -379,6 +385,7 @@
+@@ -365,6 +374,7 @@ class SpecialExport extends SpecialPage {
  			if ( $this->templates ) {
  				$pageSet = $this->getTemplates( $inputPages, $pageSet );
  			}
@@ -131,10 +115,11 @@ index 199debc..f3509619 100644
  			$linkDepth = $this->pageLinkDepth;
  			if ( $linkDepth ) {
  				$pageSet = $this->getPageLinks( $inputPages, $pageSet, $linkDepth );
-@@ -491,6 +498,21 @@
+@@ -478,6 +488,21 @@ class SpecialExport extends SpecialPage {
+ 		);
  	}
  
- 	/**
++	/**
 +	 * Add extra pages to the list of pages to export.
 +	 * @param string[] $inputPages List of page titles to export
 +	 * @param bool[] $pageSet Initial associative array indexed by string page titles
@@ -149,7 +134,6 @@ index 199debc..f3509619 100644
 +		return $pageSet;
 +	}
 +
-+	/**
+ 	/**
  	 * Validate link depth setting, if available.
  	 * @param int $depth
- 	 * @return int
