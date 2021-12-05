@@ -659,6 +659,10 @@ RUN set -x; \
     cd $MW_HOME/extensions/MassPasswordReset \
     && git apply /tmp/patches/MassPasswordReset.patch
 
+RUN set -x; \
+    cd $MW_HOME \
+    && git apply /tmp/patches/CommentStreams.REL1_35.core.hook.37a9e60.diff
+
 # Cache non frequently changing core packages
 # NOTE: the lockfile might need to be updated (not frequently), mainly for major core releases
 # just to keep the benefits on this extra step, eg:
