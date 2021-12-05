@@ -25,7 +25,7 @@ index f77b9c2..32b5e44 100644
 @@ -3666,6 +3667,13 @@ class HookRunner implements
  		);
  	}
- 
+
 +	public function onSpecialExportGetExtraPages( $inputPages, &$extraPages ) {
 +		return $this->container->run(
 +			'SpecialExportGetExtraPages',
@@ -41,7 +41,7 @@ index 59ecef8..12a7d64 100644
 --- a/includes/specialpage/SpecialPageFactory.php
 +++ b/includes/specialpage/SpecialPageFactory.php
 @@ -187,6 +187,12 @@ class SpecialPageFactory {
- 
+
  		// Page tools
  		'ComparePages' => \SpecialComparePages::class,
 +		'Export' => [
@@ -59,7 +59,7 @@ index 0000000..9ecda05
 --- /dev/null
 +++ b/includes/specials/Hook/SpecialExportGetExtraPagesHook.php
 @@ -0,0 +1,25 @@
-++<?php
++<?php
 +
 +namespace MediaWiki\Hook;
 +
@@ -91,7 +91,7 @@ index 05f3a16..1e636d9 100644
 @@ -34,8 +34,17 @@ use MediaWiki\MediaWikiServices;
  class SpecialExport extends SpecialPage {
  	protected $curonly, $doExport, $pageLinkDepth, $templates;
- 
+
 -	public function __construct() {
 +	/** @var TitleFormatter */
 +	private $titleFormatter;
@@ -105,7 +105,7 @@ index 05f3a16..1e636d9 100644
  		parent::__construct( 'Export' );
 +		$this->titleFormatter = $titleFormatter;
  	}
- 
+
  	public function execute( $par ) {
 @@ -365,6 +374,7 @@ class SpecialExport extends SpecialPage {
  			if ( $this->templates ) {
@@ -118,7 +118,7 @@ index 05f3a16..1e636d9 100644
 @@ -478,6 +488,21 @@ class SpecialExport extends SpecialPage {
  		);
  	}
- 
+
 +	/**
 +	 * Add extra pages to the list of pages to export.
 +	 * @param string[] $inputPages List of page titles to export
