@@ -71,7 +71,7 @@ jobs:
         with:
           image: test-image:latest
           shell: bash
-          run: echo "Test" && ls -al
+          run: bash run-ci.sh
 
 
   # Push image to GitHub Packages.
