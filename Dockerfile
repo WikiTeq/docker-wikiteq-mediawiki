@@ -659,6 +659,7 @@ RUN set -x; \
     cd $MW_HOME/extensions/MassPasswordReset \
     && git apply /tmp/patches/MassPasswordReset.patch
 
+# TODO: the Hooks is added in REL1_38, remove the patch once the core is updated to 1.38
 RUN set -x; \
     cd $MW_HOME \
     && git apply /tmp/patches/CommentStreams.REL1_35.core.hook.37a9e60.diff
