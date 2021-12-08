@@ -83,7 +83,8 @@ jobs:
   push:
     needs: [test,phpunit]
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' || github.event_name == 'pull_request'
+    if: github.event_name == 'disabled'
+    #if: github.event_name == 'push' || github.event_name == 'pull_request'
     steps:
       - name: Checkout
         uses: actions/checkout@v2
