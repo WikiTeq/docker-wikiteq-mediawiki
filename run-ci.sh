@@ -10,3 +10,5 @@ echo '$wgShowDBErrorBacktrace = true;' >> LocalSettings.php
 echo '$wgDevelopmentWarnings = true;' >> LocalSettings.php
 php maintenance/update.php --quick
 php tests/phpunit/phpunit.php --group skins-chameleon
+
+exit 1
