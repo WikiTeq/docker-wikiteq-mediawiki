@@ -281,7 +281,7 @@ RUN set -x; \
 	# CheckUser
 	&& git clone --single-branch -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/CheckUser $MW_HOME/extensions/CheckUser \
 	&& cd $MW_HOME/extensions/CheckUser \
-	&& git checkout -q 025d552c4ca4968cca8a8717b25129d62147c9a7 \
+	&& git checkout -q 2ec9a1bea7ea93bd96c3db44d320b907e6c28c00 \
 	# CommonsMetadata
 	&& git clone --single-branch -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/CommonsMetadata $MW_HOME/extensions/CommonsMetadata \
 	&& cd $MW_HOME/extensions/CommonsMetadata \
