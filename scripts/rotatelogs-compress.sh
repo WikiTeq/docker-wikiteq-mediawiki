@@ -1,7 +1,5 @@
 #!/bin/bash
 
-LIMIT_CMD="nice -n $MW_JOBS_NICE ionice -c $MW_JOBS_IONICE"
-
 # Returns common prefix of two strings
 common_prefix() {
   local n=0
@@ -33,7 +31,7 @@ if [[ "${file_to_compress}" ]]; then
 
     if [[ -f  "${file_to_compress}" ]]; then
         echo "Compressing ${file_to_compress} ..."
-        $LIMIT_CMD tar --gzip --create --remove-files --absolute-names --transform 's/.*\///g' --file "${file_to_compress}.tar.gz" "${file_to_compress}"
+        tar --gzip --create --remove-files --absolute-names --transform 's/.*\///g' --file "${file_to_compress}.tar.gz" "${file_to_compress}"
 
         compress_exit_code=${?}
 

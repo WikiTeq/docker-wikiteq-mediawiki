@@ -1,7 +1,5 @@
 #!/bin/bash
 
-LIMIT_CMD="nice -n $MW_JOBS_NICE ionice -c $MW_JOBS_IONICE"
-
 SCRIPT=$MW_HOME/maintenance/generateSitemap.php
 logfileName=mwsitemapgen_log
 
@@ -26,7 +24,7 @@ while true; do
     date >> "$logfileNow"
 
     # generate the sitemap
-    $LIMIT_CMD php "$SCRIPT" \
+    php "$SCRIPT" \
       --fspath="$MW_HOME/sitemap/" \
       --urlpath=w/sitemap/ \
       --compress yes \
