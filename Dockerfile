@@ -774,7 +774,9 @@ ENV MW_AUTOUPDATE=true \
 	LOG_FILES_COMPRESS_DELAY=3600 \
 	LOG_FILES_REMOVE_OLDER_THAN_DAYS=10 \
 	MEDIAWIKI_MAINTENANCE_AUTO_ENABLED=false \
-	MW_DEBUG_MODE=false
+	MW_DEBUG_MODE=false \
+	MW_JOBS_NICE=10 \
+	MW_JOBS_IONICE=0
 
 COPY conf/ssmtp.conf /etc/ssmtp/ssmtp.conf
 COPY conf/scan.conf /etc/clamd.d/scan.conf
