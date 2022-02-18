@@ -388,7 +388,7 @@ RUN set -x; \
 	# CommentStreams
 	&& git clone --single-branch -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/CommentStreams $MW_HOME/extensions/CommentStreams \
 	&& cd $MW_HOME/extensions/CommentStreams \
-	&& git checkout -q e4e3178fff0231c9a2b77ee64fcd1b8b21db4cab \
+	&& git checkout -q 98d4a0fdd6fc6030f668ba330cd637b01bd6ba82 \
 	# GoogleAnalyticsMetrics
 	&& git clone --single-branch -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/GoogleAnalyticsMetrics $MW_HOME/extensions/GoogleAnalyticsMetrics \
 	&& cd $MW_HOME/extensions/GoogleAnalyticsMetrics \
