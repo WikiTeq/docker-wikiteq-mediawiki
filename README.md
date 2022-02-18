@@ -1,5 +1,7 @@
 # WikiTeq's MediaWiki Docker image
 
+[![Docker build and push](https://github.com/WikiTeq/docker-wikiteq-mediawiki/actions/workflows/docker-image.yml/badge.svg)](https://github.com/WikiTeq/docker-wikiteq-mediawiki/actions/workflows/docker-image.yml)
+
 The image is based on `centos` and runs [MediaWiki](https://www.mediawiki.org/) software.
 The image consists of the following:
 
@@ -128,7 +130,7 @@ Below is the list of evironment variables used by the image:
 
 # Pre-installed extensions
 
-The image has the following extensions pre-installed, there extensions can be enabled via `MW_LOAD_EXTENSIONS` env:
+The image has the following extensions pre-installed. **These pre-installed extensions can be enabled via `MW_LOAD_EXTENSIONS` env:**
 
 * AdminLinks
 * AdvancedSearch
@@ -159,6 +161,7 @@ The image has the following extensions pre-installed, there extensions can be en
 * ConfirmEdit/ReCaptchaNoCaptcha
 * ContactPage
 * DataTransfer
+* DebugMode
 * Description2
 * Disambiguator
 * DismissableSiteNotice
@@ -217,6 +220,7 @@ The image has the following extensions pre-installed, there extensions can be en
 * OpenGraphMeta
 * OpenIDConnect
 * PageExchange
+* PageForms
 * PageImages
 * PageSchemas
 * ParserFunctions
@@ -239,6 +243,7 @@ The image has the following extensions pre-installed, there extensions can be en
 * SemanticExtraSpecialProperties
 * SemanticCompoundQueries
 * SemanticDrilldown
+* SemanticMediaWiki
 * SemanticQueryInterface
 * SemanticResultFormats
 * SemanticScribunto
@@ -388,3 +393,9 @@ of generated `/var/www/html/w/LocalSettings.php`
 * Starts service scripts
 * Runs `maintenance/update.php` and SMW maintenance scripts
 * Starts the Apache
+
+# Debugging
+
+The image is bundled with [DebugMode](https://www.mediawiki.org/wiki/Extension:DebugMode) extension which can be enabled via `MW_DEBUG_MODE=true` environment variable
+plus adding your IP address to `$wgDebugModeForIP` array
+

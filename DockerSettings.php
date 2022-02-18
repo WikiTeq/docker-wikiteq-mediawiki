@@ -46,6 +46,7 @@ const DOCKER_EXTENSIONS = [
 	'ConfirmEdit/ReCaptchaNoCaptcha', # bundled
 	'ContactPage',
 	'DataTransfer',
+	'DebugMode',
 	'Description2',
 	'Disambiguator',
 	'DismissableSiteNotice',
@@ -449,3 +450,17 @@ if ( getenv('MW_ENABLE_SITEMAP_GENERATOR') === 'true' ) {
 		] );
 	};
 }
+
+# Debug mode
+$wgDebugMode = getenv('MW_DEBUG_MODE') === 'true';
+if( $wgDebugMode ) {
+	if( isset( $wgDebugModeForIP ) && $_SERVER['REMOTE_ADDR'] == $wgDebugModeForIP ) {
+		wfLoadExtension( 'DebugMode' );
+	}
+}
+
+# Fixes CVE-2021-44858, CVE-2021-45038, CVE-2021-44857, https://www.mediawiki.org/wiki/2021-12_security_release/FAQ
+$wgActions['mcrundo'] = false;
+$wgActions['mcrrestore'] = false;
+$wgWhitelistRead = [];
+$wgWhitelistReadRegexp = [];

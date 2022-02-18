@@ -132,7 +132,9 @@ wait_database_started ()
 }
 
 get_tables_count() {
-    wait_database_started
+    wait_database_started || {
+        return $?
+    }
 
     if [ "3" = "$db_started" ]; then
         # sqlite
@@ -171,7 +173,7 @@ wait_elasticsearch_started ()
     if [ "$i" = 0 ]; then
         echo >&2 'Could not connect to the elasticsearch'
         echo "$output"
-        retirn 1
+        return 1
     fi
     echo >&2 'Elasticsearch started successfully'
     es_started="1"
@@ -186,8 +188,14 @@ run_maintenance_script_if_needed () {
     fi
 
     if [[ "$update_info" != "$2" && -n "$2" || "$2" == "always" ]]; then
-        wait_database_started
-        if [[ "$1" == *CirrusSearch* ]]; then wait_elasticsearch_started; fi
+        wait_database_started || {
+            return $?
+        }
+        if [[ "$1" == *CirrusSearch* ]]; then
+            wait_elasticsearch_started || {
+                return $?
+            }
+        fi
 
         i=3
         while [ -n "${!i}" ]
@@ -197,7 +205,10 @@ run_maintenance_script_if_needed () {
                 return 0;
             fi
             echo >&2 "Run maintenance script: ${!i}"
-            runuser -c "php ${!i}" -s /bin/bash "$WWW_USER"
+            runuser -c "php ${!i}" -s /bin/bash "$WWW_USER" || {
+                echo >&2 "An error occurred when the maintenance script ${!i} was running"
+                return $?
+            }
             i=$((i+1))
         done
 
@@ -216,10 +227,19 @@ run_script_if_needed () {
     fi
 
     if [[ "$update_info" != "$2" && -n "$2" && "${2: -1}" != '-' ]]; then
-        wait_database_started
-        if [[ "$1" == *CirrusSearch* ]]; then wait_elasticsearch_started; fi
+        wait_database_started || {
+            return $?
+        }
+        if [[ "$1" == *CirrusSearch* ]]; then
+            wait_elasticsearch_started || {
+                return $?
+            }
+        fi
         echo >&2 "Run script: $3"
-        eval "$3"
+        eval "$3" || {
+            echo >&2 "An error occurred when the script $3 was running"
+            return $?
+        }
 
         cd "$MW_HOME" || exit
 
@@ -320,7 +340,10 @@ run_autoupdate () {
 
     SMW_UPGRADE_KEY=$(php /getMediawikiSettings.php --SMWUpgradeKey)
     run_maintenance_script_if_needed 'maintenance_update' "$MW_VERSION-$MW_CORE_VERSION-$MW_MAINTENANCE_UPDATE-$VERSION_HASH-$SMW_UPGRADE_KEY" \
-        'maintenance/update.php --quick'
+        'maintenance/update.php --quick' || {
+            echo >&2 "An error occurred when auto-update script was running"
+            return $?
+        }
 
 #    run_maintenance_script_if_needed 'maintenance_update' "always" \
 #        'maintenance/update.php --quick'
@@ -348,9 +371,7 @@ run_autoupdate () {
     ### CirrusSearch
     if [ "$WG_SEARCH_TYPE" == 'CirrusSearch' ]; then
         run_maintenance_script_if_needed 'maintenance_CirrusSearch_updateConfig' "${EXTRA_MW_MAINTENANCE_CIRRUSSEARCH_UPDATECONFIG}${MW_MAINTENANCE_CIRRUSSEARCH_UPDATECONFIG}${MW_VERSION}" \
-            'extensions/CirrusSearch/maintenance/UpdateSearchIndexConfig.php --reindexAndRemoveOk --indexIdentifier now' \
-            'extensions/CirrusSearch/maintenance/Metastore.php --upgrade'
-
+            'extensions/CirrusSearch/maintenance/UpdateSearchIndexConfig.php --reindexAndRemoveOk --indexIdentifier now' && \
         run_maintenance_script_if_needed 'maintenance_CirrusSearch_forceIndex' "${EXTRA_MW_MAINTENANCE_CIRRUSSEARCH_FORCEINDEX}${MW_MAINTENANCE_CIRRUSSEARCH_FORCEINDEX}${MW_VERSION}" \
             'extensions/CirrusSearch/maintenance/ForceSearchIndex.php --skipLinks --indexOnSkip' \
             'extensions/CirrusSearch/maintenance/ForceSearchIndex.php --skipParse'
@@ -359,13 +380,13 @@ run_autoupdate () {
     ### cldr extension
     if [ -n "$MW_SCRIPT_CLDR_REBUILD" ]; then
     run_script_if_needed 'script_cldr_rebuild' "$MW_VERSION-$MW_SCRIPT_CLDR_REBUILD" \
-        "set -x; cd $MW_HOME/extensions/cldr && wget -q http://www.unicode.org/Public/cldr/latest/core.zip && unzip -q core.zip -d core && php rebuild.php && set +x;"
-
-        if [ -n "$MW_MAINTENANCE_ULS_INDEXER" ]; then
-            ### UniversalLanguageSelector extension
-            run_maintenance_script_if_needed 'maintenance_ULS_indexer' "$MW_VERSION-$MW_SCRIPT_CLDR_REBUILD-$MW_MAINTENANCE_ULS_INDEXER" \
-                'extensions/UniversalLanguageSelector/data/LanguageNameIndexer.php'
-        fi
+        "set -x; cd $MW_HOME/extensions/cldr && wget -q http://www.unicode.org/Public/cldr/latest/core.zip && unzip -q core.zip -d core && php rebuild.php && set +x;" && {
+            if [ "$MW_MAINTENANCE_ULS_INDEXER" ]; then
+                ### UniversalLanguageSelector extension
+                run_maintenance_script_if_needed 'maintenance_ULS_indexer' "$MW_VERSION-$MW_SCRIPT_CLDR_REBUILD-$MW_MAINTENANCE_ULS_INDEXER" \
+                    'extensions/UniversalLanguageSelector/data/LanguageNameIndexer.php'
+            fi
+        }
     fi
 
     ### Flow extension
@@ -382,7 +403,7 @@ run_autoupdate () {
     transcoder &
     sitemapgen &
 
-    echo Auto-update completed
+    echo >&2 "Auto-update completed"
 }
 
 ########## Run maintenance scripts ##########

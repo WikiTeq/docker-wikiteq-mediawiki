@@ -4,7 +4,7 @@ LABEL maintainers="pastakhov@yandex.ru,alexey@wikiteq.com"
 LABEL org.opencontainers.image.source=https://github.com/WikiTeq/docker-wikiteq-mediawiki
 
 ENV MW_VERSION=REL1_35 \
-	MW_CORE_VERSION=1.35.4 \
+	MW_CORE_VERSION=1.35.5 \
 	MW_HOME=/var/www/html/w \
 	MW_LOG=/var/log/mediawiki \
 	MW_VOLUME=/mediawiki \
@@ -49,6 +49,7 @@ RUN set -x; \
 	 curl \
 	 monit \
 	 clamav \
+	 cronie \
 	 --exclude=clamav-update \
 	&& yum clean all \
 	# remove clamav virus signature data, because we use clamav outside of the docker container
@@ -220,7 +221,7 @@ RUN set -x; \
 	# UniversalLanguageSelector
 	&& git clone --single-branch -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/UniversalLanguageSelector $MW_HOME/extensions/UniversalLanguageSelector \
 	&& cd $MW_HOME/extensions/UniversalLanguageSelector \
-	&& git checkout -q e7ab607dd91b55f15a733bcba793619cf48d3604 \
+	&& git checkout -q 25e6fd1940975c652838c3db092c55ae74d3de7b \
 	# Survey
 	&& git clone --single-branch -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/Survey $MW_HOME/extensions/Survey \
 	&& cd $MW_HOME/extensions/Survey \
@@ -280,7 +281,7 @@ RUN set -x; \
 	# CheckUser
 	&& git clone --single-branch -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/CheckUser $MW_HOME/extensions/CheckUser \
 	&& cd $MW_HOME/extensions/CheckUser \
-	&& git checkout -q 025d552c4ca4968cca8a8717b25129d62147c9a7 \
+	&& git checkout -q 2ec9a1bea7ea93bd96c3db44d320b907e6c28c00 \
 	# CommonsMetadata
 	&& git clone --single-branch -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/CommonsMetadata $MW_HOME/extensions/CommonsMetadata \
 	&& cd $MW_HOME/extensions/CommonsMetadata \
@@ -402,9 +403,9 @@ RUN set -x; \
 	&& cd $MW_HOME/extensions/MassMessageEmail \
 	&& git checkout -q 2424d03ac7b53844d49379cba3cceb5d9f4b578e \
 	# SemanticDrilldown
-	&& git clone --single-branch -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/SemanticDrilldown $MW_HOME/extensions/SemanticDrilldown \
+	&& git clone --single-branch -b master https://gerrit.wikimedia.org/r/mediawiki/extensions/SemanticDrilldown $MW_HOME/extensions/SemanticDrilldown \
 	&& cd $MW_HOME/extensions/SemanticDrilldown \
-	&& git checkout -q 8e03672100457ebfcd65f4b94fd60af80c2eaf4a \
+	&& git checkout -q c9f0770512d9c34efc1fa1235a7ccf894e8aef9e \
 	# VEForAll TODO (version 0.3, master), switch back to REL_x for 1.36
 	&& git clone --single-branch -b master https://gerrit.wikimedia.org/r/mediawiki/extensions/VEForAll $MW_HOME/extensions/VEForAll \
 	&& cd $MW_HOME/extensions/VEForAll \
@@ -446,7 +447,8 @@ RUN set -x; \
 	&& cd $MW_HOME/extensions \
 	&& git clone https://gerrit.wikimedia.org/r/mediawiki/extensions/EncryptedUploads \
 	&& cd EncryptedUploads \
-	&& git checkout -b $MW_VERSION 51e3482462f1852e289d5863849b164e1b1a7ea9 \
+	# TODO: update once https://gerrit.wikimedia.org/r/c/mediawiki/extensions/EncryptedUploads/+/741096 is merged
+	&& git fetch https://gerrit.wikimedia.org/r/mediawiki/extensions/EncryptedUploads refs/changes/96/741096/1 && git checkout FETCH_HEAD \
 	# PageExchange, we use master because of compatibility issues of REL1_35 branch of the extension with core 1.35.1 tag
 	&& cd $MW_HOME/extensions \
 	&& git clone https://gerrit.wikimedia.org/r/mediawiki/extensions/PageExchange \
@@ -567,7 +569,11 @@ RUN set -x; \
     && cd $MW_HOME/extensions \
     && git clone https://github.com/WikiTeq/SemanticExternalQueryLookup.git \
     && cd SemanticExternalQueryLookup \
-    && git checkout -b $MW_VERSION dd7810061f2f1a9eef7be5ee09da999cbf9ecd8a
+    && git checkout -b $MW_VERSION dd7810061f2f1a9eef7be5ee09da999cbf9ecd8a \
+    # DebugMode, see https://www.mediawiki.org/wiki/Extension:DebugMode
+    && git clone --single-branch -b master https://github.com/wikimedia/mediawiki-extensions-DebugMode.git $MW_HOME/extensions/DebugMode \
+    && cd $MW_HOME/extensions/DebugMode \
+    && git checkout -q ea803a501175fb3009f0fcde7d9168ef8e374399
 
 # GTag1
 ADD sources/GTag1.2.0.tar.gz $MW_HOME/extensions/
@@ -600,10 +606,14 @@ RUN set -x; \
     && git checkout -q -b $MW_VERSION 0d3d6b03a83afd7e1cb170aa41bdf23c0ce3e93b
 
 # TODO send to upstream, see https://wikiteq.atlassian.net/browse/MW-64 and https://wikiteq.atlassian.net/browse/MW-81
-COPY patches/skin-refreshed.patch /tmp/skin-refreshed.patch
+COPY patches /tmp/patches
 RUN set -x; \
 	cd $MW_HOME/skins/Refreshed \
-	&& patch -u -b includes/RefreshedTemplate.php -i /tmp/skin-refreshed.patch
+    # TODO push the patch to the repo?
+	&& patch -u -b includes/RefreshedTemplate.php -i /tmp/patches/skin-refreshed.patch \
+    # TODO remove me when https://gerrit.wikimedia.org/r/c/mediawiki/skins/Refreshed/+/737080 merged \
+    # Fix PHP Warning in RefreshedTemplate::makeElementWithIconHelper()
+    && git apply /tmp/patches/skin-refreshed-737080.diff
 
 FROM base as source
 
@@ -642,6 +652,17 @@ RUN set -x; \
 RUN set -x; \
 	cd $MW_HOME \
 	&& git apply /tmp/patches/core-fix-composer-for-GoogleAnalyticsMetrics.diff
+
+# Fix composer dependencies for MassPasswordReset extension \
+# TODO: remove when PR merged https://github.com/nischayn22/MassPasswordReset/pull/1
+RUN set -x; \
+    cd $MW_HOME/extensions/MassPasswordReset \
+    && git apply /tmp/patches/MassPasswordReset.patch
+
+# TODO: the Hooks is added in REL1_38, remove the patch once the core is updated to 1.38
+RUN set -x; \
+    cd $MW_HOME \
+    && git apply /tmp/patches/CommentStreams.REL1_35.core.hook.37a9e60.diff
 
 # Cache non frequently changing core packages
 # NOTE: the lockfile might need to be updated (not frequently), mainly for major core releases
@@ -699,15 +720,19 @@ RUN set -x; \
 # WikiTeq's patch allowing to manage fields visibility site-wide
 RUN set -x; \
     cd $MW_HOME/extensions/SocialProfile \
-    && git apply /tmp/patches/SocialProfile-disable-fields.patch
+    && git apply /tmp/patches/SocialProfile-disable-fields.patch \
 
 RUN set -x; \
      cd $MW_HOME/extensions/CommentStreams \
      && git apply /tmp/patches/CommentStreams.REL1_35.showSearchHitTitle.diff
 
-RUN  set -x; \
+RUN set -x; \
      cd $MW_HOME/extensions/DisplayTitle \
      && git apply /tmp/patches/DisplayTitleHooks.fragment.master.patch
+
+RUN set -x; \
+    cd $MW_HOME/extensions/Mendeley \
+    && git apply /tmp/patches/Mendeley.notices.patch
 
 # Cleanup all .git leftovers
 RUN set -x; \
@@ -732,6 +757,7 @@ ENV MW_AUTOUPDATE=true \
 	MW_MAIN_CACHE_TYPE=CACHE_NONE \
 	MW_DB_TYPE=mysql \
 	MW_DB_SERVER=db \
+	MW_DB_USER=root \
 	MW_CIRRUS_SEARCH_SERVERS=elasticsearch \
 	MW_MAINTENANCE_CIRRUSSEARCH_UPDATECONFIG=1 \
 	MW_MAINTENANCE_CIRRUSSEARCH_FORCEINDEX=1 \
@@ -746,7 +772,9 @@ ENV MW_AUTOUPDATE=true \
 	PHP_POST_MAX_SIZE=8M \
 	PHP_MEMORY_LIMIT=128M \
 	LOG_FILES_COMPRESS_DELAY=3600 \
-	LOG_FILES_REMOVE_OLDER_THAN_DAYS=10
+	LOG_FILES_REMOVE_OLDER_THAN_DAYS=10 \
+	MEDIAWIKI_MAINTENANCE_AUTO_ENABLED=false \
+	MW_DEBUG_MODE=false
 
 COPY conf/ssmtp.conf /etc/ssmtp/ssmtp.conf
 COPY conf/scan.conf /etc/clamd.d/scan.conf
@@ -755,6 +783,14 @@ COPY conf/apache/mediawiki.conf conf/apache/log.conf /etc/httpd/conf.d/
 COPY robots.txt .htaccess /var/www/html/
 COPY scripts/run-apache.sh scripts/mwjobrunner.sh scripts/mwsitemapgen.sh scripts/mwtranscoder.sh scripts/monit-slack.sh scripts/rotatelogs-compress.sh scripts/getMediawikiSettings.php /
 COPY DockerSettings.php $MW_HOME/DockerSettings.php
+
+# Installs mediawiki-maintenance-automation scripts
+# This is disabled by default. You can enable this by adding
+# MEDIAWIKI_MAINTENANCE_AUTO_ENABLED=true environment variable to docker-compose.yml
+COPY --from=ghcr.io/wikiteq/mediawiki-maintenance-automation:latest /root/mediawiki-maintenance-automation /root/mediawiki-maintenance-automation
+RUN set -x; \
+	cd /root/mediawiki-maintenance-automation \
+	&& ./setupWikiCron.sh $MW_HOME --silent
 
 # update packages every time!
 RUN set -x; \
