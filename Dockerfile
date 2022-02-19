@@ -804,10 +804,10 @@ RUN set -x; \
 	# Comment out ErrorLog and CustomLog parameters, we use rotatelogs in mediawiki.conf for the log files
 	&& sed -i 's/^\(\s*ErrorLog .*\)/# \1/g' /etc/httpd/conf/httpd.conf \
 	&& sed -i 's/^\(\s*CustomLog .*\)/# \1/g' /etc/httpd/conf/httpd.conf \
-    # For Widgets extension
-    && mkdir -p $MW_ORIGIN_FILES/extensions/Widgets \
-    && mv $MW_HOME/extensions/Widgets/compiled_templates $MW_ORIGIN_FILES/extensions/Widgets/ \
-    && ln -s $MW_VOLUME/extensions/Widgets/compiled_templates $MW_HOME/extensions/Widgets/compiled_templates
+	# For Widgets extension
+	&& mkdir -p $MW_ORIGIN_FILES/extensions/Widgets \
+	&& mv $MW_HOME/extensions/Widgets/compiled_templates $MW_ORIGIN_FILES/extensions/Widgets/ \
+	&& ln -s $MW_VOLUME/extensions/Widgets/compiled_templates $MW_HOME/extensions/Widgets/compiled_templates
 
 CMD ["/run-apache.sh"]
 
