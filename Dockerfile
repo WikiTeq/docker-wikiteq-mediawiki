@@ -464,9 +464,6 @@ RUN set -x; \
 	&& git clone -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/Widgets \
 	&& cd Widgets \
 	&& git checkout e9ebcb7a60e04a4b6054538032d1d2e1badf9934 \
-	&& mkdir -p $MW_ORIGIN_FILES/extensions/Widgets \
-	&& mv compiled_templates $MW_ORIGIN_FILES/extensions/Widgets/ \
-	&& ln -s $MW_VOLUME/extensions/Widgets/compiled_templates compiled_templates \
 	# SimpleTooltip
 	&& cd $MW_HOME/extensions \
 	&& git clone https://github.com/Fannon/SimpleTooltip.git \
@@ -806,7 +803,11 @@ RUN set -x; \
 	&& echo $'check filesystem rootfs with path /\n\tif SPACE usage > 90% then exec "/monit-slack.sh"' > /etc/monit.d/hdd \
 	# Comment out ErrorLog and CustomLog parameters, we use rotatelogs in mediawiki.conf for the log files
 	&& sed -i 's/^\(\s*ErrorLog .*\)/# \1/g' /etc/httpd/conf/httpd.conf \
-	&& sed -i 's/^\(\s*CustomLog .*\)/# \1/g' /etc/httpd/conf/httpd.conf
+	&& sed -i 's/^\(\s*CustomLog .*\)/# \1/g' /etc/httpd/conf/httpd.conf \
+    # For Widgets extension
+    && mkdir -p $MW_ORIGIN_FILES/extensions/Widgets \
+    && mv $MW_HOME/extensions/Widgets/compiled_templates $MW_ORIGIN_FILES/extensions/Widgets/ \
+    && ln -s $MW_VOLUME/extensions/Widgets/compiled_templates $MW_HOME/extensions/Widgets/compiled_templates
 
 CMD ["/run-apache.sh"]
 
