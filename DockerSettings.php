@@ -459,6 +459,12 @@ if( $wgDebugMode ) {
 	}
 }
 
+# Sentry
+$wgSentryDsn = getenv('MW_SENTRY_DSN');
+if ( $wgSentryDsn ) {
+	wfLoadExtension( 'Sentry' );
+}
+
 # Fixes CVE-2021-44858, CVE-2021-45038, CVE-2021-44857, https://www.mediawiki.org/wiki/2021-12_security_release/FAQ
 $wgActions['mcrundo'] = false;
 $wgActions['mcrrestore'] = false;

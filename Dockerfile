@@ -570,7 +570,11 @@ RUN set -x; \
     # DebugMode, see https://www.mediawiki.org/wiki/Extension:DebugMode
     && git clone --single-branch -b master https://github.com/wikimedia/mediawiki-extensions-DebugMode.git $MW_HOME/extensions/DebugMode \
     && cd $MW_HOME/extensions/DebugMode \
-    && git checkout -q ea803a501175fb3009f0fcde7d9168ef8e374399
+    && git checkout -q ea803a501175fb3009f0fcde7d9168ef8e374399 \
+    # Sentry
+    && git clone --single-branch -b master https://github.com/WikiTeq/mediawiki-extensions-Sentry.git \
+    && cd $MW_HOME/extensions/Sentry \
+    && git checkout -q 51ffdd6474a02476adce583edfe647616c6f117a
 
 # GTag1
 ADD sources/GTag1.2.0.tar.gz $MW_HOME/extensions/
@@ -771,7 +775,8 @@ ENV MW_AUTOUPDATE=true \
 	LOG_FILES_COMPRESS_DELAY=3600 \
 	LOG_FILES_REMOVE_OLDER_THAN_DAYS=10 \
 	MEDIAWIKI_MAINTENANCE_AUTO_ENABLED=false \
-	MW_DEBUG_MODE=false
+	MW_DEBUG_MODE=false \
+	MW_SENTRY_DSN=""
 
 COPY conf/ssmtp.conf /etc/ssmtp/ssmtp.conf
 COPY conf/scan.conf /etc/clamd.d/scan.conf
