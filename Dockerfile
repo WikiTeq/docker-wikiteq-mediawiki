@@ -574,7 +574,11 @@ RUN set -x; \
     # Sentry
     && git clone --single-branch -b master https://github.com/WikiTeq/mediawiki-extensions-Sentry.git \
     && cd $MW_HOME/extensions/Sentry \
-    && git checkout -q 51ffdd6474a02476adce583edfe647616c6f117a
+    && git checkout -q 51ffdd6474a02476adce583edfe647616c6f117a \
+    # Buggy
+    && git clone --single-branch -b master https://github.com/wikimedia/mediawiki-extensions-Buggy.git \
+    && cd $MW_HOME/extensions/Buggy \
+    && git checkout -q 613c5f197ae28ed8e0da5748a28841a32987cd59
 
 # GTag1
 ADD sources/GTag1.2.0.tar.gz $MW_HOME/extensions/
