@@ -572,11 +572,11 @@ RUN set -x; \
     && cd $MW_HOME/extensions/DebugMode \
     && git checkout -q ea803a501175fb3009f0fcde7d9168ef8e374399 \
     # Sentry
-    && git clone --single-branch -b master https://github.com/WikiTeq/mediawiki-extensions-Sentry.git \
+    && git clone --single-branch -b master https://github.com/WikiTeq/mediawiki-extensions-Sentry.git $MW_HOME/extensions/Sentry \
     && cd $MW_HOME/extensions/Sentry \
     && git checkout -q 51ffdd6474a02476adce583edfe647616c6f117a \
     # Buggy
-    && git clone --single-branch -b master https://github.com/wikimedia/mediawiki-extensions-Buggy.git \
+    && git clone --single-branch -b master https://github.com/wikimedia/mediawiki-extensions-Buggy.git $MW_HOME/extensions/Buggy \
     && cd $MW_HOME/extensions/Buggy \
     && git checkout -q 613c5f197ae28ed8e0da5748a28841a32987cd59
 
