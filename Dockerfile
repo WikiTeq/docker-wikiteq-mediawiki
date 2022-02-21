@@ -717,7 +717,7 @@ RUN set -x; \
 # WikiTeq's patch allowing to manage fields visibility site-wide
 RUN set -x; \
     cd $MW_HOME/extensions/SocialProfile \
-    && git apply /tmp/patches/SocialProfile-disable-fields.patch \
+    && git apply /tmp/patches/SocialProfile-disable-fields.patch
 
 RUN set -x; \
      cd $MW_HOME/extensions/CommentStreams \
