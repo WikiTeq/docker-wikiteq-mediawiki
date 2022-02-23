@@ -424,6 +424,12 @@ else
     echo "Skip monit (MONIT_SLACK_HOOK is not defined)"
 fi
 
+# Run extra post-init scripts if any
+if [ -f "/post-init.sh" ]; then
+    chmod +x /post-init.sh
+    runuser -c /post-init.sh -s /bin/bash "$WWW_USER"
+fi
+
 # Make sure we're not confused by old, incompletely-shutdown httpd
 # context after restarting the container.  httpd won't start correctly
 # if it thinks it is already running.
