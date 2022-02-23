@@ -427,7 +427,8 @@ fi
 # Run extra post-init scripts if any
 if [ -f "/post-init.sh" ]; then
     chmod +x /post-init.sh
-    runuser -c /post-init.sh -s /bin/bash "$WWW_USER"
+    echo >&2 Running post-init.sh script..
+    /bin/bash /post-init.sh
 fi
 
 # Make sure we're not confused by old, incompletely-shutdown httpd
