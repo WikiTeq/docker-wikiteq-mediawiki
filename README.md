@@ -399,3 +399,8 @@ of generated `/var/www/html/w/LocalSettings.php`
 The image is bundled with [DebugMode](https://www.mediawiki.org/wiki/Extension:DebugMode) extension which can be enabled via `MW_DEBUG_MODE=true` environment variable
 plus adding your IP address to `$wgDebugModeForIP` array
 
+# Running custom post-init scripts
+
+It's possible to run extra script after the initial setup is done and before the Apache is started in the container,
+to do so mount the `/post-init.sh` script into container. Note, the script will be executed under the `root` user
+so if necessary use `chown` or run commands via `runuser -c "ls -al" -s /bin/bash "$WWW_USER"`.
