@@ -30,6 +30,7 @@ WG_SQLITE_DATA_DIR=$(get_mediawiki_variable wgSQLiteDataDir)
 WG_LANG_CODE=$(get_mediawiki_variable wgLanguageCode)
 WG_SITE_NAME=$(get_mediawiki_variable wgSitename)
 WG_SEARCH_TYPE=$(get_mediawiki_variable wgSearchType)
+WG_SCRIPT_PATH=$(get_mediawiki_variable wgScriptPath)
 WG_CIRRUS_SEARCH_SERVER=$(get_hostname_with_port "$(get_mediawiki_variable wgCirrusSearchServers first)" 9200)
 VERSION_HASH=$(php /getMediawikiSettings.php --versions --format=md5)
 
