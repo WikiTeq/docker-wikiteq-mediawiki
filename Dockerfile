@@ -528,6 +528,11 @@ RUN set -x; \
     && git clone https://gitlab.com/hydrawiki/extensions/Tabber.git \
     && cd Tabber \
     && git checkout -b $MW_VERSION 6c67baf4d18518fa78e07add4c032d62dd384b06 \
+    # TabberNeue
+    && cd $MW_HOME/extensions \
+    && git clone https://github.com/StarCitizenTools/mediawiki-extensions-TabberNeue.git TabberNeue \
+    && cd TabberNeue \
+    && git checkout -b $MW_VERSION 3f689e0b28653bc3addfd8d32f68d907c6c46d19 \
     # UploadWizardExtraButtons
     && cd $MW_HOME/extensions \
     && git clone https://github.com/vedmaka/mediawiki-extension-UploadWizardExtraButtons.git UploadWizardExtraButtons \
