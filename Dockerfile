@@ -78,10 +78,10 @@ RUN set -x; \
 	&& git clone --single-branch -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/AdminLinks $MW_HOME/extensions/AdminLinks \
 	&& cd $MW_HOME/extensions/AdminLinks \
 	&& git checkout -q ea76d25167320f5a0d8a63254bd38ff5582e4ff4 \
-	# ContributionScores
-	&& git clone --single-branch -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/ContributionScores $MW_HOME/extensions/ContributionScores \
+	# ContributionScores (v. 1.26.1 - REL1_35 branch does not work with MW 1.35)
+	&& git clone --single-branch -b master https://gerrit.wikimedia.org/r/mediawiki/extensions/ContributionScores $MW_HOME/extensions/ContributionScores \
 	&& cd $MW_HOME/extensions/ContributionScores \
-	&& git checkout -q de75d9f6904e9b41f7148417cc9fd491164da722 \
+	&& git checkout -q 46ebf438283913f103ba5dd03a3e4730bb9f87dc \
 	# ExternalData
 	&& git clone --single-branch -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/ExternalData $MW_HOME/extensions/ExternalData \
 	&& cd $MW_HOME/extensions/ExternalData \
