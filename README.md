@@ -56,7 +56,7 @@ services:
     image: ghcr.io/wikiteq/mediawiki:latest
     restart: unless-stopped
     ports:
-      - "${PORT:-80}:80"
+      - "${PORT:-127.0.0.1:80}:80"
     links:
       - db
     environment:
