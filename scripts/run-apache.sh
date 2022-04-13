@@ -1,5 +1,7 @@
 #!/bin/bash
 
+LIMIT_CMD="nice -n $MW_JOBS_NICE ionice -c $MW_JOBS_IONICE"
+
 set -x
 
 if ! mountpoint -q -- "$MW_VOLUME"; then
@@ -12,7 +14,7 @@ fi
 
 # read variables from LocalSettings.php
 get_mediawiki_variable () {
-    php /getMediawikiSettings.php --variable="$1" --format="${2:-string}"
+    $LIMIT_CMD php /getMediawikiSettings.php --variable="$1" --format="${2:-string}"
 }
 
 get_hostname_with_port () {
@@ -302,7 +304,7 @@ jobrunner() {
     sleep 3
     if [ "$MW_ENABLE_JOB_RUNNER" = true ]; then
         echo >&2 Run Jobs
-        nice -n 20 runuser -c /mwjobrunner.sh -s /bin/bash "$WWW_USER"
+        $LIMIT_CMD runuser -c /mwjobrunner.sh -s /bin/bash "$WWW_USER"
     else
         echo >&2 Job runner is disabled
     fi
@@ -312,7 +314,7 @@ transcoder() {
     sleep 3
     if [ "$MW_ENABLE_TRANSCODER" = true ]; then
         echo >&2 Run transcoder
-        nice -n 20 runuser -c /mwtranscoder.sh -s /bin/bash "$WWW_USER"
+        $LIMIT_CMD runuser -c /mwtranscoder.sh -s /bin/bash "$WWW_USER"
     else
         echo >&2 Transcoder disabled
     fi
@@ -322,7 +324,7 @@ sitemapgen() {
     sleep 3
     if [ "$MW_ENABLE_SITEMAP_GENERATOR" = true ]; then
         echo >&2 Run sitemap generator
-        nice -n 20 runuser -c /mwsitemapgen.sh -s /bin/bash "$WWW_USER"
+        $LIMIT_CMD runuser -c /mwsitemapgen.sh -s /bin/bash "$WWW_USER"
     else
         echo >&2 Sitemap generator is disabled
     fi
