@@ -473,7 +473,7 @@ RUN set -x; \
 	&& cd $MW_HOME/extensions \
 	&& git clone https://github.com/WikiTeq/PubmedParser.git \
 	&& cd PubmedParser \
-	&& git checkout -b $MW_VERSION 089613f8eb1ae7ee2b034979c4a8d66b2f41e254 \
+	&& git checkout -b $MW_VERSION 91796e2e454001f5ec7ef90212551dc358b3562a \
 	# NCBITaxonomyLookup
 	&& cd $MW_HOME/extensions \
     && git clone https://gerrit.wikimedia.org/r/mediawiki/extensions/NCBITaxonomyLookup \
