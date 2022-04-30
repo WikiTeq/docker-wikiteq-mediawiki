@@ -698,7 +698,8 @@ RUN set -x; \
 	&& git clone https://gerrit.wikimedia.org/r/mediawiki/extensions/PageForms \
 	&& cd PageForms \
 	&& git checkout -b $MW_VERSION d2e48e51eef1 \
-	&& git apply /tmp/patches/pageforms-xss-cherry-picked.patch
+	&& git apply /tmp/patches/pageforms-xss-cherry-picked.patch \
+    && git apply /tmp/patches/PF_autoedit.js.scroll.anchor.diff
 
 # PATCHES
 # Parsoid assertValidUTF8 back-port from 0.13.1

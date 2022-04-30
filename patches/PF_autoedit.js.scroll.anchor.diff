@@ -1,0 +1,16 @@
+diff --git a/libs/PF_autoedit.js b/libs/PF_autoedit.js
+index ade051ff..d4bd841f 100644
+--- a/libs/PF_autoedit.js
++++ b/libs/PF_autoedit.js
+@@ -10,7 +10,10 @@
+ 
+ 	'use strict';
+ 
+-	var autoEditHandler = function handleAutoEdit(){
++	var autoEditHandler = function handleAutoEdit( e ){
++
++		// Prevents scroll from jumping to the top due achor #
++		e.preventDefault();
+ 
+ 		if ( mw.config.get( 'wgUserName' ) === null &&
+ 			! confirm( mw.msg( 'pf_autoedit_anoneditwarning' ) ) ) {
