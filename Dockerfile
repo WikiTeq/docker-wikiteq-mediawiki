@@ -699,6 +699,8 @@ RUN set -x; \
 	&& cd PageForms \
 	&& git checkout -b $MW_VERSION d2e48e51eef1 \
 	&& git apply /tmp/patches/pageforms-xss-cherry-picked.patch \
+	# Note: this patch can be removed once PageForms is upgraded past commit
+	# https://gerrit.wikimedia.org/r/plugins/gitiles/mediawiki/extensions/PageForms/+/ed14c7d811663e3276a873850cc3ef0619b0de1f
     && git apply /tmp/patches/PF_autoedit.js.scroll.anchor.diff
 
 # PATCHES
