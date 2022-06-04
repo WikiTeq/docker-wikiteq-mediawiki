@@ -30,6 +30,7 @@ WG_SQLITE_DATA_DIR=$(get_mediawiki_variable wgSQLiteDataDir)
 WG_LANG_CODE=$(get_mediawiki_variable wgLanguageCode)
 WG_SITE_NAME=$(get_mediawiki_variable wgSitename)
 WG_SEARCH_TYPE=$(get_mediawiki_variable wgSearchType)
+WG_SCRIPT_PATH=$(get_mediawiki_variable wgScriptPath)
 WG_CIRRUS_SEARCH_SERVER=$(get_hostname_with_port "$(get_mediawiki_variable wgCirrusSearchServers first)" 9200)
 VERSION_HASH=$(php /getMediawikiSettings.php --versions --format=md5)
 
@@ -422,6 +423,13 @@ if [ -n "$MONIT_SLACK_HOOK" ]; then
     monit -I -c /etc/monitrc &
 else
     echo "Skip monit (MONIT_SLACK_HOOK is not defined)"
+fi
+
+# Run extra post-init scripts if any
+if [ -f "/post-init.sh" ]; then
+    chmod +x /post-init.sh
+    echo >&2 Running post-init.sh script..
+    /bin/bash /post-init.sh
 fi
 
 # Make sure we're not confused by old, incompletely-shutdown httpd

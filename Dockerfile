@@ -4,7 +4,7 @@ LABEL maintainers="pastakhov@yandex.ru,alexey@wikiteq.com"
 LABEL org.opencontainers.image.source=https://github.com/WikiTeq/docker-wikiteq-mediawiki
 
 ENV MW_VERSION=REL1_35 \
-	MW_CORE_VERSION=1.35.5 \
+	MW_CORE_VERSION=1.35.6 \
 	MW_HOME=/var/www/html/w \
 	MW_LOG=/var/log/mediawiki \
 	MW_VOLUME=/mediawiki \
@@ -78,10 +78,10 @@ RUN set -x; \
 	&& git clone --single-branch -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/AdminLinks $MW_HOME/extensions/AdminLinks \
 	&& cd $MW_HOME/extensions/AdminLinks \
 	&& git checkout -q ea76d25167320f5a0d8a63254bd38ff5582e4ff4 \
-	# ContributionScores
-	&& git clone --single-branch -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/ContributionScores $MW_HOME/extensions/ContributionScores \
+	# ContributionScores (v. 1.26.1 - REL1_35 branch does not work with MW 1.35)
+	&& git clone --single-branch -b master https://gerrit.wikimedia.org/r/mediawiki/extensions/ContributionScores $MW_HOME/extensions/ContributionScores \
 	&& cd $MW_HOME/extensions/ContributionScores \
-	&& git checkout -q de75d9f6904e9b41f7148417cc9fd491164da722 \
+	&& git checkout -q 46ebf438283913f103ba5dd03a3e4730bb9f87dc \
 	# ExternalData
 	&& git clone --single-branch -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/ExternalData $MW_HOME/extensions/ExternalData \
 	&& cd $MW_HOME/extensions/ExternalData \
@@ -471,9 +471,9 @@ RUN set -x; \
 	&& git checkout -b $MW_VERSION 2476bff8f4555f86795c26ca5fdb7db99bfe58d1 \
 	# PubmedParser
 	&& cd $MW_HOME/extensions \
-	&& git clone https://github.com/bovender/PubmedParser.git \
+	&& git clone https://github.com/WikiTeq/PubmedParser.git \
 	&& cd PubmedParser \
-	&& git checkout -b $MW_VERSION 9cd01d828b23853e3e790dc7bf49cdd230847272 \
+	&& git checkout -b $MW_VERSION 91796e2e454001f5ec7ef90212551dc358b3562a \
 	# NCBITaxonomyLookup
 	&& cd $MW_HOME/extensions \
     && git clone https://gerrit.wikimedia.org/r/mediawiki/extensions/NCBITaxonomyLookup \
@@ -528,6 +528,11 @@ RUN set -x; \
     && git clone https://gitlab.com/hydrawiki/extensions/Tabber.git \
     && cd Tabber \
     && git checkout -b $MW_VERSION 6c67baf4d18518fa78e07add4c032d62dd384b06 \
+    # TabberNeue
+    && cd $MW_HOME/extensions \
+    && git clone https://github.com/StarCitizenTools/mediawiki-extensions-TabberNeue.git TabberNeue \
+    && cd TabberNeue \
+    && git checkout -b $MW_VERSION 3f689e0b28653bc3addfd8d32f68d907c6c46d19 \
     # UploadWizardExtraButtons
     && cd $MW_HOME/extensions \
     && git clone https://github.com/vedmaka/mediawiki-extension-UploadWizardExtraButtons.git UploadWizardExtraButtons \
@@ -570,7 +575,15 @@ RUN set -x; \
     # DebugMode, see https://www.mediawiki.org/wiki/Extension:DebugMode
     && git clone --single-branch -b master https://github.com/wikimedia/mediawiki-extensions-DebugMode.git $MW_HOME/extensions/DebugMode \
     && cd $MW_HOME/extensions/DebugMode \
-    && git checkout -q ea803a501175fb3009f0fcde7d9168ef8e374399
+    && git checkout -q ea803a501175fb3009f0fcde7d9168ef8e374399 \
+    # Sentry
+    && git clone --single-branch -b master https://github.com/WikiTeq/mediawiki-extensions-Sentry.git $MW_HOME/extensions/Sentry \
+    && cd $MW_HOME/extensions/Sentry \
+    && git checkout -q 51ffdd6474a02476adce583edfe647616c6f117a \
+    # Buggy
+    && git clone --single-branch -b master https://github.com/wikimedia/mediawiki-extensions-Buggy.git $MW_HOME/extensions/Buggy \
+    && cd $MW_HOME/extensions/Buggy \
+    && git checkout -q 613c5f197ae28ed8e0da5748a28841a32987cd59
 
 # GTag1
 ADD sources/GTag1.2.0.tar.gz $MW_HOME/extensions/
@@ -685,7 +698,10 @@ RUN set -x; \
 	&& git clone https://gerrit.wikimedia.org/r/mediawiki/extensions/PageForms \
 	&& cd PageForms \
 	&& git checkout -b $MW_VERSION d2e48e51eef1 \
-	&& git apply /tmp/patches/pageforms-xss-cherry-picked.patch
+	&& git apply /tmp/patches/pageforms-xss-cherry-picked.patch \
+	# Note: this patch can be removed once PageForms is upgraded past commit
+	# https://gerrit.wikimedia.org/r/plugins/gitiles/mediawiki/extensions/PageForms/+/ed14c7d811663e3276a873850cc3ef0619b0de1f
+    && git apply /tmp/patches/PF_autoedit.js.scroll.anchor.diff
 
 # PATCHES
 # Parsoid assertValidUTF8 back-port from 0.13.1
@@ -771,13 +787,14 @@ ENV MW_AUTOUPDATE=true \
 	LOG_FILES_COMPRESS_DELAY=3600 \
 	LOG_FILES_REMOVE_OLDER_THAN_DAYS=10 \
 	MEDIAWIKI_MAINTENANCE_AUTO_ENABLED=false \
-	MW_DEBUG_MODE=false
+	MW_DEBUG_MODE=false \
+	MW_SENTRY_DSN=""
 
 COPY conf/ssmtp.conf /etc/ssmtp/ssmtp.conf
 COPY conf/scan.conf /etc/clamd.d/scan.conf
 COPY conf/php/php_memory_limit.ini conf/php/php_max_execution_time.ini conf/php/php_error_reporting.ini conf/php/php_upload_max_filesize.ini /etc/php.d/
 COPY conf/apache/mediawiki.conf conf/apache/log.conf /etc/httpd/conf.d/
-COPY robots.txt .htaccess /var/www/html/
+COPY robots.txt .htaccess favicon.ico /var/www/html/
 COPY scripts/run-apache.sh scripts/mwjobrunner.sh scripts/mwsitemapgen.sh scripts/mwtranscoder.sh scripts/monit-slack.sh scripts/rotatelogs-compress.sh scripts/getMediawikiSettings.php /
 COPY DockerSettings.php $MW_HOME/DockerSettings.php
 

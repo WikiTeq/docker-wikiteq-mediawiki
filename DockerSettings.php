@@ -345,9 +345,6 @@ $wgUseInstantCommons  = (bool)getenv( 'MW_USE_INSTANT_COMMONS' );
 # or else you'll overwrite your logo when you upgrade!
 $wgLogo = "$wgScriptPath/logo.png";
 
-# The URL of the site favicon (the small icon displayed next to a URL in the address bar of a browser)
-$wgFavicon = "$wgScriptPath/favicon.ico";
-
 ##### Short URLs
 ## https://www.mediawiki.org/wiki/Manual:Short_URL
 $wgArticlePath = '/wiki/$1';
@@ -457,6 +454,12 @@ if( $wgDebugMode ) {
 	if( isset( $wgDebugModeForIP ) && $_SERVER['REMOTE_ADDR'] == $wgDebugModeForIP ) {
 		wfLoadExtension( 'DebugMode' );
 	}
+}
+
+# Sentry
+$wgSentryDsn = getenv('MW_SENTRY_DSN');
+if ( $wgSentryDsn ) {
+	wfLoadExtension( 'Sentry' );
 }
 
 # Fixes CVE-2021-44858, CVE-2021-45038, CVE-2021-44857, https://www.mediawiki.org/wiki/2021-12_security_release/FAQ
