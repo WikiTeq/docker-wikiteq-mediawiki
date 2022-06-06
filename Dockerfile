@@ -736,10 +736,6 @@ RUN set -x; \
     && git apply /tmp/patches/SocialProfile-disable-fields.patch
 
 RUN set -x; \
-     cd $MW_HOME/extensions/CommentStreams \
-     && git apply /tmp/patches/CommentStreams.REL1_35.showSearchHitTitle.diff
-
-RUN set -x; \
      cd $MW_HOME/extensions/DisplayTitle \
      && git apply /tmp/patches/DisplayTitleHooks.fragment.master.patch
 
