@@ -583,7 +583,9 @@ RUN set -x; \
     # Buggy
     && git clone --single-branch -b master https://github.com/wikimedia/mediawiki-extensions-Buggy.git $MW_HOME/extensions/Buggy \
     && cd $MW_HOME/extensions/Buggy \
-    && git checkout -q 613c5f197ae28ed8e0da5748a28841a32987cd59
+    && git checkout -q 613c5f197ae28ed8e0da5748a28841a32987cd59 \
+    # Citoid
+    && git clone -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/Citoid $MW_HOME/extensions/Citoid
 
 # GTag1
 ADD sources/GTag1.2.0.tar.gz $MW_HOME/extensions/
