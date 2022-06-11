@@ -635,6 +635,7 @@ RUN set -x; \
 	&& cd $MW_HOME \
 	&& git submodule update --init \
 	# VisualEditor
+	&& ls -al \
 	&& cd $MW_HOME/extensions/VisualEditor \
 	&& git submodule update --init \
 	# Toss directories
