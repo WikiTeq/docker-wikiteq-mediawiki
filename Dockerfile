@@ -13,7 +13,7 @@ ENV MW_VERSION=REL1_35 \
 	WWW_GROUP=apache \
 	APACHE_LOG_DIR=/var/log/apache2
 
-# Install requered packages
+# Install requered packages.
 RUN set -x; \
 	yum -y install --nogpgcheck yum-utils \
 	https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm \
