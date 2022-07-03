@@ -500,7 +500,7 @@ RUN set -x; \
     && cd $MW_HOME/extensions \
     && git clone https://gitlab.com/hydrawiki/extensions/EmbedVideo.git \
     && cd EmbedVideo \
-    && git checkout -b $MW_VERSION 954af96d3744d8adc7ff6458a05e579784f2d991 \
+    && git checkout -b $MW_VERSION 1c2f745b16beb3ee5a176bb8a1d0d03d301a9385 \
     # Lazyload
     # TODO change me when https://github.com/mudkipme/mediawiki-lazyload/pull/15 will be merged
     && cd $MW_HOME/extensions \
