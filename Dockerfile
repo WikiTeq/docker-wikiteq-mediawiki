@@ -150,10 +150,11 @@ RUN set -x; \
 	&& git clone --single-branch -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/Loops $MW_HOME/extensions/Loops \
 	&& cd $MW_HOME/extensions/Loops \
 	&& git checkout -q f0f1191f56e6b31b063f59ee2710a6f62890a336 \
-	# MyVariables
-	&& git clone --single-branch -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/MyVariables $MW_HOME/extensions/MyVariables \
+	# MyVariables \
+	# TODO switch me to $MW_VERSION branch for next LTS version
+	&& git clone --single-branch https://gerrit.wikimedia.org/r/mediawiki/extensions/MyVariables $MW_HOME/extensions/MyVariables \
 	&& cd $MW_HOME/extensions/MyVariables \
-	&& git checkout -q cde2562ffde8a1b648be10b78b86386a9c7d3151 \
+	&& git checkout -q c497061dedec1e6717be35dc0c2a11643feb361c \
 	# Arrays
 	&& git clone --single-branch -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/Arrays $MW_HOME/extensions/Arrays \
 	&& cd $MW_HOME/extensions/Arrays \
