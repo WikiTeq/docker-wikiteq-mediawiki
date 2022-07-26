@@ -258,7 +258,8 @@ $wgRightsIcon = "";
 $wgDiff3 = "/usr/bin/diff3";
 
 # see https://www.mediawiki.org/wiki/Manual:$wgCdnServersNoPurge
-$wgCdnServersNoPurge = [ '172.16.0.0/12' ]; # Add docker network as CDN
+# Add docker networks as CDNs
+$wgCdnServersNoPurge = [ '172.16.0.0/12', '192.168.0.0/16', '10.0.0.0/8' ];
 
 if ( getenv( 'MW_SHOW_EXCEPTION_DETAILS' ) === 'true' ) {
 	$wgShowExceptionDetails = true;

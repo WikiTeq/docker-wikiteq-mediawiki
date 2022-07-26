@@ -20,6 +20,10 @@ get_hostname_with_port () {
     echo "$1:${port:-$2}"
 }
 
+get_docker_gateway () {
+  getent hosts "gateway.docker.internal" | awk '{ print $1 }'
+}
+
 WG_SITE_SERVER=$(get_mediawiki_variable wgServer)
 WG_DB_TYPE=$(get_mediawiki_variable wgDBtype)
 WG_DB_SERVER=$(get_mediawiki_variable wgDBserver)
@@ -34,12 +38,20 @@ WG_SCRIPT_PATH=$(get_mediawiki_variable wgScriptPath)
 WG_CIRRUS_SEARCH_SERVER=$(get_hostname_with_port "$(get_mediawiki_variable wgCirrusSearchServers first)" 9200)
 VERSION_HASH=$(php /getMediawikiSettings.php --versions --format=md5)
 
+# Try to fetch gateway IP from extra host
+DOCKER_GATEWAY=$(get_docker_gateway)
+
+# Fall back to default 172.x network if unable to fetch gateway
+if [ -z "$DOCKER_GATEWAY" ]; then
+  DOCKER_GATEWAY="172.17.0.1"
+fi
+
 if [ -z "$WG_DB_SERVER" ]; then
     echo the wgDBserver variable must be defined
     exit 1
 fi
 
-# Map the site hostname to 172.17.0.1 for VisualEditor
+# Map the site hostname to $DOCKER_GATEWAY for VisualEditor
 MW_SITE_HOST=$(echo "$WG_SITE_SERVER" | sed -e 's|^[^/]*//||' -e 's|[:/].*$||')
 cp /etc/hosts ~/hosts.new
 sed -i '/# MW_SITE_HOST/d' ~/hosts.new
@@ -49,10 +61,13 @@ if [ "$MW_MAP_DOMAIN_TO_DOCKER_GATEWAY" != true ]; then
 elif [[ $MW_SITE_HOST =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
     echo "MW_SITE_HOST is IP address '$MW_SITE_HOST'"
 else
-    echo "Add MW_SITE_HOST '172.17.0.1 $MW_SITE_HOST' to /etc/hosts"
-    echo "172.17.0.1 $MW_SITE_HOST # MW_SITE_HOST" >> ~/hosts.new
+    echo "Add MW_SITE_HOST '$DOCKER_GATEWAY $MW_SITE_HOST' to /etc/hosts"
+    echo "$DOCKER_GATEWAY $MW_SITE_HOST # MW_SITE_HOST" >> ~/hosts.new
 fi
 cp -f ~/hosts.new /etc/hosts
+
+# Update /etc/ssmtp/ssmtp.conf to use DOCKER_GATEWAY
+sed -i "s/DOCKER_GATEWAY/$DOCKER_GATEWAY/" /etc/ssmtp/ssmtp.conf
 
 # Create needed directories
 rsync -avh --ignore-existing "$MW_ORIGIN_FILES"/ "$MW_VOLUME"/
