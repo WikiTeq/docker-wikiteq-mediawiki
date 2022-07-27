@@ -154,7 +154,7 @@ RUN set -x; \
 	# TODO switch me to $MW_VERSION branch for next LTS version
 	&& git clone --single-branch https://gerrit.wikimedia.org/r/mediawiki/extensions/MyVariables $MW_HOME/extensions/MyVariables \
 	&& cd $MW_HOME/extensions/MyVariables \
-	&& git checkout -q c497061dedec1e6717be35dc0c2a11643feb361c \
+	&& git checkout -q a175761a49a8c9d77e9a42f419c7151f8f5c449f \
 	# Arrays
 	&& git clone --single-branch -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/Arrays $MW_HOME/extensions/Arrays \
 	&& cd $MW_HOME/extensions/Arrays \
