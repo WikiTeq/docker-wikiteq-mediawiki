@@ -467,9 +467,9 @@ RUN set -x; \
 	&& git checkout e9ebcb7a60e04a4b6054538032d1d2e1badf9934 \
 	# SimpleTooltip
 	&& cd $MW_HOME/extensions \
-	&& git clone https://github.com/Fannon/SimpleTooltip.git \
+	&& git clone https://github.com/Universal-Omega/SimpleTooltip.git \
 	&& cd SimpleTooltip \
-	&& git checkout -b $MW_VERSION 2476bff8f4555f86795c26ca5fdb7db99bfe58d1 \
+	&& git checkout -b $MW_VERSION 5986ddf74177423c384b044cce62fcff3e26f8e6 \
 	# PubmedParser
 	&& cd $MW_HOME/extensions \
 	&& git clone https://github.com/WikiTeq/PubmedParser.git \
