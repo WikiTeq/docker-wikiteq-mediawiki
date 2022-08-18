@@ -263,7 +263,6 @@ The image has the following extensions pre-installed. **These pre-installed exte
 * SyntaxHighlight_GeSHi
 * Tabber
 * Tabs
-* TalkRight
 * TemplateData
 * TemplateStyles
 * TextExtracts
