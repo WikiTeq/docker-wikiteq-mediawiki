@@ -148,7 +148,6 @@ const DOCKER_EXTENSIONS = [
 	'SyntaxHighlight_GeSHi', # bundled
 	'Tabber',
 	'Tabs',
-	'TalkRight',
 	'TemplateData', # bundled
 	'TemplateStyles',
 	'TextExtracts', # bundled
