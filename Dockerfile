@@ -48,6 +48,9 @@ RUN set -x; \
 	 ffmpeg \
 	 curl \
 	 monit \
+     zip \
+     weasyprint \
+     pandoc \
 	 clamav \
 	 cronie \
 	 --exclude=clamav-update \
