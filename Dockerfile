@@ -707,7 +707,10 @@ RUN set -x; \
 	&& git apply /tmp/patches/pageforms-xss-cherry-picked.patch \
 	# Note: this patch can be removed once PageForms is upgraded past commit
 	# https://gerrit.wikimedia.org/r/plugins/gitiles/mediawiki/extensions/PageForms/+/ed14c7d811663e3276a873850cc3ef0619b0de1f
-    && git apply /tmp/patches/PF_autoedit.js.scroll.anchor.diff
+    && git apply /tmp/patches/PF_autoedit.js.scroll.anchor.diff \
+    # Note: this patch can be removed once PageForms is upgraded past commit
+    # https://gerrit.wikimedia.org/r/c/mediawiki/extensions/PageForms/+/832748
+    && git apply /tmp/patches/PageFormsEmbedQueryCacheTTL.diff
 
 # PATCHES
 # Parsoid assertValidUTF8 back-port from 0.13.1

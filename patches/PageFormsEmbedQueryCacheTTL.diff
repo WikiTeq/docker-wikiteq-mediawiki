@@ -1,0 +1,35 @@
+diff --git a/extension.json b/extension.json
+index 233bbdd6..5227ad94 100644
+--- a/extension.json
++++ b/extension.json
+@@ -535,7 +535,8 @@
+ 			"_merge_strategy": "array_plus"
+ 		},
+ 		"PageFormsAutoeditNamespaces": [ 0 ],
+-		"PageFormsIgnoreTitlePattern": []
++		"PageFormsIgnoreTitlePattern": [],
++		"PageFormsEmbedQueryCacheTTL": 0
+ 	},
+ 	"manifest_version": 1
+ }
+diff --git a/specials/PF_RunQuery.php b/specials/PF_RunQuery.php
+index da03da4e..42677fd9 100644
+--- a/specials/PF_RunQuery.php
++++ b/specials/PF_RunQuery.php
+@@ -204,6 +204,16 @@ END;
+ 		}
+ 	}
+ 
++	/**
++	 * Overrides base maxIncludeCacheTime to make it configurable
++	 * for Special:RunQuery embed pages
++	 * @return float|int
++	 */
++	public function maxIncludeCacheTime() {
++		global $wgPageFormsEmbedQueryCacheTTL;
++		return $wgPageFormsEmbedQueryCacheTTL;
++	}
++
+ 	protected function getGroupName() {
+ 		return 'pf_group';
+ 	}
