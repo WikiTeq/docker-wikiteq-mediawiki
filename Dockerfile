@@ -712,6 +712,11 @@ RUN set -x; \
     # https://gerrit.wikimedia.org/r/c/mediawiki/extensions/PageForms/+/832748
     && git apply /tmp/patches/PageFormsEmbedQueryCacheTTL.diff
 
+# ContributionScores, PATCHED
+RUN set -x; \
+    cd $MW_HOME/extensions/ContributionScores \
+    && git apply /tmp/patches/ContributionScoresCacheTTL.diff
+
 # PATCHES
 # Parsoid assertValidUTF8 back-port from 0.13.1
 RUN set -x; \
