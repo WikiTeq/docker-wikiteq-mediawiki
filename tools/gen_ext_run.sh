@@ -83,7 +83,6 @@ Extensions=(
 	"TemplateStyles"
 	"LookupUser"
 	"HeadScript"
-	"Favorites"
 	"GoogleDocTag"
 	EditAccount
 	"EventLogging"

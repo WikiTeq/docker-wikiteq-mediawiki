@@ -362,10 +362,6 @@ RUN set -x; \
 	&& git clone --single-branch -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/HeadScript $MW_HOME/extensions/HeadScript \
 	&& cd $MW_HOME/extensions/HeadScript \
 	&& git checkout -q f8245e350d6e3452a20d871240ebb193f69f384d \
-	# Favorites
-	&& git clone --single-branch -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/Favorites $MW_HOME/extensions/Favorites \
-	&& cd $MW_HOME/extensions/Favorites \
-	&& git checkout -q 782afc856a35c37b1a508ce37f7402954cc32efb \
 	# GoogleDocTag
 	&& git clone --single-branch -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/GoogleDocTag $MW_HOME/extensions/GoogleDocTag \
 	&& cd $MW_HOME/extensions/GoogleDocTag \
