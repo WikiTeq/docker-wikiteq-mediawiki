@@ -173,7 +173,6 @@ The image has the following extensions pre-installed. **These pre-installed exte
 * EventLogging
 * EventStreamConfig
 * ExternalData
-* Favorites
 * FixedHeaderTable
 * Flow
 * Gadgets
