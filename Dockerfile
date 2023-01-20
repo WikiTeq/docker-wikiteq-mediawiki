@@ -463,7 +463,7 @@ RUN set -x; \
 	&& cd $MW_HOME/extensions \
 	&& git clone -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/Widgets \
 	&& cd Widgets \
-	&& git checkout e9ebcb7a60e04a4b6054538032d1d2e1badf9934 \
+	&& git checkout 32993157584b182390962d93341561cd3aecdb58 \
 	# SimpleTooltip
 	&& cd $MW_HOME/extensions \
 	&& git clone https://github.com/Universal-Omega/SimpleTooltip.git \
