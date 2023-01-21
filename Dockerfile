@@ -463,7 +463,7 @@ RUN set -x; \
 	&& cd $MW_HOME/extensions \
 	&& git clone -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/Widgets \
 	&& cd Widgets \
-	&& git checkout e9ebcb7a60e04a4b6054538032d1d2e1badf9934 \
+	&& git checkout 32993157584b182390962d93341561cd3aecdb58 \
 	# SimpleTooltip
 	&& cd $MW_HOME/extensions \
 	&& git clone https://github.com/Universal-Omega/SimpleTooltip.git \
@@ -508,11 +508,6 @@ RUN set -x; \
     && git clone https://github.com/WikiTeq/mediawiki-lazyload.git Lazyload \
     && cd Lazyload \
     && git checkout -b $MW_VERSION 92172c30ee5ac764627e397b19eddd536155394e \
-    # WikiSEO Dont change me without testing well!
-    && cd $MW_HOME/extensions \
-    && git clone https://gerrit.wikimedia.org/r/mediawiki/extensions/WikiSEO \
-    && cd WikiSEO \
-    && git checkout -b $MW_VERSION 30bb8c323e8cd44df52c7537f97f8518de2557df \
     # GoogleDocCreator
     && cd $MW_HOME/extensions \
     && git clone https://github.com/nischayn22/GoogleDocCreator.git \
@@ -586,6 +581,15 @@ RUN set -x; \
     && git checkout -q 613c5f197ae28ed8e0da5748a28841a32987cd59 \
     # Citoid
     && git clone -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/Citoid $MW_HOME/extensions/Citoid
+
+RUN set -x; \
+    # WikiSEO
+    cd $MW_HOME/extensions \
+    && git clone https://gerrit.wikimedia.org/r/mediawiki/extensions/WikiSEO \
+    && cd WikiSEO \
+    && git config core.autocrlf false \
+    && git checkout assets \
+    && git checkout -b $MW_VERSION 30bb8c323e8cd44df52c7537f97f8518de2557df
 
 # GTag1
 ADD sources/GTag1.2.0.tar.gz $MW_HOME/extensions/
