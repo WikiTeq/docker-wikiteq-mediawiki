@@ -811,6 +811,7 @@ COPY conf/apache/mediawiki.conf conf/apache/log.conf /etc/httpd/conf.d/
 COPY robots.txt .htaccess favicon.ico /var/www/html/
 COPY scripts/run-apache.sh scripts/mwjobrunner.sh scripts/mwsitemapgen.sh scripts/mwtranscoder.sh scripts/monit-slack.sh scripts/rotatelogs-compress.sh scripts/getMediawikiSettings.php /
 COPY DockerSettings.php $MW_HOME/DockerSettings.php
+COPY run-ci.sh $MW_HOME/run-ci.sh
 
 # Installs mediawiki-maintenance-automation scripts
 # This is disabled by default. You can enable this by adding
@@ -825,6 +826,7 @@ RUN set -x; \
 	yum -y update \
 	&& sed -i '/<Directory "\/var\/www\/html">/,/<\/Directory>/ s/AllowOverride None/AllowOverride All/' /etc/httpd/conf/httpd.conf \
 	&& chmod -v +x /*.sh \
+	&& chmod -v +x $MW_HOME/*.sh \
 	&& mkdir $MW_HOME/sitemap \
 	&& chown $WWW_USER:$WWW_GROUP $MW_HOME/sitemap \
 	&& chmod g+w $MW_HOME/sitemap \
